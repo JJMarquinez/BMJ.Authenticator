@@ -68,7 +68,7 @@ namespace BMJ.Authenticator.Infrastructure.Persistence
 
             if (_userManager.Users.All(u => u.UserName != administrator.UserName))
             {
-                await _userManager.CreateAsync(administrator, "1234");
+                await _userManager.CreateAsync(administrator, "Administrator1!");
                 if (!string.IsNullOrWhiteSpace(administratorRole.Name))
                 {
                     await _userManager.AddToRolesAsync(administrator, new[] { administratorRole.Name });
