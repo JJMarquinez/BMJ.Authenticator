@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Applicati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Infrastructure", "src\BMJ.Authenticator.Infrastructure\BMJ.Authenticator.Infrastructure.csproj", "{95FCEE9A-A636-4351-82D9-ABF3A22C66E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.RestApi.Host", "src\BMJ.Authenticator.RestApi.Host\BMJ.Authenticator.RestApi.Host.csproj", "{B66D2C16-E1A6-4581-AB8A-2A1020634656}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.App", "src\BMJ.Authenticator.App\BMJ.Authenticator.App.csproj", "{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,10 +27,10 @@ Global
 		{95FCEE9A-A636-4351-82D9-ABF3A22C66E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95FCEE9A-A636-4351-82D9-ABF3A22C66E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95FCEE9A-A636-4351-82D9-ABF3A22C66E1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B66D2C16-E1A6-4581-AB8A-2A1020634656}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B66D2C16-E1A6-4581-AB8A-2A1020634656}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B66D2C16-E1A6-4581-AB8A-2A1020634656}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B66D2C16-E1A6-4581-AB8A-2A1020634656}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -38,7 +38,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DE3EA2B9-BB60-4D3B-AE34-99CA4159FB03} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 		{95FCEE9A-A636-4351-82D9-ABF3A22C66E1} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
-		{B66D2C16-E1A6-4581-AB8A-2A1020634656} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
+		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}

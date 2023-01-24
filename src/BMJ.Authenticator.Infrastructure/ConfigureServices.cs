@@ -32,13 +32,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
             services.AddTransient<IIdentityService, IdentityService>();
-
-            //services.AddAuthentication()
-            //    .AddIdentityServerJwt();
 
             return services;
         }
