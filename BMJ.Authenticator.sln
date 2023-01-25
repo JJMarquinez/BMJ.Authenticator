@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Infrastru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.App", "src\BMJ.Authenticator.App\BMJ.Authenticator.App.csproj", "{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Domain", "src\BMJ.Authenticator.Domain\BMJ.Authenticator.Domain.csproj", "{E2C486B3-94D3-41CA-AA47-E9A5148464FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2C486B3-94D3-41CA-AA47-E9A5148464FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2C486B3-94D3-41CA-AA47-E9A5148464FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2C486B3-94D3-41CA-AA47-E9A5148464FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2C486B3-94D3-41CA-AA47-E9A5148464FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -39,6 +45,7 @@ Global
 		{DE3EA2B9-BB60-4D3B-AE34-99CA4159FB03} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 		{95FCEE9A-A636-4351-82D9-ABF3A22C66E1} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 		{BEE3AF06-C5E5-49AB-9F47-C1F5B79430FA} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
+		{E2C486B3-94D3-41CA-AA47-E9A5148464FB} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}

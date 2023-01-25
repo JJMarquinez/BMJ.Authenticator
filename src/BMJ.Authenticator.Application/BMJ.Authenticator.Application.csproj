@@ -14,4 +14,8 @@
     <Folder Include="UseCases\Login\Queries\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BMJ.Authenticator.Domain\BMJ.Authenticator.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,6 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Interfaces;
+using BMJ.Authenticator.Infrastructure.Authentication;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
@@ -33,6 +35,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IJwtProvider, JwtProvider>();
 
             return services;
         }

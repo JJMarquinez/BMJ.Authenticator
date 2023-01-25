@@ -1,4 +1,7 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Interfaces;
+using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Domain;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Login.Commands
@@ -7,18 +10,18 @@ namespace BMJ.Authenticator.Application.UseCases.Login.Commands
         : IRequestHandler<LoginCommand, string>
     {
         private readonly IIdentityService _identityService;
-        public LoginCommandHandler(IIdentityService identityService)
+        private readonly IJwtProvider _jwtProvider;
+        public LoginCommandHandler(IIdentityService identityService, IJwtProvider jwtProvider)
         {
-            _identityService = identityService; 
+            _identityService = identityService;
+            _jwtProvider = jwtProvider; 
         }
 
         public async Task<string> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
-            string token = "";
-
-            var user =  _identityService.GetUserAsync(command.UserName, command.Password);
-
-            return token;
+            var user =  await _identityService.Authenticate(command.UserName, command.Password);
+            Ensure.NotNull(user, "Invalid credentials");
+            return _jwtProvider.Generate(user);
         }
     }
 }
