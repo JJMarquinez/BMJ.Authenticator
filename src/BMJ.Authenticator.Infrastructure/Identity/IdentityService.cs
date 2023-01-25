@@ -78,5 +78,12 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
             return result.ToApplicationResult();
         }
+
+        public Task<ApplicationUser> GetUserAsync(string userName, string password)
+        {
+            var user = await _userManager.Users.FirstAsync(u => u.UserName == userName && u.PasswordHash == password).Result;
+
+            return user;
+        }
     }
 }

@@ -1,9 +1,11 @@
+using BMJ.Authenticator.Application;
 using BMJ.Authenticator.Infrastructure;
 using BMJ.Authenticator.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddControllers();
