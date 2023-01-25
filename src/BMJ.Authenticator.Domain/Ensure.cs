@@ -32,7 +32,7 @@ namespace BMJ.Authenticator.Domain
         {
             if (!condition)
             {
-                throw Activator.CreateInstance(typeof(TException), message);
+                throw (TException)Activator.CreateInstance(typeof(TException), message);
             }
         }
 

@@ -21,7 +21,7 @@ namespace BMJ.Authenticator.Infrastructure.Authentication
         {
             var claims = new List<Claim> {
                 new (JwtRegisteredClaimNames.Sub, user.GetId()),
-                new (JwtRegisteredClaimNames.Name, user.GetUserName()),
+                new (JwtRegisteredClaimNames.Name, user.GetUserName())
             };
             
             foreach (var role in user.GetRoles())
