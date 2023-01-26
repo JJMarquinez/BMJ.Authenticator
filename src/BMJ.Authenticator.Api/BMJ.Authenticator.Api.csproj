@@ -14,4 +14,8 @@
     <PackageReference Include="MediatR" Version="11.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BMJ.Authenticator.Application\BMJ.Authenticator.Application.csproj" />
+  </ItemGroup>
+
 </Project>
