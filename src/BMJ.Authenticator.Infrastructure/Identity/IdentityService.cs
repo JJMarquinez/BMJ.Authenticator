@@ -80,12 +80,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             return result.ToApplicationResult();
         }
 
-        public async Task<User> Authenticate(string userName, string password)
+        public async Task<User> AuthenticateMember(string userName, string password)
         {
             User result = null;
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == userName && u.PasswordHash == password);
-
-            if (user != null)
+            var user = await _userManager.FindByNameAsync(userName);
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (isValidPassword)
             { 
                 var roles = await _userManager.GetRolesAsync(user);
                 result = user.ToApplicationUser(roles.ToArray());

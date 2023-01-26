@@ -6,7 +6,7 @@ namespace BMJ.Authenticator.Application.Common.Interfaces
     {
         Task<string?> GetUserNameAsync(string userId);
 
-        Task<User> Authenticate(string userName, string password);
+        Task<User> AuthenticateMember(string userName, string password);
 
         Task<bool> IsInRoleAsync(string userId, string role);
 
