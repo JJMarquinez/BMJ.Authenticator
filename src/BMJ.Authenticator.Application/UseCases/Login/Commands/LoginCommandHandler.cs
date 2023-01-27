@@ -20,7 +20,9 @@ namespace BMJ.Authenticator.Application.UseCases.Login.Commands
         public async Task<string> Handle(LoginCommand command, CancellationToken cancellationToken)
         {
             var user =  await _identityService.AuthenticateMember(command.UserName, command.Password);
-            Ensure.NotNull(user, "Invalid credentials");
+            //Ensure.NotNull(user, "Invalid credentials");
+            Ensure.Not<UnauthorizedAccessException>(user is null, "Invalid credentials");
+
             return _jwtProvider.Generate(user);
         }
     }
