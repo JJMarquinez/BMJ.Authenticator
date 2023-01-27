@@ -1,6 +1,6 @@
-namespace BMJ.Authenticator.RestApi.Host
+﻿namespace BMJ.Authenticator.Presentation
 {
-    public class WeatherForecast
+    public class CustomWeatherForecast
     {
         public DateOnly Date { get; set; }
 

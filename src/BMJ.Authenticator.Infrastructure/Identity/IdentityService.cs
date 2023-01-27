@@ -3,6 +3,7 @@ using BMJ.Authenticator.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -77,6 +78,20 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             var result = await _userManager.DeleteAsync(user);
 
             return result.ToApplicationResult();
+        }
+
+        public async Task<User> AuthenticateMember(string userName, string password)
+        {
+            User result = null;
+            var user = await _userManager.FindByNameAsync(userName);
+            var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+            
+            if (isValidPassword)
+            { 
+                var roles = await _userManager.GetRolesAsync(user);
+                result = user.ToApplicationUser(roles.ToArray());
+            }
+            return result;
         }
     }
 }

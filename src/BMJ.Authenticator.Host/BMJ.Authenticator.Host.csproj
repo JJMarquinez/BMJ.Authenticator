@@ -12,10 +12,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.18.2" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BMJ.Authenticator.Api\BMJ.Authenticator.Api.csproj" />
     <ProjectReference Include="..\BMJ.Authenticator.Infrastructure\BMJ.Authenticator.Infrastructure.csproj" />
   </ItemGroup>
 

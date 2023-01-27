@@ -7,15 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\Login\Queries\" />
+    <PackageReference Include="MediatR" Version="11.1.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BMJ.Authenticator.Domain\BMJ.Authenticator.Domain.csproj" />
+    <ProjectReference Include="..\BMJ.Authenticator.Application\BMJ.Authenticator.Application.csproj" />
   </ItemGroup>
 
 </Project>
