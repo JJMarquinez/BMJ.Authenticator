@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Runtime.InteropServices;
 using System.Xml.Linq;
@@ -21,6 +22,7 @@ namespace BMJ.Authenticator.Presentation.Controllers
             _logger = logger;
         }
 
+        [Authorize]
         [HttpGet(Name = "CustomGetWeatherForecast")]
         public IEnumerable<CustomWeatherForecast> Get()
         {

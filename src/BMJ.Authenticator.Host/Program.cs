@@ -1,3 +1,4 @@
+using BMJ.Authenticator.Api;
 using BMJ.Authenticator.Application;
 using BMJ.Authenticator.Host;
 using BMJ.Authenticator.Infrastructure;
@@ -11,7 +12,7 @@ builder.Services
     .AddApplicationServices()
     .AddInfrastructureServices(builder.Configuration)
     .AddApiServices()
-    .AddHostServices();
+    .AddHostServices(builder.Configuration);
 
 var app = builder.Build();
 
@@ -30,12 +31,8 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseAuthentication();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.UseApiConfiguration();
 
 app.Run();

@@ -1,17 +1,19 @@
-﻿using BMJ.Authenticator.App.OptionSetup;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
+using System.Text;
+using BMJ.Authenticator.Infrastructure.Authentication;
 
 namespace BMJ.Authenticator.Host
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddHostServices(this IServiceCollection services)
+        public static IServiceCollection AddHostServices(this IServiceCollection services, IConfiguration configuration)
         {
             services
-                .AddCustomAuthentication()
-                .AddCustomConfigure()
+                .AddCustomConfigure(configuration)
+                .AddCustomAuthentication(configuration)
                 .AddCustomOpenApiDocument();
             
             return services;
@@ -35,18 +37,32 @@ namespace BMJ.Authenticator.Host
             return services;
         }
 
-        private static IServiceCollection AddCustomAuthentication(this IServiceCollection services)
+        private static IServiceCollection AddCustomAuthentication(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer();
+                .AddJwtBearer(
+                options =>
+                {
+                    options.TokenValidationParameters = new()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = configuration["JwtOptions:Issuer"],
+                        ValidAudience = configuration["JwtOptions:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(configuration["JwtOptions:SecretKey"])
+                        )
+                    };
+                }
+                );
             return services;
         }
 
-        private static IServiceCollection AddCustomConfigure(this IServiceCollection services)
+        private static IServiceCollection AddCustomConfigure(this IServiceCollection services, IConfiguration configuration)
         {
-            services.ConfigureOptions<JwtOptionsSetup>();
-            //services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-            services.ConfigureOptions<JwtBearerOptionsSetup>();
+            services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
             return services;
         }
     }
