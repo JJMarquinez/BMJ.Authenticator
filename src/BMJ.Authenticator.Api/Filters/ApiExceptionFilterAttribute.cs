@@ -7,17 +7,18 @@ namespace BMJ.Authenticator.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
-    private readonly IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers;
+    private IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>();
 
     public ApiExceptionFilterAttribute()
     {
-        // Register known exception types and handlers.
-        _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
-            {
-                { typeof(ValidationException), HandleValidationException },
-                { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
-                { typeof(AuthException), HandleAuthException },
-            };
+        RegisterExceptionHandler(typeof(ValidationException), HandleValidationException);
+        RegisterExceptionHandler(typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException);
+        RegisterExceptionHandler(typeof(AuthException), HandleAuthException);
+    }
+
+    private void RegisterExceptionHandler(Type type, Action<ExceptionContext> handler)
+    { 
+        _exceptionHandlers.Add(type, handler);
     }
 
     public override void OnException(ExceptionContext context)
