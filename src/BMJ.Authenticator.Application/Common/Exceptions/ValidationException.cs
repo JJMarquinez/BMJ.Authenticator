@@ -4,19 +4,23 @@ namespace BMJ.Authenticator.Application.Common.Exceptions;
 
 public class ValidationException : Exception
 {
-    public ValidationException()
+    private IDictionary<string, string[]> errors;
+    private ValidationException()
         : base("One or more validation failures have occurred.")
     {
-        Errors = new Dictionary<string, string[]>();
+        errors = new Dictionary<string, string[]>();
     }
 
-    public ValidationException(IEnumerable<ValidationFailure> failures)
+    private ValidationException(IEnumerable<ValidationFailure> failures)
         : this()
     {
-        Errors = failures
+        errors = failures
             .GroupBy(e => e.PropertyName, e => e.ErrorMessage)
             .ToDictionary(failureGroup => failureGroup.Key, failureGroup => failureGroup.ToArray());
     }
 
-    public IDictionary<string, string[]> Errors { get; }
+    public static ValidationException New(IEnumerable<ValidationFailure> failures)
+        => new (failures);
+
+    public IDictionary<string, string[]> GetErrors() => errors;
 }

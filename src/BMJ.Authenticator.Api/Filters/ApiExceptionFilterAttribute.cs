@@ -48,7 +48,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         var exception = (ValidationException)context.Exception;
 
-        var details = new ValidationProblemDetails(exception.Errors)
+        var details = new ValidationProblemDetails(exception.GetErrors())
         {
             Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
         };
@@ -89,15 +89,22 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleAuthException(ExceptionContext context)
     {
-        var exception = (AuthException)context.Exception;
+        AuthException exception = (AuthException)context.Exception;
 
         var details = new ProblemDetails
         {
             Status = exception.GetError().GetStatusCode(),
             Title = exception.Message,
+            
         };
-        details.Extensions.Add("InternalErrorCode", exception.GetError().GetCode());
-        details.Extensions.Add("Details", exception.GetError().GetDescriptions());
+        details.Extensions.Add(
+            "Errors", 
+            new Dictionary<string, string[]>() {
+                { 
+                    exception.GetError().GetCode(),
+                    exception.GetError().GetDescriptions().ToArray() 
+                }
+            });
 
         context.Result = new ObjectResult(details)
         {

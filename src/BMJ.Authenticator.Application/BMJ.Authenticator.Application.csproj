@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Behaviours\" />
+    <Folder Include="UseCases\Login\EventHandlers\" />
     <Folder Include="UseCases\Login\Queries\" />
   </ItemGroup>
 
