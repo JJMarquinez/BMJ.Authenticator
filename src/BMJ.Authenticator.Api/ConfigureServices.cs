@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using BMJ.Authenticator.Api.Filters;
+using FluentValidation.AspNetCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Presentation
 {
@@ -7,8 +9,11 @@ namespace BMJ.Authenticator.Presentation
         public static IServiceCollection AddApiServices(this IServiceCollection services)
         {
             services
+                .AddProblemDetails()
                 .AddEndpointsApiExplorer()
-                .AddMvcCore()
+                .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
+                .AddMvcCore(options =>
+                    options.Filters.Add<ApiExceptionFilterAttribute>())
                 .AddApplicationPart(typeof(ConfigureServices).Assembly);
             return services;
         }

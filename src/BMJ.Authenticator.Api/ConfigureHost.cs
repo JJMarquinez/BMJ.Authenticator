@@ -7,7 +7,8 @@ namespace BMJ.Authenticator.Api
     {
         public static IApplicationBuilder UseApiConfiguration(this IApplicationBuilder app)
         {
-            app.UseRouting()
+            app.UseExceptionHandler()
+                .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseEndpoints(endpoints =>
