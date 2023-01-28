@@ -93,22 +93,25 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
         var details = new ProblemDetails
         {
-            Status = exception.GetError().GetStatusCode(),
+            Status = exception.GetError().GetStatusCodeAsInt(),
             Title = exception.Message,
             
         };
         details.Extensions.Add(
-            "Errors", 
-            new Dictionary<string, string[]>() {
+            "errors", 
+            new Dictionary<string, object>() {
                 { 
                     exception.GetError().GetCode(),
-                    exception.GetError().GetDescriptions().ToArray() 
+                    new {
+                        descriptions = exception.GetError().GetDescriptions().ToArray(), 
+                        errorType = exception.GetError().GetErrorType().ToString()
+                    }
                 }
             });
 
         context.Result = new ObjectResult(details)
         {
-            StatusCode = exception.GetError().GetStatusCode()
+            StatusCode = exception.GetError().GetStatusCodeAsInt()
         };
 
         context.ExceptionHandled = true;
