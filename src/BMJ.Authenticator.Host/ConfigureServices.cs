@@ -5,7 +5,7 @@ using NSwag.Generation.Processors.Security;
 using System.Text;
 using BMJ.Authenticator.Infrastructure.Authentication;
 using Serilog;
-using Microsoft.AspNetCore.Builder;
+using Serilog.Sinks.Elasticsearch;
 
 namespace BMJ.Authenticator.Host
 {
@@ -23,11 +23,22 @@ namespace BMJ.Authenticator.Host
 
         private static IServiceCollection AddCustomLogging(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
         {
-            using var logger = new LoggerConfiguration()
+            webApplicationBuilder.Host.UseSerilog((context, configuration) => 
+            {
+                configuration.Enrich.FromLogContext()
+                .Enrich.WithMachineName()
                 .WriteTo.Console()
-                .CreateLogger();
-
-            webApplicationBuilder.Host.UseSerilog(logger);
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri(context.Configuration["Elasticsearch:Url"]))
+                    {
+                        IndexFormat = $"BMJ.Authenticator-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+                        AutoRegisterTemplate = true,
+                        NumberOfShards = 2,
+                        NumberOfReplicas = 1
+                    })
+                .Enrich.WithProperty("Enviroment", context.HostingEnvironment.EnvironmentName)
+                .ReadFrom.Configuration(context.Configuration);
+            });
             return services;
         }
 

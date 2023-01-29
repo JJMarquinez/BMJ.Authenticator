@@ -2,15 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using BMJ.Authenticator.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace BMJ.Authenticator.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>();
+    private readonly ILogger _logger;
 
-    public ApiExceptionFilterAttribute()
+    public ApiExceptionFilterAttribute(ILogger<ApiExceptionFilterAttribute> logger)
     {
+        _logger = logger;
         RegisterExceptionHandler(typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException);
         RegisterExceptionHandler(typeof(AuthException), HandleAuthException);
     }
@@ -22,6 +25,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     public override void OnException(ExceptionContext context)
     {
+        _logger.LogError(context.Exception, context.Exception.Message);
         HandleException(context);
 
         base.OnException(context);

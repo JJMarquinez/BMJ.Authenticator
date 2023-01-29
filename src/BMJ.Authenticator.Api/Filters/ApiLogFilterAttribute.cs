@@ -14,8 +14,8 @@ namespace BMJ.Authenticator.Api.Filters
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            _logger.LogInformation("BMJ.Authentidator Request: {Name} {@Request}",
-                nameof(context.HttpContext.Request), context.HttpContext.Request.RouteValues);
+            _logger.LogInformation("BMJ.Authentidator Request: {Name} {@Request} {CorrelationId}",
+                nameof(context.HttpContext.Request), context.HttpContext.Request.RouteValues, new Random().Next());
             base.OnActionExecuting(context);
         }
     }
