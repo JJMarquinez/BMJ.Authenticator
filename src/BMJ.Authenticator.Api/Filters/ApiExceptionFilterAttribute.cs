@@ -11,7 +11,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     public ApiExceptionFilterAttribute()
     {
-        RegisterExceptionHandler(typeof(ValidationException), HandleValidationException);
         RegisterExceptionHandler(typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException);
         RegisterExceptionHandler(typeof(AuthException), HandleAuthException);
     }
@@ -42,20 +41,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             HandleInvalidModelStateException(context);
             return;
         }
-    }
-
-    private void HandleValidationException(ExceptionContext context)
-    {
-        var exception = (ValidationException)context.Exception;
-
-        var details = new ValidationProblemDetails(exception.GetErrors())
-        {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-        };
-
-        context.Result = new BadRequestObjectResult(details);
-
-        context.ExceptionHandled = true;
     }
 
     private void HandleInvalidModelStateException(ExceptionContext context)

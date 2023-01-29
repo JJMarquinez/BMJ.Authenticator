@@ -4,18 +4,30 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Text;
 using BMJ.Authenticator.Infrastructure.Authentication;
+using Serilog;
+using Microsoft.AspNetCore.Builder;
 
 namespace BMJ.Authenticator.Host
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddHostServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddHostServices(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
         {
             services
-                .AddCustomConfigure(configuration)
-                .AddCustomAuthentication(configuration)
+                .AddCustomConfigure(webApplicationBuilder.Configuration)
+                .AddCustomLogging(webApplicationBuilder)
+                .AddCustomAuthentication(webApplicationBuilder.Configuration)
                 .AddCustomOpenApiDocument();
-            
+            return services;
+        }
+
+        private static IServiceCollection AddCustomLogging(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
+        {
+            using var logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .CreateLogger();
+
+            webApplicationBuilder.Host.UseSerilog(logger);
             return services;
         }
 
