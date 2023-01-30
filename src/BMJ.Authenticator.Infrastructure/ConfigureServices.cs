@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Infrastructure.Authentication;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Logger;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +37,7 @@ namespace BMJ.Authenticator.Infrastructure
 
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IJwtProvider, JwtProvider>();
+            services.AddTransient<IAuthLogger, AuthLogger>();
 
             return services;
         }

@@ -1,22 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc.Filters;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
 namespace BMJ.Authenticator.Api.Filters
 {
     public class ApiLogFilterAttribute : ActionFilterAttribute
     {
-        private readonly ILogger _logger;
+        private readonly IAuthLogger _logger;
 
-        public ApiLogFilterAttribute(ILogger<ActionFilterAttribute> logger)
+        public ApiLogFilterAttribute(IAuthLogger logger)
         {
             _logger = logger;
         }
 
-        public override void OnActionExecuting(ActionExecutingContext context)
+        public override void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogInformation("BMJ.Authentidator Request: {Name} {@Request} {CorrelationId}",
-                nameof(context.HttpContext.Request), context.HttpContext.Request.RouteValues, new Random().Next());
-            base.OnActionExecuting(context);
+            _logger.LogInformation("Request: {TraceIdentifier} {@Request} {@Reponse}",
+                context.HttpContext.TraceIdentifier,
+                new
+                {
+                    Path = context.HttpContext.Request.Path.Value,
+                    Method = context.HttpContext.Request.Method,
+                    Protocol = context.HttpContext.Request.Protocol
+                },
+                new
+                {
+                    StatusCode = context.HttpContext.Response.StatusCode,
+                    Body = context.Result
+                });
+            base.OnActionExecuted(context);
         }
     }
 }
