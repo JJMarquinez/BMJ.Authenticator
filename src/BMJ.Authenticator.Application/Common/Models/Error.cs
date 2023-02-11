@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Domain;
+﻿using BMJ.Authenticator.Domain.Common;
 using System.Net;
 
 namespace BMJ.Authenticator.Application.Common.Models;

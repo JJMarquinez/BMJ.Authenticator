@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace BMJ.Authenticator.Domain
+namespace BMJ.Authenticator.Domain.Common
 {
     /// <summary>
     /// Will throw exceptions when conditions are not satisfied.
@@ -79,7 +79,7 @@ namespace BMJ.Authenticator.Domain
         /// <exception cref="Exception">string value is null or empty</exception>
         public static void NotNullOrEmpty(string value, string message = "String cannot be null or empty")
         {
-            That(!String.IsNullOrEmpty(value), message);
+            That(!string.IsNullOrEmpty(value), message);
         }
 
         /// <summary>

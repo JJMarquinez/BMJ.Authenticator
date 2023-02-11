@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Domain;
+using BMJ.Authenticator.Domain.Common;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Login.Commands;
