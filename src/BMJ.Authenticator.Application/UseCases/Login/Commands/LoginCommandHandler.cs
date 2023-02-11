@@ -1,7 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Exceptions;
 using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Domain;
 using MediatR;
 

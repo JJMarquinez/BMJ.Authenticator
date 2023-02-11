@@ -1,6 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
 
 namespace BMJ.Authenticator.Api.Filters
 {
@@ -15,7 +14,7 @@ namespace BMJ.Authenticator.Api.Filters
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            _logger.LogInformation("Request: {TraceIdentifier} {@Request} {@Reponse}",
+            _logger.Information("Request: {TraceIdentifier} {@Request} {@Reponse}",
                 context.HttpContext.TraceIdentifier,
                 new
                 {
