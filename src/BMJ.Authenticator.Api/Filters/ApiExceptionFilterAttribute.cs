@@ -2,16 +2,18 @@
 using Microsoft.AspNetCore.Mvc;
 using BMJ.Authenticator.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
     private IDictionary<Type, Action<ExceptionContext>> _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>();
+    private readonly IAuthLogger _logger;
 
-    public ApiExceptionFilterAttribute()
+    public ApiExceptionFilterAttribute(IAuthLogger logger)
     {
-        RegisterExceptionHandler(typeof(ValidationException), HandleValidationException);
+        _logger = logger;
         RegisterExceptionHandler(typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException);
         RegisterExceptionHandler(typeof(AuthException), HandleAuthException);
     }
@@ -23,6 +25,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     public override void OnException(ExceptionContext context)
     {
+        _logger.Error(context.Exception, context.Exception.Message);
         HandleException(context);
 
         base.OnException(context);
@@ -42,20 +45,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             HandleInvalidModelStateException(context);
             return;
         }
-    }
-
-    private void HandleValidationException(ExceptionContext context)
-    {
-        var exception = (ValidationException)context.Exception;
-
-        var details = new ValidationProblemDetails(exception.GetErrors())
-        {
-            Type = "https://tools.ietf.org/html/rfc7231#section-6.5.1"
-        };
-
-        context.Result = new BadRequestObjectResult(details);
-
-        context.ExceptionHandled = true;
     }
 
     private void HandleInvalidModelStateException(ExceptionContext context)

@@ -3,7 +3,7 @@ using BMJ.Authenticator.Application;
 using BMJ.Authenticator.Host;
 using BMJ.Authenticator.Infrastructure;
 using BMJ.Authenticator.Infrastructure.Persistence;
-using BMJ.Authenticator.Presentation;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,7 +12,7 @@ builder.Services
     .AddApplicationServices()
     .AddInfrastructureServices(builder.Configuration)
     .AddApiServices()
-    .AddHostServices(builder.Configuration);
+    .AddHostServices(builder);
 
 var app = builder.Build();
 

@@ -4,18 +4,41 @@ using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Text;
 using BMJ.Authenticator.Infrastructure.Authentication;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
 
 namespace BMJ.Authenticator.Host
 {
     public static class ConfigureServices
     {
-        public static IServiceCollection AddHostServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddHostServices(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
         {
             services
-                .AddCustomConfigure(configuration)
-                .AddCustomAuthentication(configuration)
+                .AddCustomConfigure(webApplicationBuilder.Configuration)
+                .AddCustomLogging(webApplicationBuilder)
+                .AddCustomAuthentication(webApplicationBuilder.Configuration)
                 .AddCustomOpenApiDocument();
-            
+            return services;
+        }
+
+        private static IServiceCollection AddCustomLogging(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
+        {
+            webApplicationBuilder.Host.UseSerilog((context, configuration) => 
+            {
+                configuration.Enrich.FromLogContext()
+                .Enrich.WithMachineName()
+                .WriteTo.Console()
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri(context.Configuration["Elasticsearch:Url"]))
+                    {
+                        IndexFormat = $"BMJ.Authenticator-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
+                        AutoRegisterTemplate = true,
+                        NumberOfShards = 2,
+                        NumberOfReplicas = 1
+                    })
+                .Enrich.WithProperty("Enviroment", context.HostingEnvironment.EnvironmentName)
+                .ReadFrom.Configuration(context.Configuration);
+            });
             return services;
         }
 
