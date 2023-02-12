@@ -1,12 +1,13 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Interfaces;
+using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Domain.Common;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Login.Commands;
 
 public class LoginCommandHandler
-    : IRequestHandler<LoginCommand, string>
+    : IRequestHandler<LoginCommand, Result<string?>>
 {
     private readonly IIdentityService _identityService;
     private readonly IJwtProvider _jwtProvider;
@@ -16,11 +17,12 @@ public class LoginCommandHandler
         _jwtProvider = jwtProvider; 
     }
 
-    public async Task<string> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async Task<Result<string?>> Handle(LoginCommand command, CancellationToken cancellationToken)
     {
-        var user =  await _identityService.AuthenticateMember(command.UserName, command.Password);
-        Ensure.Not<UnauthorizedAccessException>(user is null);
+        Result<User?> userResult =  await _identityService.AuthenticateMember(command.UserName, command.Password);
 
-        return _jwtProvider.Generate(user);
+        return userResult.IsFailure() 
+            ? Result.Failure<string>(userResult.GetError())
+            : _jwtProvider.Generate(userResult.Value);
     }
 }

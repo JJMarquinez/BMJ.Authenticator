@@ -1,18 +1,17 @@
 ﻿using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Domain.Common;
 
 namespace BMJ.Authenticator.Application.Common.Interfaces
 {
     public interface IIdentityService
     {
-        Task<string?> GetUserNameAsync(string userId);
+        Task<Result<string?>> GetUserNameAsync(string userId);
 
-        Task<User> AuthenticateMember(string userName, string password);
+        Task<Result<User?>> AuthenticateMember(string userName, string password);
 
-        Task<bool> IsInRoleAsync(string userId, string role);
+        Task<Result<bool>> IsInRoleAsync(string userId, string role);
 
-        Task<bool> AuthorizeAsync(string userId, string policyName);
-
-        Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password);
+        Task<Result> CreateUserAsync(string userName, string password);
 
         Task<Result> DeleteUserAsync(string userId);
     }
