@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Models;
-using BMJ.Authenticator.Domain.Common;
+using BMJ.Authenticator.Domain.Common.Results;
 
 namespace BMJ.Authenticator.Application.Common.Interfaces
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
-using BMJ.Authenticator.Application.Common.Exceptions;
 using Microsoft.AspNetCore.Http;
 using BMJ.Authenticator.Application.Common.Abstractions;
 
@@ -15,7 +14,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
     {
         _logger = logger;
         RegisterExceptionHandler(typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException);
-        RegisterExceptionHandler(typeof(AuthException), HandleAuthException);
     }
 
     private void RegisterExceptionHandler(Type type, Action<ExceptionContext> handler)
@@ -71,36 +69,6 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.Result = new ObjectResult(details)
         {
             StatusCode = StatusCodes.Status401Unauthorized
-        };
-
-        context.ExceptionHandled = true;
-    }
-
-    private void HandleAuthException(ExceptionContext context)
-    {
-        AuthException exception = (AuthException)context.Exception;
-
-        var details = new ProblemDetails
-        {
-            Status = exception.GetError().GetStatusCodeAsInt(),
-            Title = exception.Message,
-            
-        };
-        details.Extensions.Add(
-            "errors", 
-            new Dictionary<string, object>() {
-                { 
-                    exception.GetError().GetCode(),
-                    new {
-                        descriptions = exception.GetError().GetDescriptions().ToArray(), 
-                        errorType = exception.GetError().GetErrorType().ToString()
-                    }
-                }
-            });
-
-        context.Result = new ObjectResult(details)
-        {
-            StatusCode = exception.GetError().GetStatusCodeAsInt()
         };
 
         context.ExceptionHandled = true;

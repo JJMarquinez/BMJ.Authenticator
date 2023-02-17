@@ -11,7 +11,7 @@ public class InfrastructureError
 
         public static readonly Error UserNameOrPasswordNotValid
             = Error.New(string.Concat(_codeArgumentPrefix, nameof(UserNameOrPasswordNotValid)), 
-                "User name or pasword not valid.");
+                "User name or pasword aren't valid.");
 
         public static readonly Error UserWasNotDeleted
             = Error.New(string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)),
