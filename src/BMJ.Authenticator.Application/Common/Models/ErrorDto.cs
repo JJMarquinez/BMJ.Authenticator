@@ -8,7 +8,11 @@ public class ErrorDto : IMapFrom<Error>
 {
     public string Code { get; set; }
 
-    public string Message { get; set; }
+    public string Title { get; set; }
+
+    public string Detail { get; set; }
+
+    public int HttpStatusCode { get; set; }
 
     public void Mapping(Profile profile)
     {

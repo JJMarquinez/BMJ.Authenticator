@@ -16,6 +16,7 @@ public static class ConfigureServices
             {
                 options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<ApiLogFilterAttribute>();
+                options.Filters.Add<ErrorFilterAttribute>();
             })
             .AddApplicationPart(typeof(ConfigureServices).Assembly);
         return services;
