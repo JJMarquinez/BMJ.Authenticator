@@ -7,7 +7,7 @@ public class Result
 
     private protected Result(bool success, Error error)
     {
-        Ensure.Argument.NotNull(error, nameof(error));
+        Ensure.Argument.NotNull(error, string.Format("{0} cannot be null", nameof(error)));
         _success = success;
         _error = error;
     }

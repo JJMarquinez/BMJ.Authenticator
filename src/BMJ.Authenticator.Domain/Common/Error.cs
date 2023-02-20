@@ -9,10 +9,10 @@ public class Error
 
     private Error(string code, string title, string detail, int httpStatusCode)
     {
-        Ensure.Argument.NotNullOrEmpty(code, nameof(code));
-        Ensure.Argument.NotNullOrEmpty(title, nameof(title));
-        Ensure.Argument.NotNullOrEmpty(detail, nameof(detail));
-        Ensure.Argument.IsNot(httpStatusCode == default, nameof(httpStatusCode));
+        Ensure.Argument.NotNullOrEmpty(code, string.Format("{0} cannot be null or empty", nameof(code)));
+        Ensure.Argument.NotNullOrEmpty(title, string.Format("{0} cannot be null or empty", nameof(title)));
+        Ensure.Argument.NotNullOrEmpty(detail, string.Format("{0} cannot be null or empty", nameof(detail)));
+        Ensure.Argument.IsNot(httpStatusCode == default, string.Format("{0} cannot be default int value", nameof(httpStatusCode)));
         _code = code;
         _title = title;
         _detail = detail;
