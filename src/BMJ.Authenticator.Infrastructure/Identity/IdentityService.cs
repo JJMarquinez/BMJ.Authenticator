@@ -1,5 +1,8 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Domain.Common.Results;
+using BMJ.Authenticator.Infrastructure.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,84 +15,100 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
         private readonly IAuthorizationService _authorizationService;
+        private readonly IAuthLogger _authLogger;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService)
+            IAuthorizationService authorizationService,
+            IAuthLogger authLogger)
         {
             _userManager = userManager;
             _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
             _authorizationService = authorizationService;
+            _authLogger = authLogger;
         }
 
-        public async Task<string?> GetUserNameAsync(string userId)
+        public async Task<Result<string?>> GetUserNameAsync(string userId)
         {
-            var user = await _userManager.Users.FirstAsync(u => u.Id == userId);
+            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
-            return user.UserName;
+            if (user is null)
+                _authLogger.Warning<string>("The user with id {userId} wasn't found, it is not possible to get the user name", userId);
+
+            return user is null
+                ? Result.Failure<string>(InfrastructureError.Identity.UserWasNotFound)
+                : user.UserName;
         }
 
-        public async Task<(Result Result, string UserId)> CreateUserAsync(string userName, string password)
+        public async Task<Result> CreateUserAsync(string userName, string password)
         {
-            var user = new ApplicationUser
-            {
-                UserName = userName,
-                Email = userName,
-            };
+            ApplicationUser user = new ApplicationUser { UserName = userName };
 
-            var result = await _userManager.CreateAsync(user, password);
+            IdentityResult identityResult = await _userManager.CreateAsync(user, password);
 
-            return (result.ToApplicationResult(), user.Id);
+            if (!identityResult.Succeeded)
+                _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
+                    "The following errors {@Errors} don't allow delete the user {@user}",
+                    identityResult.Errors,
+                    user);
+
+            return identityResult.Succeeded
+                ? Result.Success()
+                : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
         }
 
-        public async Task<bool> IsInRoleAsync(string userId, string role)
+        public async Task<Result<bool>> IsInRoleAsync(string userId, string role)
         {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
+            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
-            return user != null && await _userManager.IsInRoleAsync(user, role);
-        }
+            if (user is null)
+                _authLogger.Warning<string>("The user with id {userId} wasn't found, it is not possible to check what roles he has", userId);
 
-        public async Task<bool> AuthorizeAsync(string userId, string policyName)
-        {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
-
-            if (user == null)
-            {
-                return false;
-            }
-
-            var principal = await _userClaimsPrincipalFactory.CreateAsync(user);
-
-            var result = await _authorizationService.AuthorizeAsync(principal, policyName);
-
-            return result.Succeeded;
+            return user is null
+                ? Result.Failure<bool>(InfrastructureError.Identity.UserWasNotFound)
+                : await _userManager.IsInRoleAsync(user, role);
         }
 
         public async Task<Result> DeleteUserAsync(string userId)
         {
-            var user = _userManager.Users.SingleOrDefault(u => u.Id == userId);
+            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
 
-            return user != null ? await DeleteUserAsync(user) : Result.Success();
+            if(user is null)
+                _authLogger.Warning<string>("The user with id {userId} wasn't delete cause he wasn't found", userId);
+
+            return user != null 
+                ? await DeleteUserAsync(user) 
+                : Result.Failure(InfrastructureError.Identity.UserWasNotFound);
         }
 
-        public async Task<Result> DeleteUserAsync(ApplicationUser user)
+        private async Task<Result> DeleteUserAsync(ApplicationUser user)
         {
-            var result = await _userManager.DeleteAsync(user);
+            IdentityResult identityResult = await _userManager.DeleteAsync(user);
 
-            return result.ToApplicationResult();
+            if(!identityResult.Succeeded) 
+                _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
+                    "The following errors {@Errors} don't allow delete the user {@user}",
+                    identityResult.Errors, 
+                    user);
+                
+            return identityResult.Succeeded
+                ? Result.Success()
+                : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
         }
 
-        public async Task<User> AuthenticateMember(string userName, string password)
+        public async Task<Result<User?>> AuthenticateMember(string userName, string password)
         {
-            User result = null;
-            var user = await _userManager.FindByNameAsync(userName);
-            var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
-            
-            if (isValidPassword)
-            { 
-                var roles = await _userManager.GetRolesAsync(user);
-                result = user.ToApplicationUser(roles.ToArray());
+            Result<User?> result = Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
+            ApplicationUser? user = await _userManager.FindByNameAsync(userName);
+            if (user is not null)
+            {
+                var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+                if (isValidPassword)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    result = user.ToApplicationUser(roles.ToArray());
+                }
             }
             return result;
         }
