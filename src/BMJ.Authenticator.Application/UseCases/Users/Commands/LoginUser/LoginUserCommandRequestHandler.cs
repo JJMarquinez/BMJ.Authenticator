@@ -6,24 +6,24 @@ using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Domain.Common.Results;
 using MediatR;
 
-namespace BMJ.Authenticator.Application.UseCases.Login.Commands;
+namespace BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
 
-public class LoginCommandHandler
-    : IRequestHandler<LoginCommand, ResultDto<string?>>
+public class LoginUserCommandRequestHandler
+    : IRequestHandler<LoginUserCommandRequest, ResultDto<string?>>
 {
     private readonly IIdentityService _identityService;
     private readonly IJwtProvider _jwtProvider;
     private readonly IMapper _mapper;
-    public LoginCommandHandler(IIdentityService identityService, IJwtProvider jwtProvider, IMapper mapper)
+    public LoginUserCommandRequestHandler(IIdentityService identityService, IJwtProvider jwtProvider, IMapper mapper)
     {
         _identityService = identityService;
         _jwtProvider = jwtProvider;
         _mapper = mapper;
     }
 
-    public async Task<ResultDto<string?>> Handle(LoginCommand command, CancellationToken cancellationToken)
+    public async Task<ResultDto<string?>> Handle(LoginUserCommandRequest command, CancellationToken cancellationToken)
     {
-        Result<User?> userResult =  await _identityService.AuthenticateMember(command.UserName, command.Password);
+        Result<User?> userResult = await _identityService.AuthenticateMember(command.UserName, command.Password);
 
         return _mapper.Map<ResultDto<string?>>(
             userResult.IsSuccess()

@@ -1,9 +1,9 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
 using MediatR;
 
-namespace BMJ.Authenticator.Application.UseCases.Login.Commands
+namespace BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser
 {
-    public record LoginCommand() : IRequest<ResultDto<string?>>
+    public record LoginUserCommandRequest() : IRequest<ResultDto<string?>>
     {
         public string? UserName { get; init; }
 
