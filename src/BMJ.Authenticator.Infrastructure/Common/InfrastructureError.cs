@@ -16,6 +16,13 @@ public class InfrastructureError
                 "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
                 400);
 
+        public static readonly Error UserMustHaveAtLeastOneRole
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserMustHaveAtLeastOneRole)),
+                "The user must has at least one role assigned.",
+                "The user doesn't have any role assigned and must have at least one.",
+                409);
+
         public static readonly Error UserWasNotDeleted
             = Error.New(
                 string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)),

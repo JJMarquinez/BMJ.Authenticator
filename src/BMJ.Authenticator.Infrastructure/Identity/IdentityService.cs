@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Domain.Common.Results;
+using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -103,11 +104,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             ApplicationUser? user = await _userManager.FindByNameAsync(userName);
             if (user is not null)
             {
-                var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+                bool isValidPassword = await _userManager.CheckPasswordAsync(user, password);
                 if (isValidPassword)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
-                    result = user.ToApplicationUser(roles.ToArray());
+                    if (roles is not null && roles.Count > 0)
+                        result = user.ToApplicationUser(roles.ToArray());
+                    else Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
                 }
             }
             return result;

@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Domain.Entities.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -21,7 +21,8 @@ namespace BMJ.Authenticator.Infrastructure.Authentication
         {
             var claims = new List<Claim> {
                 new (JwtRegisteredClaimNames.Sub, user.GetId()),
-                new (JwtRegisteredClaimNames.Name, user.GetUserName())
+                new (JwtRegisteredClaimNames.Name, user.GetUserName()),
+                new (JwtRegisteredClaimNames.Email, user.GetEmail())
             };
             
             foreach (var role in user.GetRoles())

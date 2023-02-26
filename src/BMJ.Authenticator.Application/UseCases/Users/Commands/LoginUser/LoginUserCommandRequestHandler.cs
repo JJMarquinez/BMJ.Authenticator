@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Domain.Common.Results;
+using BMJ.Authenticator.Domain.Entities.Users;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;

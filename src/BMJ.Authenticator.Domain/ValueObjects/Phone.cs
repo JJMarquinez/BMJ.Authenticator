@@ -14,7 +14,7 @@ public class Phone : ValueObject
     private Phone(string number)
     {
         Ensure.Argument.NotNullOrEmpty(number, string.Format("{0} cannot be null or empty.", nameof(number)));
-        Ensure.Argument.Is(IsValidPhoneNumber(number), string.Format("Invalid phone number ({0})."));
+        Ensure.Argument.Is(IsValidPhoneNumber(number), string.Format("Invalid phone number ({0}).", nameof(number)));
         Number = number;
     }
 

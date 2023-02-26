@@ -14,7 +14,7 @@ public class Email : ValueObject
     private Email(string address)
     {
         Ensure.Argument.NotNullOrEmpty(address, string.Format("{0} cannot be null or empty.", nameof(address)));
-        Ensure.Argument.Is(IsValidEmail(address), string.Format("Invalid email address ({0})."));
+        Ensure.Argument.Is(IsValidEmail(address), string.Format("Invalid email address ({0}).", nameof(address)));
         Address = address;
     }
 
