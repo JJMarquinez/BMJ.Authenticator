@@ -4,4 +4,7 @@ using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
 
-public record GetUserByNameQueryRequest : IRequest<ResultDto<UserDto?>>;
+public record GetUserByNameQueryRequest : IRequest<ResultDto<UserDto?>>
+{
+    public string? UserName { get; init; }
+}
