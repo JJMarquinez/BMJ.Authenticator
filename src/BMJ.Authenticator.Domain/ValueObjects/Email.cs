@@ -23,7 +23,7 @@ public class Email : ValueObject
         return new(address);
     }
 
-    private static bool IsValidEmail(string address)
+    private bool IsValidEmail(string address)
     {
         bool isValid = true;
         try
