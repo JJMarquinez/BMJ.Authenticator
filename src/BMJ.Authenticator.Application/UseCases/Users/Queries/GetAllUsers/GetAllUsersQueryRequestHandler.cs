@@ -22,7 +22,6 @@ public class GetAllUsersQueryRequestHandler
     public async Task<ResultDto<List<UserDto>?>> Handle(GetAllUsersQueryRequest request, CancellationToken cancellationToken)
     {
         Result<List<User>?> allUsersResult = await _identityService.GetAllUserAsync();
-
         return _mapper.Map<ResultDto<List<UserDto>?>>(allUsersResult);
     }
 }

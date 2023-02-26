@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,21 @@ namespace BMJ.Authenticator.Api.Controllers;
 public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
-    [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginUserCommandRequest loginCommand)
+    [HttpPost("loginAsync")]
+    public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommand)
     { 
         return Ok(await Mediator.Send(loginCommand));
     }
 
-    [HttpGet("getAll")]
-    public async Task<IActionResult> GetAll()
+    [HttpGet("getAllAsync")]
+    public async Task<IActionResult> GetAllAsync()
     {
         return Ok(await Mediator.Send(new GetAllUsersQueryRequest()));
+    }
+
+    [HttpGet("getByNameAsync")]
+    public async Task<IActionResult> GetByNameAsync(GetUserByNameQueryRequest getUserByNameRequest)
+    {
+        return Ok(await Mediator.Send(getUserByNameRequest));
     }
 }

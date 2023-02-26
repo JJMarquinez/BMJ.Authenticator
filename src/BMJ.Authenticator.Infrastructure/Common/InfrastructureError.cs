@@ -34,7 +34,7 @@ public class InfrastructureError
             = Error.New(
                 string.Concat(_codeArgumentPrefix, nameof(UserWasNotFound)),
                 "User was not found.",
-                "Any user isn't found with the data pr link to acquired.",
+                "Any user isn't found with the data acquired.",
                 404);
 
         public static readonly Error UserWasNotCreated

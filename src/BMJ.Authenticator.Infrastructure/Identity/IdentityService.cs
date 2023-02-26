@@ -46,8 +46,9 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<Result<User?>> GetUserByNameAsync(string userName)
         {
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => string.Equals(user.UserName, userName, StringComparison.OrdinalIgnoreCase));
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.UserName == userName);
             User? user = null;
+
             if (applicationUser is null)
                 _authLogger.Warning<string>("The user with name {userName} wasn't found, it is not possible to get the user name", userName);
             else

@@ -6,6 +6,6 @@ public class GetUserByNameQueryRequestValidator : AbstractValidator<GetUserByNam
 {
     public GetUserByNameQueryRequestValidator()
     {
-        RuleFor(v => v.UserName).NotEmpty();
+        RuleFor(v => v.UserName).NotEmpty().WithMessage("The userName is mandatory to look for the user.");
     }
 }
