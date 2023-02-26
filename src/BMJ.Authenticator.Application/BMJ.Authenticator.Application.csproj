@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="UseCases\Users\EventHandlers\" />
+    <Folder Include="UseCases\Users\Queries\GetUserByName\" />
   </ItemGroup>
 
   <ItemGroup>

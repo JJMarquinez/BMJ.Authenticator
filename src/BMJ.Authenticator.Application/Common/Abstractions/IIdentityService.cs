@@ -7,6 +7,8 @@ namespace BMJ.Authenticator.Application.Common.Interfaces
     {
         Task<Result<List<User>?>> GetAllUserAsync();
 
+        Task<Result<User?>> GetUserByNameAsync(string userName);
+
         Task<Result<string?>> GetUserNameAsync(string userId);
 
         Task<Result<User?>> AuthenticateMemberAsync(string userName, string password);

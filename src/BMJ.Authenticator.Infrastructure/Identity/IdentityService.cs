@@ -14,8 +14,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IUserClaimsPrincipalFactory<ApplicationUser> _userClaimsPrincipalFactory;
-        private readonly IAuthorizationService _authorizationService;
         private readonly IAuthLogger _authLogger;
 
         public IdentityService(
@@ -25,8 +23,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             IAuthLogger authLogger)
         {
             _userManager = userManager;
-            _userClaimsPrincipalFactory = userClaimsPrincipalFactory;
-            _authorizationService = authorizationService;
             _authLogger = authLogger;
         }
 
@@ -46,6 +42,23 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             return userList.Count() > 0
                 ? userList
                 : Result.Failure<List<User>?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
+        }
+
+        public async Task<Result<User?>> GetUserByNameAsync(string userName)
+        {
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => string.Equals(user.UserName, userName, StringComparison.OrdinalIgnoreCase));
+            User? user = null;
+            if (applicationUser is null)
+                _authLogger.Warning<string>("The user with name {userName} wasn't found, it is not possible to get the user name", userName);
+            else
+            {
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                user = applicationUser.ToApplicationUser(roles?.ToArray());
+            }
+
+            return user is null
+                ? Result.Failure<User?>(InfrastructureError.Identity.UserWasNotFound)
+                : user;
         }
 
         public async Task<Result<string?>> GetUserNameAsync(string userId)
