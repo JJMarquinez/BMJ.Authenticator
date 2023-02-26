@@ -116,7 +116,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
         }
 
-        public async Task<Result<User?>> AuthenticateMember(string userName, string password)
+        public async Task<Result<User?>> AuthenticateMemberAsync(string userName, string password)
         {
             Result<User?> result = Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
             ApplicationUser? user = await _userManager.FindByNameAsync(userName);
