@@ -30,6 +30,24 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             _authLogger = authLogger;
         }
 
+        public async Task<Result<List<User>?>> GetAllUserAsync()
+        {
+            IEnumerable<ApplicationUser> users = _userManager.Users.AsEnumerable();
+            List<User> userList= new List<User>();
+            foreach (ApplicationUser user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                userList.Add(user.ToApplicationUser(roles?.ToArray()));
+            }
+
+            if (userList.Count() == 0)
+                _authLogger.Warning("It doesn't exist any user");
+
+            return userList.Count() > 0
+                ? userList
+                : Result.Failure<List<User>?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
+        }
+
         public async Task<Result<string?>> GetUserNameAsync(string userId)
         {
             ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
@@ -108,11 +126,14 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 if (isValidPassword)
                 {
                     var roles = await _userManager.GetRolesAsync(user);
-                    if (roles is not null && roles.Count > 0)
-                        result = user.ToApplicationUser(roles.ToArray());
-                    else Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
+                    result = user.ToApplicationUser(roles?.ToArray());
                 }
+                else
+                    _authLogger.Warning<string>("The password ({password}) doesn't match with any user", password);
             }
+            else
+                _authLogger.Warning<string>("The userName ({userName}) doesn't match with any user", userName);
+
             return result;
         }
     }

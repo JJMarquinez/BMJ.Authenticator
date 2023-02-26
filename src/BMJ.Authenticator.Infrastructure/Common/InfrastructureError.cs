@@ -43,5 +43,12 @@ public class InfrastructureError
                 "User was not created.",
                 "Because of internal error the user wasn't created, please contact with user administrator.",
                 404);
+
+        public static readonly Error ItDoesNotExistAnyUser
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(ItDoesNotExistAnyUser)),
+                "It doesn't exist any user.",
+                "There is no saved users to get",
+                404);
     }
 }

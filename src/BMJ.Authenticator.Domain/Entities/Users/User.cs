@@ -12,12 +12,11 @@ public class User
     private string _passwordHash;
     private string[] _roles;
 
-    private User(string id, string userName, Email email, string[] roles, Phone? phoneNumber, string passwordHash)
+    private User(string id, string userName, Email email, string[]? roles, Phone? phoneNumber, string passwordHash)
     {
         Ensure.Argument.NotNullOrEmpty(id, string.Format("{0} cannot be null or empty.", nameof(id)));
         Ensure.Argument.NotNullOrEmpty(userName, string.Format("{0} cannot be null or empty.", nameof(userName)));
         Ensure.Argument.NotNull(email, string.Format("{0} cannot be null or empty.", nameof(email)));
-        Ensure.Argument.Is(roles != null && roles.Length >= 1, string.Format("{0} cannot be null or empty.", nameof(roles)));
 
         _id = id;
         _userName = userName;
@@ -27,7 +26,7 @@ public class User
         _roles = roles;
     }
 
-    public static User New(string id, string userName, Email email, string[] roles, Phone? phoneNumber, string passwordHash)
+    public static User New(string id, string userName, Email email, string[]? roles, Phone? phoneNumber, string passwordHash)
         => new(id, userName, email, roles, phoneNumber, passwordHash);
 
     public string GetId() => _id;
