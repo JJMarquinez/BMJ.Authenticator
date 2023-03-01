@@ -50,5 +50,12 @@ public class InfrastructureError
                 "It doesn't exist any user.",
                 "There is no saved users to get",
                 404);
+
+        public static readonly Error UserNameIsNotAvailable
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameIsNotAvailable)),
+                "User name is not available.",
+                "The user name is already in use, please change the user name.",
+                409);
     }
 }

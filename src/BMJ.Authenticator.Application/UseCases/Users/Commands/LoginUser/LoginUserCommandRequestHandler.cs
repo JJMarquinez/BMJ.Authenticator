@@ -21,9 +21,9 @@ public class LoginUserCommandRequestHandler
         _mapper = mapper;
     }
 
-    public async Task<ResultDto<string?>> Handle(LoginUserCommandRequest command, CancellationToken cancellationToken)
+    public async Task<ResultDto<string?>> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
     {
-        Result<User?> userResult = await _identityService.AuthenticateMemberAsync(command.UserName, command.Password);
+        Result<User?> userResult = await _identityService.AuthenticateMemberAsync(request.UserName, request.Password);
 
         return _mapper.Map<ResultDto<string?>>(
             userResult.IsSuccess()

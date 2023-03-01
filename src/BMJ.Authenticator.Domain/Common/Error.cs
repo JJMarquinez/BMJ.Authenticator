@@ -26,7 +26,7 @@ public class Error
 
     public int GetHttpStatusCode => _httpStatusCode;
 
-    public static Error New(string code, string message, string detail, int httpStatusCode) => new(code, message, detail, httpStatusCode);
+    public static Error New(string code, string title, string detail, int httpStatusCode) => new(code, title, detail, httpStatusCode);
 
     public static implicit operator string(Error error) => error.GetCode();
 

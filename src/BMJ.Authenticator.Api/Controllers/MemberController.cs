@@ -1,4 +1,5 @@
-﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
+﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
 using Microsoft.AspNetCore.Authorization;
@@ -11,9 +12,9 @@ public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
     [HttpPost("loginAsync")]
-    public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommand)
+    public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     { 
-        return Ok(await Mediator.Send(loginCommand));
+        return Ok(await Mediator.Send(loginCommandRequest));
     }
 
     [HttpGet("getAllAsync")]
@@ -26,5 +27,12 @@ public class MemberController : ApiControllerBase
     public async Task<IActionResult> GetByNameAsync(GetUserByNameQueryRequest getUserByNameRequest)
     {
         return Ok(await Mediator.Send(getUserByNameRequest));
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpPost("createAsync")]
+    public async Task<IActionResult> CreateAsync(CreateUserCommandRequest createUserCommandRequest)
+    {
+        return Ok(await Mediator.Send(createUserCommandRequest));
     }
 }

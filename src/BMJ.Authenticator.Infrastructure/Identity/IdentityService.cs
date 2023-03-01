@@ -37,7 +37,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             }
 
             if (userList.Count() == 0)
-                _authLogger.Warning("It doesn't exist any user");
+                _authLogger.Warning("It doesn't exist any user.");
 
             return userList.Count() > 0
                 ? userList
@@ -50,7 +50,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             User? user = null;
 
             if (applicationUser is null)
-                _authLogger.Warning<string>("The user with name {userName} wasn't found, it is not possible to get the user name", userName);
+                _authLogger.Warning<string>("The user with name {userName} wasn't found, it is not possible to get the user.", userName);
             else
             {
                 var roles = await _userManager.GetRolesAsync(applicationUser);
@@ -62,33 +62,29 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 : user;
         }
 
-        public async Task<Result<string?>> GetUserNameAsync(string userId)
+        public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
-            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
+            Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotDeleted); 
+            ApplicationUser user = new ApplicationUser { UserName = userName, Email = email, PhoneNumber = phoneNumber };
 
-            if (user is null)
-                _authLogger.Warning<string>("The user with id {userId} wasn't found, it is not possible to get the user name", userId);
+            if (_userManager.Users.All(u => u.UserName != user.UserName))
+            {
+                IdentityResult identityResult = await _userManager.CreateAsync(user, password);
+                if (identityResult.Succeeded)
+                    result = Result.Success<string?>(user.Id);
+                else
+                    _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
+                        "The following errors {@Errors} don't allow delete the user {@user}",
+                        identityResult.Errors,
+                        user);
+            }
+            else
+            {
+                _authLogger.Error(InfrastructureError.Identity.UserNameIsNotAvailable.GetTitle());
+                result = Result.Failure<string?>(InfrastructureError.Identity.UserNameIsNotAvailable);
+            }
 
-            return user is null
-                ? Result.Failure<string>(InfrastructureError.Identity.UserWasNotFound)
-                : user.UserName;
-        }
-
-        public async Task<Result> CreateUserAsync(string userName, string password)
-        {
-            ApplicationUser user = new ApplicationUser { UserName = userName };
-
-            IdentityResult identityResult = await _userManager.CreateAsync(user, password);
-
-            if (!identityResult.Succeeded)
-                _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
-                    "The following errors {@Errors} don't allow delete the user {@user}",
-                    identityResult.Errors,
-                    user);
-
-            return identityResult.Succeeded
-                ? Result.Success()
-                : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
+            return result;
         }
 
         public async Task<Result<bool>> IsInRoleAsync(string userId, string role)

@@ -9,13 +9,11 @@ namespace BMJ.Authenticator.Application.Common.Interfaces
 
         Task<Result<User?>> GetUserByNameAsync(string userName);
 
-        Task<Result<string?>> GetUserNameAsync(string userId);
-
         Task<Result<User?>> AuthenticateMemberAsync(string userName, string password);
 
         Task<Result<bool>> IsInRoleAsync(string userId, string role);
 
-        Task<Result> CreateUserAsync(string userName, string password);
+        Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber);
 
         Task<Result> DeleteUserAsync(string userId);
     }
