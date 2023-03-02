@@ -16,5 +16,8 @@ public class CreateUserCommandRequestValidator : AbstractValidator<CreateUserCom
             .Matches(@"[0-9]+").WithMessage("Your password must contain at least one number.")
             .Matches(@"[\!\?\*\.]+").WithMessage("Your password must contain at least one (!? *.)."); 
         RuleFor(v => v.Email).NotEmpty().EmailAddress();
+        RuleFor(v => v.PhoneNumber)
+            .Matches(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$")
+            .WithMessage("Your phone number must have the following formats: 111-111-1111, 111.111.1111 or 111 111 1111.");
     }
 }

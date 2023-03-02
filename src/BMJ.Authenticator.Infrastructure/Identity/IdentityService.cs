@@ -44,13 +44,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 : Result.Failure<List<User>?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
         }
 
-        public async Task<Result<User?>> GetUserByNameAsync(string userName)
+        public async Task<Result<User?>> GetUserByIdAsync(string id)
         {
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.UserName == userName);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == id);
             User? user = null;
 
             if (applicationUser is null)
-                _authLogger.Warning<string>("The user with name {userName} wasn't found, it is not possible to get the user.", userName);
+                _authLogger.Warning<string>("The user with id {id} wasn't found, it is not possible to get the user.", id);
             else
             {
                 var roles = await _userManager.GetRolesAsync(applicationUser);

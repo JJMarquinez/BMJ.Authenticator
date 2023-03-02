@@ -2,10 +2,10 @@
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
 
-public class GetUserByNameQueryRequestValidator : AbstractValidator<GetUserByNameQueryRequest>
+public class GetUserByNameQueryRequestValidator : AbstractValidator<GetUserByIdQueryRequest>
 {
     public GetUserByNameQueryRequestValidator()
     {
-        RuleFor(v => v.UserName).NotEmpty().WithMessage("The userName is mandatory to look for the user.");
+        RuleFor(v => v.Id).NotEmpty().WithMessage("The Id is mandatory to look for the user.");
     }
 }

@@ -9,7 +9,7 @@ using MediatR;
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
 
 public class GetUserByNameQueryRequestHandler
-    : IRequestHandler<GetUserByNameQueryRequest, ResultDto<UserDto?>>
+    : IRequestHandler<GetUserByIdQueryRequest, ResultDto<UserDto?>>
 {
     private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
@@ -20,9 +20,9 @@ public class GetUserByNameQueryRequestHandler
         _mapper = mapper;
     }
 
-    public async Task<ResultDto<UserDto?>> Handle(GetUserByNameQueryRequest request, CancellationToken cancellationToken)
+    public async Task<ResultDto<UserDto?>> Handle(GetUserByIdQueryRequest request, CancellationToken cancellationToken)
     {
-        Result<User?> allUsersResult = await _identityService.GetUserByNameAsync(request.UserName);
+        Result<User?> allUsersResult = await _identityService.GetUserByIdAsync(request.Id);
         return _mapper.Map<ResultDto<UserDto?>>(allUsersResult);
     }
 }

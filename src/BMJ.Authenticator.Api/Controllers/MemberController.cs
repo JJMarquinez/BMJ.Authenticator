@@ -23,10 +23,10 @@ public class MemberController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAllUsersQueryRequest()));
     }
 
-    [HttpGet("getByNameAsync")]
-    public async Task<IActionResult> GetByNameAsync(GetUserByNameQueryRequest getUserByNameRequest)
+    [HttpGet("getByIdAsync")]
+    public async Task<IActionResult> GetByIdAsync(GetUserByIdQueryRequest getUserByIdRequest)
     {
-        return Ok(await Mediator.Send(getUserByNameRequest));
+        return Ok(await Mediator.Send(getUserByIdRequest));
     }
 
     [Authorize(Roles = "Administrator")]
