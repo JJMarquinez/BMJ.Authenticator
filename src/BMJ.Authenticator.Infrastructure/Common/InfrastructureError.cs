@@ -39,7 +39,7 @@ public class InfrastructureError
 
         public static readonly Error UserWasNotCreated
             = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)),
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotCreated)),
                 "User was not created.",
                 "Because of internal error the user wasn't created, please contact with user administrator.",
                 404);
@@ -56,6 +56,13 @@ public class InfrastructureError
                 string.Concat(_codeInvalidOperationPrefix, nameof(UserNameIsNotAvailable)),
                 "User name is not available.",
                 "The user name is already in use, please change the user name.",
+                409);
+
+        public static readonly Error UserWasNotUpdated
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotUpdated)),
+                "User was not updated.",
+                "Because of internal error the user wasn't updated, please contact with user administrator.",
                 409);
     }
 }

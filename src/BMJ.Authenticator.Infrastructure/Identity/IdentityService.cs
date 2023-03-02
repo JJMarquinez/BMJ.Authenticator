@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Threading;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -64,25 +65,38 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
-            Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotDeleted); 
+            Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotCreated); 
             ApplicationUser user = new ApplicationUser { UserName = userName, Email = email, PhoneNumber = phoneNumber };
 
-            if (_userManager.Users.All(u => u.UserName != user.UserName))
-            {
-                IdentityResult identityResult = await _userManager.CreateAsync(user, password);
-                if (identityResult.Succeeded)
-                    result = Result.Success<string?>(user.Id);
-                else
-                    _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
-                        "The following errors {@Errors} don't allow delete the user {@user}",
-                        identityResult.Errors,
-                        user);
-            }
+
+            IdentityResult identityResult = await _userManager.CreateAsync(user, password);
+            if (identityResult.Succeeded)
+                result = Result.Success<string?>(user.Id);
             else
-            {
-                _authLogger.Error(InfrastructureError.Identity.UserNameIsNotAvailable.GetTitle());
-                result = Result.Failure<string?>(InfrastructureError.Identity.UserNameIsNotAvailable);
-            }
+                _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
+                    "The following errors {@Errors} don't allow delete the user {@user}",
+                    identityResult.Errors,
+                    user);
+            
+            return result;
+        }
+
+        public async Task<Result> UpdateUserAsync(string id, string userName, string email, string? phoneNumber)
+        {
+            Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == id);
+            applicationUser.UserName = userName;
+            applicationUser.Email = email;
+            applicationUser.PhoneNumber = phoneNumber;
+            IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
+
+            if (identityResult.Succeeded)
+                result = Result.Success();
+            else
+                _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
+                    "The following errors {@Errors} don't allow delete the user {@applicationUser}",
+                    identityResult.Errors,
+                    applicationUser);
 
             return result;
         }
@@ -146,5 +160,11 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
             return result;
         }
+
+        public bool DoesUserNameNotExist(string userName)
+            => _userManager.Users.All(u => u.UserName != userName);
+
+        public bool IsUserIdAssigned(string id)
+            => _userManager.Users.Any(u => u.Id == id);
     }
 }

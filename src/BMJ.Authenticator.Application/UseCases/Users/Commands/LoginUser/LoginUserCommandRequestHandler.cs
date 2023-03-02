@@ -28,7 +28,7 @@ public class LoginUserCommandRequestHandler
         return _mapper.Map<ResultDto<string?>>(
             userResult.IsSuccess()
             ? _jwtProvider.Generate(userResult.GetValue())
-            : Result.Failure<string>(userResult.GetError())
+            : Result.Failure(userResult.GetError())
         );
     }
 }
