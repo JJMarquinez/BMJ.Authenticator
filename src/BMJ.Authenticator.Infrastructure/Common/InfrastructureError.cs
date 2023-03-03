@@ -11,10 +11,17 @@ public class InfrastructureError
 
         public static readonly Error UserNameOrPasswordNotValid
             = Error.New(
-                string.Concat(_codeArgumentPrefix, nameof(UserNameOrPasswordNotValid)), 
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameOrPasswordNotValid)), 
                 "User name or password aren't valid.",
                 "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
-                400);
+                409);
+
+        public static readonly Error UserMustHaveAtLeastOneRole
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserMustHaveAtLeastOneRole)),
+                "The user must has at least one role assigned.",
+                "The user doesn't have any role assigned and must have at least one.",
+                409);
 
         public static readonly Error UserWasNotDeleted
             = Error.New(
@@ -27,14 +34,35 @@ public class InfrastructureError
             = Error.New(
                 string.Concat(_codeArgumentPrefix, nameof(UserWasNotFound)),
                 "User was not found.",
-                "The user identification isn't link to any user.",
+                "Any user isn't found with the data acquired.",
                 404);
 
         public static readonly Error UserWasNotCreated
             = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)),
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotCreated)),
                 "User was not created.",
                 "Because of internal error the user wasn't created, please contact with user administrator.",
                 404);
+
+        public static readonly Error ItDoesNotExistAnyUser
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(ItDoesNotExistAnyUser)),
+                "It doesn't exist any user.",
+                "There is no saved users to get",
+                404);
+
+        public static readonly Error UserNameIsNotAvailable
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameIsNotAvailable)),
+                "User name is not available.",
+                "The user name is already in use, please change the user name.",
+                409);
+
+        public static readonly Error UserWasNotUpdated
+            = Error.New(
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotUpdated)),
+                "User was not updated.",
+                "Because of internal error the user wasn't updated, please contact with user administrator.",
+                409);
     }
 }

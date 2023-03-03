@@ -3,4 +3,4 @@ using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 
-//public record GetAllUsersQueryRequest : IRequest<ResultDto<UserDto?>>;
+public record GetAllUsersQueryRequest : IRequest<ResultDto<List<UserDto>?>>;

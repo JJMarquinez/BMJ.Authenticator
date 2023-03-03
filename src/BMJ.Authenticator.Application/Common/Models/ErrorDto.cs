@@ -13,9 +13,4 @@ public class ErrorDto : IMapFrom<Error>
     public string Detail { get; set; }
 
     public int HttpStatusCode { get; set; }
-
-    public void Mapping(Profile profile)
-    {
-        profile.CreateMap<Error, ErrorDto>();
-    }
 }
