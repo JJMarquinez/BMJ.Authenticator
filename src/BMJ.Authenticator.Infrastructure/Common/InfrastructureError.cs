@@ -11,10 +11,10 @@ public class InfrastructureError
 
         public static readonly Error UserNameOrPasswordNotValid
             = Error.New(
-                string.Concat(_codeArgumentPrefix, nameof(UserNameOrPasswordNotValid)), 
+                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameOrPasswordNotValid)), 
                 "User name or password aren't valid.",
                 "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
-                400);
+                409);
 
         public static readonly Error UserMustHaveAtLeastOneRole
             = Error.New(

@@ -2,7 +2,7 @@
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using MediatR;
 
-namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
+namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
 public record GetUserByIdQueryRequest : IRequest<ResultDto<UserDto?>>
 {

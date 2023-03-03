@@ -1,14 +1,13 @@
 ﻿using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.Common;
 using FluentValidation;
 
-namespace BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
+namespace BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
 
-public class UpdateUserCommandRequestValidator : UserCommandRequestValidator<UpdateUserCommandRequest>
+public class DeleteUserCommandRequestValidator : AbstractValidator<DeleteUserCommandRequest>
 {
     private readonly IIdentityService _identityService;
 
-    public UpdateUserCommandRequestValidator(IIdentityService identityService) : base(identityService)
+    public DeleteUserCommandRequestValidator(IIdentityService identityService)
     {
         _identityService = identityService;
 

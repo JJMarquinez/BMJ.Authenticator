@@ -1,8 +1,9 @@
 ﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
-using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -42,5 +43,12 @@ public class MemberController : ApiControllerBase
     public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest)
     {
         return Ok(await Mediator.Send(updateUserCommandRequest));
+    }
+
+    [Authorize(Roles = "Administrator")]
+    [HttpDelete("deleteAsync")]
+    public async Task<IActionResult> DeleteAsync(DeleteUserCommandRequest deleteUserCommandRequest)
+    {
+        return Ok(await Mediator.Send(deleteUserCommandRequest));
     }
 }

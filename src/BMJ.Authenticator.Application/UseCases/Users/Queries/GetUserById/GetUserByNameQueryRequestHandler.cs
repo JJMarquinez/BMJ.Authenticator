@@ -6,7 +6,7 @@ using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using MediatR;
 
-namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserByName;
+namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
 public class GetUserByNameQueryRequestHandler
     : IRequestHandler<GetUserByIdQueryRequest, ResultDto<UserDto?>>

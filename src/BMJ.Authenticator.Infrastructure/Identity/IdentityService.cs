@@ -45,22 +45,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 : Result.Failure<List<User>?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
         }
 
-        public async Task<Result<User?>> GetUserByIdAsync(string id)
+        public async Task<Result<User?>> GetUserByIdAsync(string userId)
         {
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == id);
-            User? user = null;
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
+            var roles = await _userManager.GetRolesAsync(applicationUser);
+            User user = applicationUser.ToApplicationUser(roles?.ToArray());
 
-            if (applicationUser is null)
-                _authLogger.Warning<string>("The user with id {id} wasn't found, it is not possible to get the user.", id);
-            else
-            {
-                var roles = await _userManager.GetRolesAsync(applicationUser);
-                user = applicationUser.ToApplicationUser(roles?.ToArray());
-            }
-
-            return user is null
-                ? Result.Failure<User?>(InfrastructureError.Identity.UserWasNotFound)
-                : user;
+            return user;
         }
 
         public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
@@ -81,10 +72,10 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             return result;
         }
 
-        public async Task<Result> UpdateUserAsync(string id, string userName, string email, string? phoneNumber)
+        public async Task<Result> UpdateUserAsync(string UserId, string userName, string email, string? phoneNumber)
         {
             Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == id);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
             applicationUser.UserName = userName;
             applicationUser.Email = email;
             applicationUser.PhoneNumber = phoneNumber;
@@ -116,13 +107,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result> DeleteUserAsync(string userId)
         {
             ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
-
-            if(user is null)
-                _authLogger.Warning<string>("The user with id {userId} wasn't delete cause he wasn't found", userId);
-
-            return user != null 
-                ? await DeleteUserAsync(user) 
-                : Result.Failure(InfrastructureError.Identity.UserWasNotFound);
+            return await DeleteUserAsync(user); 
         }
 
         private async Task<Result> DeleteUserAsync(ApplicationUser user)
@@ -164,7 +149,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public bool DoesUserNameNotExist(string userName)
             => _userManager.Users.All(u => u.UserName != userName);
 
-        public bool IsUserIdAssigned(string id)
-            => _userManager.Users.Any(u => u.Id == id);
+        public bool IsUserIdAssigned(string userId)
+            => _userManager.Users.Any(u => u.Id == userId);
     }
 }

@@ -15,12 +15,12 @@ namespace BMJ.Authenticator.Application.Common.Interfaces
 
         Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber);
 
-        Task<Result> UpdateUserAsync(string id, string userName, string email, string? phoneNumber);
+        Task<Result> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber);
 
         Task<Result> DeleteUserAsync(string userId);
 
         bool DoesUserNameNotExist(string userName);
 
-        bool IsUserIdAssigned(string id);
+        bool IsUserIdAssigned(string userId);
     }
 }

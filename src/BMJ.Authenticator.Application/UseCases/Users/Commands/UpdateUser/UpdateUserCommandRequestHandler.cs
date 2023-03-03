@@ -21,10 +21,6 @@ public class UpdateUserCommandRequestHandler
     public async Task<ResultDto> Handle(UpdateUserCommandRequest request, CancellationToken cancellationToken)
     {
         Result userResult = await _identityService.UpdateUserAsync(request.Id, request.UserName, request.Email, request.PhoneNumber);
-        return _mapper.Map<ResultDto>(
-        userResult.IsSuccess()
-            ? Result.Success()
-            : Result.Failure(userResult.GetError())
-        );
+        return _mapper.Map<ResultDto>(userResult);
     }
 }
