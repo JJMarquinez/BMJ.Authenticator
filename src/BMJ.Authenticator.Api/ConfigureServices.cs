@@ -1,4 +1,5 @@
-﻿using BMJ.Authenticator.Api.Filters;
+﻿using BMJ.Authenticator.Api.Caching;
+using BMJ.Authenticator.Api.Filters;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,10 +13,14 @@ public static class ConfigureServices
             .AddProblemDetails()
             .AddEndpointsApiExplorer()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
+            .AddOutputCache(options =>
+            {
+                options.AddPolicy(nameof(AuthorizationCachePolicy), AuthorizationCachePolicy.Instance);
+            })
             .AddMvcCore(options =>
             {
-                options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<ApiLogFilterAttribute>();
+                options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<AuthenticatorResultFilterAttribute>();
             })
             .AddApplicationPart(typeof(ConfigureServices).Assembly);
