@@ -8,11 +8,11 @@ public class AuthorizationCachePolicy : IOutputCachePolicy
 {
     public static readonly AuthorizationCachePolicy Instance = new();
 
-    private AuthorizationCachePolicy()
+    protected AuthorizationCachePolicy()
     {
     }
 
-    public ValueTask CacheRequestAsync(OutputCacheContext context, CancellationToken cancellation)
+    public virtual ValueTask CacheRequestAsync(OutputCacheContext context, CancellationToken cancellation)
     {
         var attemptOutputCaching = AttemptOutputCaching(context);
         context.EnableOutputCaching = true;
@@ -65,13 +65,6 @@ public class AuthorizationCachePolicy : IOutputCachePolicy
         {
             return false;
         }
-
-        //// Verify existence of authorization headers
-        //if (!StringValues.IsNullOrEmpty(request.Headers.Authorization) ||
-        //    request.HttpContext.User?.Identity?.IsAuthenticated == true)
-        //{
-        //    return false;
-        //}
 
         return true;
     }

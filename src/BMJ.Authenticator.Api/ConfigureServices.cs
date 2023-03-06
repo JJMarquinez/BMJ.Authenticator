@@ -16,6 +16,7 @@ public static class ConfigureServices
             .AddOutputCache(options =>
             {
                 options.AddPolicy(nameof(AuthorizationCachePolicy), AuthorizationCachePolicy.Instance);
+                options.AddPolicy(nameof(ByIdCachePolicy), ByIdCachePolicy.Instance);
             })
             .AddMvcCore(options =>
             {

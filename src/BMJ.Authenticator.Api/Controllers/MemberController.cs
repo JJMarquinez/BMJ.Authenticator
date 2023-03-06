@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Api.Caching;
+using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
@@ -15,7 +16,7 @@ namespace BMJ.Authenticator.Api.Controllers;
 public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
-    [OutputCache(PolicyName = nameof(AuthorizationCachePolicy))]
+    [OutputCache(PolicyName = nameof(AuthorizationCachePolicy), Duration = 900)]
     [HttpPost("loginAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     { 
@@ -29,7 +30,7 @@ public class MemberController : ApiControllerBase
         return Ok(await Mediator.Send(new GetAllUsersQueryRequest()));
     }
 
-    [OutputCache(PolicyName = nameof(AuthorizationCachePolicy))]
+    [OutputCache(PolicyName = nameof(ByIdCachePolicy))]
     [HttpGet("getByIdAsync")]
     public async Task<IActionResult> GetByIdAsync(GetUserByIdQueryRequest getUserByIdRequest)
     {
@@ -45,9 +46,12 @@ public class MemberController : ApiControllerBase
 
     [Authorize(Roles = "Administrator")]
     [HttpPut("updateAsync")]
-    public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest)
+    public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest, CancellationToken ct)
     {
-        return Ok(await Mediator.Send(updateUserCommandRequest));
+        ResultDto result = await Mediator.Send(updateUserCommandRequest);
+        if(result.Success)
+            await Cache.EvictByTagAsync(updateUserCommandRequest.Id, ct);
+        return Ok(result);
     }
 
     [Authorize(Roles = "Administrator")]
