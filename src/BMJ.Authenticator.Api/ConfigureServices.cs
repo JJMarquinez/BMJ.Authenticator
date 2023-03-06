@@ -15,8 +15,18 @@ public static class ConfigureServices
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
             .AddOutputCache(options =>
             {
-                options.AddPolicy(nameof(AuthorizationCachePolicy), AuthorizationCachePolicy.Instance);
-                options.AddPolicy(nameof(ByIdCachePolicy), ByIdCachePolicy.Instance);
+                options.AddPolicy(nameof(AuthenticatorBaseCachePolicy), builder => 
+                {
+                    builder.AddPolicy<AuthenticatorBaseCachePolicy>();
+                    builder.Expire(TimeSpan.FromSeconds(86400));
+                });
+
+                options.AddPolicy(nameof(ByIdCachePolicy), builder =>
+                {
+                    builder.AddPolicy<ByIdCachePolicy>();
+                    builder.Expire(TimeSpan.FromSeconds(86400));
+                    builder.VaryByValue(ByIdCachePolicy.VaryByValue);
+                });
             })
             .AddMvcCore(options =>
             {

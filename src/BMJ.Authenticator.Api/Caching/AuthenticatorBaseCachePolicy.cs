@@ -4,16 +4,11 @@ using Microsoft.Extensions.Primitives;
 
 namespace BMJ.Authenticator.Api.Caching;
 
-public class AuthorizationCachePolicy : IOutputCachePolicy
+public class AuthenticatorBaseCachePolicy : IOutputCachePolicy
 {
-    public static readonly AuthorizationCachePolicy Instance = new();
-
-    protected AuthorizationCachePolicy()
-    {
-    }
-
     public virtual ValueTask CacheRequestAsync(OutputCacheContext context, CancellationToken cancellation)
     {
+        AddTags(context);
         var attemptOutputCaching = AttemptOutputCaching(context);
         context.EnableOutputCaching = true;
         context.AllowCacheLookup = attemptOutputCaching;
@@ -52,7 +47,7 @@ public class AuthorizationCachePolicy : IOutputCachePolicy
         return ValueTask.CompletedTask;
     }
 
-    private static bool AttemptOutputCaching(OutputCacheContext context)
+    protected virtual bool AttemptOutputCaching(OutputCacheContext context)
     {
         // Check if the current request fulfills the requirements
         // to be cached
@@ -60,12 +55,18 @@ public class AuthorizationCachePolicy : IOutputCachePolicy
 
         // Verify the method
         if (!HttpMethods.IsGet(request.Method) &&
-            !HttpMethods.IsHead(request.Method) &&
             !HttpMethods.IsPost(request.Method))
         {
             return false;
         }
 
         return true;
+    }
+
+    protected virtual void AddTags(OutputCacheContext context)
+    {
+        string? endpointName = context.HttpContext.Request.Path.Value?.Substring(context.HttpContext.Request.Path.Value.LastIndexOf("/", StringComparison.Ordinal) + 1);
+        if (!string.IsNullOrEmpty(endpointName))
+            context.Tags.Add(endpointName);
     }
 }

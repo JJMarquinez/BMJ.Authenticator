@@ -16,14 +16,14 @@ namespace BMJ.Authenticator.Api.Controllers;
 public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
-    [OutputCache(PolicyName = nameof(AuthorizationCachePolicy), Duration = 900)]
+    [OutputCache(PolicyName = nameof(AuthenticatorBaseCachePolicy), Duration = 900)]
     [HttpPost("loginAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     { 
         return Ok(await Mediator.Send(loginCommandRequest));
     }
 
-    [OutputCache(PolicyName = nameof(AuthorizationCachePolicy))]
+    [OutputCache(PolicyName = nameof(AuthenticatorBaseCachePolicy))]
     [HttpGet("getAllAsync")]
     public async Task<IActionResult> GetAllAsync()
     {
@@ -39,9 +39,12 @@ public class MemberController : ApiControllerBase
 
     [Authorize(Roles = "Administrator")]
     [HttpPost("createAsync")]
-    public async Task<IActionResult> CreateAsync(CreateUserCommandRequest createUserCommandRequest)
+    public async Task<IActionResult> CreateAsync(CreateUserCommandRequest createUserCommandRequest, CancellationToken ct)
     {
-        return Ok(await Mediator.Send(createUserCommandRequest));
+        ResultDto<string> result = await Mediator.Send(createUserCommandRequest);
+        if (result.Success)
+            await Cache.EvictByTagAsync("getAllAsync", ct);
+        return Ok(result);
     }
 
     [Authorize(Roles = "Administrator")]
@@ -49,15 +52,24 @@ public class MemberController : ApiControllerBase
     public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest, CancellationToken ct)
     {
         ResultDto result = await Mediator.Send(updateUserCommandRequest);
-        if(result.Success)
+        if (result.Success)
+        {
             await Cache.EvictByTagAsync(updateUserCommandRequest.Id, ct);
+            await Cache.EvictByTagAsync("getAllAsync", ct);
+        }
         return Ok(result);
     }
 
     [Authorize(Roles = "Administrator")]
     [HttpDelete("deleteAsync")]
-    public async Task<IActionResult> DeleteAsync(DeleteUserCommandRequest deleteUserCommandRequest)
+    public async Task<IActionResult> DeleteAsync(DeleteUserCommandRequest deleteUserCommandRequest, CancellationToken ct)
     {
-        return Ok(await Mediator.Send(deleteUserCommandRequest));
+        ResultDto result = await Mediator.Send(deleteUserCommandRequest);
+        if (result.Success)
+        {
+            await Cache.EvictByTagAsync(deleteUserCommandRequest.Id, ct);
+            await Cache.EvictByTagAsync("getAllAsync", ct);
+        }
+        return Ok(result);
     }
 }
