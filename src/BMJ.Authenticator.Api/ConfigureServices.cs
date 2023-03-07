@@ -1,6 +1,7 @@
 ﻿using BMJ.Authenticator.Api.Caching;
 using BMJ.Authenticator.Api.Filters;
 using FluentValidation.AspNetCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 
@@ -8,34 +9,19 @@ namespace BMJ.Authenticator.Api;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddApiServices(this IServiceCollection services)
+    public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services
             .AddProblemDetails()
             .AddEndpointsApiExplorer()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
-            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect("localhost"))
+            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]))
             .AddRedisOutputCache(options =>
             {
-                options.AddPolicy(nameof(AuthenticatorBaseCachePolicy), builder => 
-                {
-                    builder.AddPolicy<AuthenticatorBaseCachePolicy>();
-                    builder.Expire(TimeSpan.FromSeconds(86400));
-                });
-
-                options.AddPolicy(nameof(ByIdCachePolicy), builder =>
-                {
-                    builder.AddPolicy<ByIdCachePolicy>();
-                    builder.Expire(TimeSpan.FromSeconds(86400));
-                    builder.VaryByValue(ByIdCachePolicy.VaryByValue);
-                });
-
-                options.AddPolicy(nameof(TokenCachePolicy), builder =>
-                {
-                    builder.AddPolicy<TokenCachePolicy>();
-                    builder.Expire(TimeSpan.FromSeconds(900));
-                    builder.VaryByValue(TokenCachePolicy.VaryByValue);
-                });
+                options
+                .AddAuthenticatorBaseCachePolicy()
+                .AddByIdCachePolicy()
+                .AddTokenCachePolicy();
             })
             .AddMvcCore(options =>
             {

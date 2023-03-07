@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
 using System.Text.Json;
 
@@ -39,4 +38,21 @@ public class ByIdCachePolicy : AuthenticatorBaseCachePolicy
 internal class RequestById
 { 
     public string? id { get; set; }
+}
+
+public static partial class OutputCacheOptionsExtensions
+{
+    public static OutputCacheOptions AddByIdCachePolicy(this OutputCacheOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        options.AddPolicy(nameof(AddByIdCachePolicy), builder =>
+        {
+            builder.AddPolicy<ByIdCachePolicy>();
+            builder.Expire(TimeSpan.FromSeconds(86400));
+            builder.VaryByValue(Caching.ByIdCachePolicy.VaryByValue);
+        });
+
+        return options;
+    }
 }

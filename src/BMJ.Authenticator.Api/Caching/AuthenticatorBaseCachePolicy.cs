@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
 namespace BMJ.Authenticator.Api.Caching;
@@ -66,5 +67,21 @@ public class AuthenticatorBaseCachePolicy : IOutputCachePolicy
         string? endpointName = context.HttpContext.Request.Path.Value?.Substring(context.HttpContext.Request.Path.Value.LastIndexOf("/", StringComparison.Ordinal) + 1);
         if (!string.IsNullOrEmpty(endpointName))
             context.Tags.Add(endpointName);
+    }
+}
+
+public static partial class OutputCacheOptionsExtensions
+{
+    public static OutputCacheOptions AddAuthenticatorBaseCachePolicy(this OutputCacheOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        options.AddPolicy(nameof(AddAuthenticatorBaseCachePolicy), builder =>
+        {
+            builder.AddPolicy<AuthenticatorBaseCachePolicy>();
+            builder.Expire(TimeSpan.FromSeconds(86400));
+        });
+
+        return options;
     }
 }

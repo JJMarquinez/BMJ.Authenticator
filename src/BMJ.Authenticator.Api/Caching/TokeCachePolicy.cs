@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.OutputCaching;
 using System.Text.Json;
 
 namespace BMJ.Authenticator.Api.Caching;
@@ -22,4 +23,21 @@ public class TokenCachePolicy : AuthenticatorBaseCachePolicy
 internal class RequestByName
 { 
     public string? userName { get; set; }
+}
+
+public static partial class OutputCacheOptionsExtensions
+{
+    public static OutputCacheOptions AddTokenCachePolicy(this OutputCacheOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+
+        options.AddPolicy(nameof(AddTokenCachePolicy), builder =>
+        {
+            builder.AddPolicy<TokenCachePolicy>();
+            builder.Expire(TimeSpan.FromSeconds(900));
+            builder.VaryByValue(Caching.TokenCachePolicy.VaryByValue);
+        });
+
+        return options;
+    }
 }
