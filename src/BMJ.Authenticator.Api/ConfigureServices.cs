@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Api.Filters;
 using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace BMJ.Authenticator.Api;
 
@@ -13,7 +14,8 @@ public static class ConfigureServices
             .AddProblemDetails()
             .AddEndpointsApiExplorer()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
-            .AddOutputCache(options =>
+            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect("localhost"))
+            .AddRedisOutputCache(options =>
             {
                 options.AddPolicy(nameof(AuthenticatorBaseCachePolicy), builder => 
                 {
