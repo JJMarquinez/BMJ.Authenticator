@@ -16,7 +16,7 @@ namespace BMJ.Authenticator.Api.Controllers;
 public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
-    [OutputCache(PolicyName = nameof(AuthenticatorBaseCachePolicy), Duration = 900)]
+    [OutputCache(PolicyName = nameof(TokenCachePolicy))]
     [HttpPost("loginAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     { 

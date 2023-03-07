@@ -29,6 +29,13 @@ public static class ConfigureServices
                     builder.Expire(TimeSpan.FromSeconds(86400));
                     builder.VaryByValue(ByIdCachePolicy.VaryByValue);
                 });
+
+                options.AddPolicy(nameof(TokenCachePolicy), builder =>
+                {
+                    builder.AddPolicy<TokenCachePolicy>();
+                    builder.Expire(TimeSpan.FromSeconds(900));
+                    builder.VaryByValue(TokenCachePolicy.VaryByValue);
+                });
             })
             .AddMvcCore(options =>
             {

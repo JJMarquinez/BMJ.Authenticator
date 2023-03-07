@@ -7,22 +7,16 @@ namespace BMJ.Authenticator.Api.Caching;
 
 public class ByIdCachePolicy : AuthenticatorBaseCachePolicy
 {
-    public static KeyValuePair<string, string> VaryByValue(HttpContext context)
+    public static async ValueTask<KeyValuePair<string, string>> VaryByValue(HttpContext context, CancellationToken ct)
     {
         KeyValuePair<string, string> varyBy = new KeyValuePair<string, string>();
-        IHttpBodyControlFeature syncIOFeature = context.Features.Get<IHttpBodyControlFeature>();
-        if (syncIOFeature is not null)
+        context.Request.EnableBuffering();
+        using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
         {
-            context.Request.EnableBuffering();
-            syncIOFeature.AllowSynchronousIO = true;
-            using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
-            {
-                string? requestId = JsonSerializer.Deserialize<RequestById>(reader.ReadToEnd())?.id?.ToString();
+            string? requestId = JsonSerializer.Deserialize<RequestById>(await reader.ReadToEndAsync())?.id?.ToString();
 
-                syncIOFeature.AllowSynchronousIO = false;
-                context.Request.Body.Position = 0;
-                varyBy = new KeyValuePair<string, string>(nameof(requestId), requestId);
-            }
+            context.Request.Body.Position = 0;
+            varyBy = new KeyValuePair<string, string>(nameof(requestId), requestId);
         }
         return varyBy;
     }
