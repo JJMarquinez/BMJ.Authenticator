@@ -59,7 +59,7 @@ public class AuthenticatorResultFilterAttribute : ActionFilterAttribute
         if (string.Equals(resultValueType.Name, typeof(ResultDto<>).Name, StringComparison.Ordinal))
         {
             object? value = resultValueType.GetProperty("Value")?.GetValue(result.Value);
-            context.Result = new OkObjectResult(new { Success = true, Value = value });
+            context.Result = new OkObjectResult(value);
         }
         else if (string.Equals(resultValueType.Name, typeof(ResultDto).Name, StringComparison.Ordinal))
         {

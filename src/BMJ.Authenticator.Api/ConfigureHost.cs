@@ -11,6 +11,7 @@ namespace BMJ.Authenticator.Api
                 .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
+                .UseOutputCache()
                 .UseEndpoints(endpoints =>
                 {
                     endpoints.MapControllers();
