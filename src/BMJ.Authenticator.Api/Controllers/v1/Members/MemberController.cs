@@ -10,16 +10,17 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
 
-namespace BMJ.Authenticator.Api.Controllers;
+namespace BMJ.Authenticator.Api.Controllers.v1.Members;
 
 [Authorize]
+[ApiVersion("1.0")]
 public class MemberController : ApiControllerBase
 {
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
     [HttpPost("loginAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
-    { 
+    {
         return Ok(await Mediator.Send(loginCommandRequest));
     }
 
