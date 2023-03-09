@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace BMJ.Authenticator.Api.Controllers
 {
     [ApiController]
-    [Route("api/auth/v{version:apiVersion}/[controller]")]
+    [Route("api/v{version:apiVersion}/auth/[controller]")]
     public class ApiControllerBase : ControllerBase
     {
         private ISender _mediator = null!;

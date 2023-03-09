@@ -6,7 +6,7 @@ namespace BMJ.Authenticator.Api.Caching;
 
 public class TokenCachePolicy : AuthenticatorBaseCachePolicy
 {
-    public static async ValueTask<KeyValuePair<string, string>> VaryByValue(HttpContext context, CancellationToken ct)
+    public static async ValueTask<KeyValuePair<string, string>> VaryByValueAsync(HttpContext context, CancellationToken ct)
     {
         KeyValuePair<string, string> varyBy = new KeyValuePair<string, string>();
         context.Request.EnableBuffering();
@@ -31,11 +31,11 @@ public static partial class OutputCacheOptionsExtensions
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        options.AddPolicy(nameof(AddTokenCachePolicy), builder =>
+        options.AddPolicy(nameof(TokenCachePolicy), builder =>
         {
             builder.AddPolicy<TokenCachePolicy>();
             builder.Expire(TimeSpan.FromSeconds(900));
-            builder.VaryByValue(Caching.TokenCachePolicy.VaryByValue);
+            builder.VaryByValue(TokenCachePolicy.VaryByValueAsync);
         });
 
         return options;

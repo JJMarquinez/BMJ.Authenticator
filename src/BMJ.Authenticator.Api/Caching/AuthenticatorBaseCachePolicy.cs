@@ -76,7 +76,7 @@ public static partial class OutputCacheOptionsExtensions
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        options.AddPolicy(nameof(AddAuthenticatorBaseCachePolicy), builder =>
+        options.AddPolicy(nameof(AuthenticatorBaseCachePolicy), builder =>
         {
             builder.AddPolicy<AuthenticatorBaseCachePolicy>();
             builder.Expire(TimeSpan.FromSeconds(86400));
