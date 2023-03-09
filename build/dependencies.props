@@ -1,0 +1,31 @@
+<Project>
+  <PropertyGroup Label="SDK Versions">
+    <NetTargetVersion>net7.0</NetTargetVersion>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package Versions">
+    <FluentValidationAspNetCore>11.2.2</FluentValidationAspNetCore>
+    <FluentValidationDependencyInjectionExtensions>11.4.0</FluentValidationDependencyInjectionExtensions>
+    <MediatR>11.1.0</MediatR>
+    <MediatRExtensionsMicrosoftDependencyInjection>11.1.0</MediatRExtensionsMicrosoftDependencyInjection>
+    <MicrosoftAspNetCoreMvcVersioning>5.0.0</MicrosoftAspNetCoreMvcVersioning>
+    <StackExchangeRedis>2.6.96</StackExchangeRedis>
+    <MicrosoftAspNetCoreOpenApi>7.0.2</MicrosoftAspNetCoreOpenApi>
+    <MicrosoftEntityFrameworkCoreTools>7.0.2</MicrosoftEntityFrameworkCoreTools>
+    <NSwagAspNetCore>13.18.2</NSwagAspNetCore>
+    <SerilogAspNetCore>6.1.0</SerilogAspNetCore>
+    <SerilogEnrichersEnvironment>2.2.0</SerilogEnrichersEnvironment>
+    <SerilogSinksElasticsearch>8.4.1</SerilogSinksElasticsearch>
+    <MicrosoftAspNetCoreApiAuthorizationIdentityServer>7.0.2</MicrosoftAspNetCoreApiAuthorizationIdentityServer>
+    <MicrosoftAspNetCoreAuthenticationJwtBearer>7.0.2</MicrosoftAspNetCoreAuthenticationJwtBearer>
+    <MicrosoftEntityFrameworkCoreDesign>7.0.2</MicrosoftEntityFrameworkCoreDesign>
+    <MicrosoftEntityFrameworkCoreInMemory>7.0.2</MicrosoftEntityFrameworkCoreInMemory>
+    <MicrosoftEntityFrameworkCoreSqlServer>7.0.2</MicrosoftEntityFrameworkCoreSqlServer>
+    <AutoMapperExtensionsMicrosoftDependencyInjection>11.0.0</AutoMapperExtensionsMicrosoftDependencyInjection>
+    <MicrosoftExtensionsLogging>7.0.0</MicrosoftExtensionsLogging>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Test Package Versions">
+  </PropertyGroup>
+</Project>
