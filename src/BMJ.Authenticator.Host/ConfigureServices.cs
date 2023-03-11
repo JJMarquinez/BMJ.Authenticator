@@ -6,6 +6,9 @@ using System.Text;
 using BMJ.Authenticator.Infrastructure.Authentication;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using BMJ.Authenticator.Application.Common.Instrumentation;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace BMJ.Authenticator.Host
 {
@@ -17,7 +20,8 @@ namespace BMJ.Authenticator.Host
                 .AddCustomConfigure(webApplicationBuilder.Configuration)
                 .AddCustomLogging(webApplicationBuilder)
                 .AddCustomAuthentication(webApplicationBuilder.Configuration)
-                .AddCustomOpenApiDocument();
+                .AddCustomOpenApiDocument()
+                .AddCustomOpenTelemetry(webApplicationBuilder.Configuration);
             return services;
         }
 
@@ -86,6 +90,30 @@ namespace BMJ.Authenticator.Host
         private static IServiceCollection AddCustomConfigure(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<JwtOptions>(configuration.GetSection(nameof(JwtOptions)));
+            return services;
+        }
+
+        private static IServiceCollection AddCustomOpenTelemetry(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddOpenTelemetry().WithTracing(options =>
+            {
+                options
+                .AddSource(Telemetry.ServiceName)
+                .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName: Telemetry.ServiceName, serviceVersion: Telemetry.Version).AddTelemetrySdk())
+                .AddSqlClientInstrumentation(options =>
+                {
+                    options.SetDbStatementForText = true;
+                    options.SetDbStatementForStoredProcedure = true;
+                    options.RecordException = true;
+                })
+                .AddAspNetCoreInstrumentation()
+                .AddRedisInstrumentation()
+                .AddElasticsearchClientInstrumentation()
+                .AddOtlpExporter(options =>
+                {
+                    options.Endpoint = new Uri(configuration.GetValue<string>("OtlpExporter:Endpoint"));
+                });
+            });
             return services;
         }
     }
