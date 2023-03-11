@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Instrumentation;
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Domain.Common.Results;
@@ -7,6 +8,7 @@ using BMJ.Authenticator.Infrastructure.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -75,19 +77,43 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result> UpdateUserAsync(string UserId, string userName, string email, string? phoneNumber)
         {
             Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
+
+            using Activity? identityGetUserById = Telemetry.Source.StartActivity("GetUserById", ActivityKind.Internal);
+            identityGetUserById.DisplayName = "Identity - GetUserById";
+
             ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
+            
+            identityGetUserById.SetTag("UserId", applicationUser.Id);
+            identityGetUserById.Stop();
+
+
             applicationUser.UserName = userName;
             applicationUser.Email = email;
             applicationUser.PhoneNumber = phoneNumber;
+
+            using Activity? identityUpdateUser = Telemetry.Source.StartActivity("UpdateUser", ActivityKind.Internal);
+            identityUpdateUser.DisplayName = "Identity - UpdateUser";
+
             IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
+
+            identityUpdateUser.SetTag("Succeeded", identityResult.Succeeded);
+            identityUpdateUser.Stop();
 
             if (identityResult.Succeeded)
                 result = Result.Success();
             else
+            {
+                using Activity? loggingActivity = Telemetry.Source.StartActivity("Logging", System.Diagnostics.ActivityKind.Internal);
+                loggingActivity.DisplayName = "Logging errors got from Identity";
+
                 _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
                     "The following errors {@Errors} don't allow delete the user {@applicationUser}",
                     identityResult.Errors,
                     applicationUser);
+
+                loggingActivity.SetTag("Error", identityResult.Errors);
+                loggingActivity.Stop();
+            }
 
             return result;
         }
