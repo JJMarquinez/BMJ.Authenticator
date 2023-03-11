@@ -39,6 +39,14 @@ services:
     volumes:
       - .cache:/data
 
+  jaeger:
+    image: jaegertracing/opentelemetry-all-in-one
+    restart: always
+    ports:
+      - "13133:13133"
+      - "16686:16686"
+      - "4317:4317"
+
 volumes:
   data01:
     driver: local
