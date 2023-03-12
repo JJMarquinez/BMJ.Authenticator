@@ -14,6 +14,13 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="NSwag.AspNetCore" Version="$(NSwagAspNetCore)" />
+    <PackageReference Include="OpenTelemetry" Version="$(OpenTelemetry)" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryExporterOpenTelemetryProtocol)" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryExtensionsHosting)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationAspNetCore)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.ElasticsearchClient" Version="$(OpenTelemetryInstrumentationElasticsearchClient)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.SqlClient" Version="$(OpenTelemetryInstrumentationSqlClient)" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="$(OpenTelemetryInstrumentationStackExchangeRedis)" />
     <PackageReference Include="Serilog.AspNetCore" Version="$(SerilogAspNetCore)" />
     <PackageReference Include="Serilog.Enrichers.Environment" Version="$(SerilogEnrichersEnvironment)" />
     <PackageReference Include="Serilog.Sinks.Elasticsearch" Version="$(SerilogSinksElasticsearch)" />
