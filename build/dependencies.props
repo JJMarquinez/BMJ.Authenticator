@@ -24,6 +24,13 @@
     <MicrosoftEntityFrameworkCoreSqlServer>7.0.2</MicrosoftEntityFrameworkCoreSqlServer>
     <AutoMapperExtensionsMicrosoftDependencyInjection>11.0.0</AutoMapperExtensionsMicrosoftDependencyInjection>
     <MicrosoftExtensionsLogging>7.0.0</MicrosoftExtensionsLogging>
+    <OpenTelemetry>1.5.0-alpha.1</OpenTelemetry>
+    <OpenTelemetryExporterOpenTelemetryProtocol>1.5.0-alpha.1</OpenTelemetryExporterOpenTelemetryProtocol>
+    <OpenTelemetryExtensionsHosting>1.5.0-alpha.1</OpenTelemetryExtensionsHosting>
+    <OpenTelemetryInstrumentationAspNetCore>1.0.0-rc9.14</OpenTelemetryInstrumentationAspNetCore>
+    <OpenTelemetryInstrumentationElasticsearchClient>1.0.0-beta.4</OpenTelemetryInstrumentationElasticsearchClient>
+    <OpenTelemetryInstrumentationSqlClient>1.0.0-rc9.14</OpenTelemetryInstrumentationSqlClient>
+    <OpenTelemetryInstrumentationStackExchangeRedis>1.0.0-rc9.8</OpenTelemetryInstrumentationStackExchangeRedis>
   </PropertyGroup>
   
   <PropertyGroup Label="Test Package Versions">
