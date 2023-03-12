@@ -21,7 +21,8 @@ namespace BMJ.Authenticator.Host
                 .AddCustomLogging(webApplicationBuilder)
                 .AddCustomAuthentication(webApplicationBuilder.Configuration)
                 .AddCustomOpenApiDocument()
-                .AddCustomOpenTelemetry(webApplicationBuilder.Configuration);
+                .AddCustomOpenTelemetry(webApplicationBuilder.Configuration)
+                .AddCustomHealthChecks(webApplicationBuilder.Configuration);
             return services;
         }
 
@@ -114,6 +115,13 @@ namespace BMJ.Authenticator.Host
                     options.Endpoint = new Uri(configuration.GetValue<string>("OtlpExporter:Endpoint"));
                 });
             });
+            return services;
+        }
+
+        private static IServiceCollection AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddHealthChecks();
+            services.AddHealthChecksUI().AddInMemoryStorage();
             return services;
         }
     }
