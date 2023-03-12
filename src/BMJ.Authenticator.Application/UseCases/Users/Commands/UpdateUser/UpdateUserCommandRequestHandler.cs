@@ -30,7 +30,9 @@ public class UpdateUserCommandRequestHandler
 
         updateUserActivity.SetTag("Succeeded", userResult.IsSuccess());
 
-        if (userResult.IsFailure())
+        if (userResult.IsSuccess())
+            updateUserActivity.AddEvent(new ActivityEvent("User was updated"));
+        else
             updateUserActivity.SetTag("Error", userResult.GetError());
        
         return _mapper.Map<ResultDto>(userResult);
