@@ -120,7 +120,12 @@ namespace BMJ.Authenticator.Host
 
         private static IServiceCollection AddCustomHealthChecks(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddHealthChecks();
+            services
+                .AddHealthChecks()
+                .AddSqlServer(configuration.GetValue<string>("ConnectionStrings:ConnectionStrings"))
+                .AddRedis(configuration.GetValue<string>("Redis:Configuration"))
+                .AddElasticsearch(configuration.GetValue<string>("Elasticsearch:Url"))
+                ;
             services.AddHealthChecksUI().AddInMemoryStorage();
             return services;
         }
