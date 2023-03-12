@@ -1,7 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
@@ -9,8 +8,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -74,30 +71,17 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             return result;
         }
 
-        public async Task<Result> UpdateUserAsync(string UserId, string userName, string email, string? phoneNumber)
+        public async Task<Result> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber)
         {
             Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
 
-            using Activity? identityGetUserById = Telemetry.Source.StartActivity("GetUserById", ActivityKind.Internal);
-            identityGetUserById.DisplayName = "Identity - GetUserById";
-
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
-            
-            identityGetUserById.SetTag("UserId", applicationUser.Id);
-            identityGetUserById.Stop();
-
+            ApplicationUser? applicationUser = await GetUserByIdInstrumentedAsync(userId);
 
             applicationUser.UserName = userName;
             applicationUser.Email = email;
             applicationUser.PhoneNumber = phoneNumber;
 
-            using Activity? identityUpdateUser = Telemetry.Source.StartActivity("UpdateUser", ActivityKind.Internal);
-            identityUpdateUser.DisplayName = "Identity - UpdateUser";
-
-            IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
-
-            identityUpdateUser.SetTag("Succeeded", identityResult.Succeeded);
-            identityUpdateUser.Stop();
+            IdentityResult identityResult = await UpdateUserIntrumentedAsync(applicationUser);
 
             if (identityResult.Succeeded)
                 result = Result.Success();
@@ -177,5 +161,29 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public bool IsUserIdAssigned(string userId)
             => _userManager.Users.Any(u => u.Id == userId);
+
+        private async ValueTask<ApplicationUser?> GetUserByIdInstrumentedAsync(string UserId)
+        {
+            using Activity? identityGetUserById = Telemetry.Source.StartActivity("GetUserById", ActivityKind.Internal);
+            identityGetUserById.DisplayName = "Identity - GetUserById";
+
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
+
+            identityGetUserById.SetTag("UserId", applicationUser.Id);
+
+            return applicationUser;
+        }
+
+        private async ValueTask<IdentityResult> UpdateUserIntrumentedAsync(ApplicationUser? user)
+        {
+            using Activity? identityUpdateUser = Telemetry.Source.StartActivity("UpdateUser", ActivityKind.Internal);
+            identityUpdateUser.DisplayName = "Identity - UpdateUser";
+
+            IdentityResult identityResult = await _userManager.UpdateAsync(user);
+
+            identityUpdateUser.SetTag("Succeeded", identityResult.Succeeded);
+
+            return identityResult;
+        }
     }
 }
