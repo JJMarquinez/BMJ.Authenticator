@@ -122,10 +122,9 @@ namespace BMJ.Authenticator.Host
         {
             services
                 .AddHealthChecks()
-                .AddSqlServer(configuration.GetValue<string>("ConnectionStrings:ConnectionStrings"))
+                .AddSqlServer(configuration.GetValue<string>("ConnectionStrings:DefaultConnection"))
                 .AddRedis(configuration.GetValue<string>("Redis:Configuration"))
-                .AddElasticsearch(configuration.GetValue<string>("Elasticsearch:Url"))
-                ;
+                .AddElasticsearch(configuration.GetValue<string>("Elasticsearch:Url"));
             services.AddHealthChecksUI().AddInMemoryStorage();
             return services;
         }
