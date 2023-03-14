@@ -34,7 +34,7 @@ namespace BMJ.Authenticator.Host
                 .Enrich.WithMachineName()
                 .WriteTo.Console()
                 .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri(context.Configuration["Elasticsearch:Url"]))
+                    new ElasticsearchSinkOptions(new Uri(context.Configuration.GetValue<string>("Elasticsearch:Url")))
                     {
                         IndexFormat = $"BMJ.Authenticator-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
                         AutoRegisterTemplate = true,
@@ -77,10 +77,10 @@ namespace BMJ.Authenticator.Host
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = configuration["JwtOptions:Issuer"],
-                        ValidAudience = configuration["JwtOptions:Audience"],
+                        ValidIssuer = configuration.GetValue<string>("JwtOptions:Issuer"),
+                        ValidAudience = configuration.GetValue<string>("JwtOptions:Audience"),
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(configuration["JwtOptions:SecretKey"])
+                            Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtOptions:SecretKey"))
                         )
                     };
                 }
