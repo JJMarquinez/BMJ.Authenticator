@@ -25,7 +25,7 @@ public static class ConfigureServices
             .AddProblemDetails()
             .AddEndpointsApiExplorer()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
-            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration["Redis:Configuration"]))
+            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration.GetValue<string>("Redis:Configuration")))
             .AddRedisOutputCache(options =>
             {
                 options

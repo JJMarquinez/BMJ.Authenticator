@@ -31,6 +31,9 @@
     <OpenTelemetryInstrumentationElasticsearchClient>1.0.0-beta.4</OpenTelemetryInstrumentationElasticsearchClient>
     <OpenTelemetryInstrumentationSqlClient>1.0.0-rc9.14</OpenTelemetryInstrumentationSqlClient>
     <OpenTelemetryInstrumentationStackExchangeRedis>1.0.0-rc9.8</OpenTelemetryInstrumentationStackExchangeRedis>
+    <AspNetCoreHealthChecksUI>6.0.5</AspNetCoreHealthChecksUI>
+    <AspNetCoreHealthChecksUIClient>6.0.5</AspNetCoreHealthChecksUIClient>
+    <AspNetCoreHealthChecksUIInMemoryStorage>6.0.5</AspNetCoreHealthChecksUIInMemoryStorage>
   </PropertyGroup>
   
   <PropertyGroup Label="Test Package Versions">
