@@ -3,6 +3,7 @@ using BMJ.Authenticator.Application;
 using BMJ.Authenticator.Host;
 using BMJ.Authenticator.Infrastructure;
 using BMJ.Authenticator.Infrastructure.Persistence;
+using HealthChecks.UI.Client;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,8 +32,11 @@ if (app.Environment.IsDevelopment())
     }
 }
 
-//app.UseHttpsRedirection();
-
+app.MapHealthChecksUI();
+app.MapHealthChecks("/healthz", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions()
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 app.UseApiConfiguration();
 
 app.Run();
