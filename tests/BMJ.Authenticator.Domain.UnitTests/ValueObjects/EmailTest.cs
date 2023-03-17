@@ -42,4 +42,10 @@ public class EmailTest
     {
         Assert.Throws<ArgumentException>(() => Email.From(address));
     }
+
+    [Fact]
+    public void Should_ThrowArgumentNullException_When_AddressIsNull()
+    {
+        Assert.Throws<ArgumentNullException>(() => Email.From(null));
+    }
 }

@@ -25,9 +25,7 @@ public class Phone : ValueObject
 
     private bool IsValidPhoneNumber(string number)
     {
-        if (number != null) 
-            return Regex.IsMatch(number, @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$");
-        else return false;
+        return Regex.IsMatch(number, @"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$");
     }
 
     public override string ToString() => Number;
