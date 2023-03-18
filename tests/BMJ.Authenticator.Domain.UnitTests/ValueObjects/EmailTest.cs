@@ -45,9 +45,15 @@ public class EmailTest
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_AddressIsNull()
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullAddress()
     {
         Assert.Throws<ArgumentNullException>(() => Email.From(null));
+    }
+
+    [Fact]
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithEmptyAddress()
+    {
+        Assert.Throws<ArgumentException>(() => Email.From(string.Empty));
     }
 
     [Fact]
