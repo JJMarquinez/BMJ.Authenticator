@@ -32,55 +32,54 @@ public class UserTests
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IdIsNull()
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullId()
     {
         Assert.Throws<ArgumentNullException>(() 
             => { 
-                User.New(null, "Jaden", Email.From("jaden@authenticator.com"), null, null, null); 
+                User.New(null, _userName, Email.From(_email), null, null, null); 
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentException_When_IdIsEmpty()
+    public void Should_ThrowArgumentException_When_IsAttemptToBeCreatedWithEmptyId()
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New(string.Empty, "Jaden", Email.From("jaden@authenticator.com"), null, null, null);
+                User.New(string.Empty, _userName, Email.From(_email), null, null, null);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_UserNameIsNull()
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullUserName()
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New("123456", null, Email.From("jaden@authenticator.com"), null, null, null);
+                User.New(_userId, null, Email.From(_email), null, null, null);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentException_When_UserNameIsEmpty()
+    public void Should_ThrowArgumentException_When_IsAttemptToBeCreatedWithEmptyUserName()
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New("123456", string.Empty, Email.From("jaden@authenticator.com"), null, null, null);
+                User.New(_userId, string.Empty, Email.From(_email), null, null, null);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_EmailIsNull()
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullEmail()
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New("123456", "jaden", null, null, null, null);
+                User.New(_userId, _userName, null, null, null, null);
             });
     }
 
     [Fact]
     public void Should_CreateNewUser_When_ParametersAreValid()
     {
-        User user = User.New("123456", "jaden", Email.From("jaden@authenticator.com"), null, null, null);
-        Assert.NotNull(user);
+        Assert.NotNull(User.New(_userId, _userName, Email.From(_email), null, null, null));
     }
 
     [Fact]
