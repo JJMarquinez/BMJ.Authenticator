@@ -43,9 +43,15 @@ public class PhoneTest
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_NumberIsNull()
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullNumber()
     {
         Assert.Throws<ArgumentNullException>(() => Phone.New(null));
+    }
+
+    [Fact]
+    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithEmptyNumber()
+    {
+        Assert.Throws<ArgumentException>(() => Phone.New(string.Empty));
     }
 
     [Fact]
