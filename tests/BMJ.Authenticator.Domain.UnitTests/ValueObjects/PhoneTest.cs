@@ -8,7 +8,7 @@ public class PhoneTest
     [InlineData("673 921 4850")]
     [InlineData("673.921.4850")]
     [InlineData("673-921-4850")]
-    public void Should_BeValidPhone_When_NumberFullfilsThePhonePattern(string number)
+    public void Should_CreateAPhone_When_NumberFullfilsThePhonePattern(string number)
     {
         Phone phone = Phone.New(number);
         Assert.Equal(number, phone.ToString());

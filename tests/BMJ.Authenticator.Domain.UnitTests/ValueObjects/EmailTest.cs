@@ -9,7 +9,7 @@ public class EmailTest
     [InlineData("andres@jmb.com")]
     [InlineData("jaime@localhost.es")]
     [InlineData("sebas.gomez@test.cat")]
-    public void Should_BeValidEmail_When_AddressFullfilsTheEmailPattern(string address)
+    public void Should_CreateAnEmail_When_AddressFullfilsTheEmailPattern(string address)
     {
         Email email = Email.From(address);
         Assert.Equal(address, email.ToString());
