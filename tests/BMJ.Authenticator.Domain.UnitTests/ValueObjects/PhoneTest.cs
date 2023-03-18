@@ -47,4 +47,22 @@ public class PhoneTest
     {
         Assert.Throws<ArgumentNullException>(() => Phone.New(null));
     }
+
+    [Fact]
+    public void Should_PhoneBeDifference_When_CompareToOtherObject()
+    {
+        Assert.False(Phone.New("584-932-6789").Equals(new object()));
+    }
+
+    [Fact]
+    public void Should_PhoneBeDifference_When_ComparePhoneToNull()
+    {
+        Assert.False(Phone.New("584-932-6789").Equals(null));
+    }
+
+    [Fact]
+    public void Should_BeInteger_When_GetHashCode()
+    {
+        Assert.IsType<int>(Phone.New("584-932-6789").GetHashCode());
+    }
 }
