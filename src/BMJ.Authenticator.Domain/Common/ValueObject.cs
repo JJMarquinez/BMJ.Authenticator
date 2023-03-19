@@ -36,4 +36,14 @@ public abstract class ValueObject
             .Select(x => x != null ? x.GetHashCode() : 0)
             .Aggregate((x, y) => x ^ y);
     }
+
+    public static bool operator ==(ValueObject one, ValueObject two)
+    {
+        return EqualOperator(one, two);
+    }
+
+    public static bool operator !=(ValueObject one, ValueObject two)
+    {
+        return NotEqualOperator(one, two);
+    }
 }
