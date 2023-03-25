@@ -6,10 +6,10 @@ namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 public class ResultTests
 {
     Error _error;
-    Result _success;
-    Result _failure;
-    Result<object?> _successGeneric;
-    Result<object?> _failureGeneric;
+    //Result _success;
+    //Result _failure;
+    //Result<object?> _successGeneric;
+    //Result<object?> _failureGeneric;
     public ResultTests()
     {
         _error = Error.New(
@@ -17,126 +17,126 @@ public class ResultTests
             "User name or password aren't valid.",
             "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
             409);
-        _success = Result.Success();
-        _failure = Result.Failure(_error);
-        _successGeneric = Result.Success<object?>(new());
-        _failureGeneric = Result.Failure<object?>(_error);
+        //_success = Result.Success();
+        //_failure = Result.Failure(_error);
+        //_successGeneric = Result.Success<object?>(new());
+        //_failureGeneric = Result.Failure<object?>(_error);
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullError()
+    public void ShouldThrowArgumentNullExceptionGivenNullAsError()
     {
-        Assert.Throws<ArgumentNullException>(() => { Result.Failure(null); });
+        Assert.Throws<ArgumentNullException>(() => { Result.Failure(null!); });
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToCreateGenericResultWithNullError()
+    public void ShouldThrowArgumentNullExceptionGivenNullAsErrorToGenericResult()
     {
-        Assert.Throws<ArgumentNullException>(() => { Result.Failure<object>(null); });
+        Assert.Throws<ArgumentNullException>(() => { Result.Failure<object>(null!); });
     }
 
     [Fact]
-    public void Should_BeCreated_When_IsAttemptToCreateWithError()
+    public void ShouldBeCreatedAResultGivenACreatedError()
     {
         Assert.NotNull(Result.Failure(_error));
     }
 
     [Fact]
-    public void Should_BeCreated_When_IsAttemptToCreateGenericResultWithError()
+    public void ShouldBeCreatedAGenericReultGivenACreatedError()
     {
         Assert.NotNull(Result.Failure<object?>(_error));
     }
 
     [Fact]
-    public void Should_BeCreated_When_IsAttemptToCreateWith0utError()
+    public void ShouldBeCreatedASuccessResult()
     {
         Assert.NotNull(Result.Success());
     }
 
     [Fact]
-    public void Should_BeCreated_When_IsAttemptToCreateGenericResultWithoutError()
+    public void ShouldBeCreatedAGenericSuccessResult()
     {
         Assert.NotNull(Result.Success<object?>(new()));
     }
 
     [Fact]
-    public void Should_GetError_When_ItHasAnError()
+    public void ShouldGetErrorGivenAError()
     {
         Result result = Result.Failure(_error);
         Assert.True(_error.Equals(result.GetError()));
     }
 
     [Fact]
-    public void Should_GetError_When_GenericResultHasAnError()
+    public void ShouldGetErrorGivenAErrorToGenericResult()
     {
         Result<object?> result = Result.Failure<object?>(_error);
         Assert.True(_error.Equals(result.GetError()));
     }
 
     [Fact]
-    public void Should_BeSuccess_When_ItGetsCreatedAsSuccess()
+    public void ShouldBeSuccessResult()
     {
-        Assert.True(_success.IsSuccess());
+        Assert.True(Result.Success().IsSuccess());
     }
 
     [Fact]
-    public void Should_BeSuccess_When_GenereicResultGetsCreatedAsSuccess()
+    public void ShouldBeGenericSuccessResult()
     {
-        Assert.True(_successGeneric.IsSuccess());
+        Assert.True(Result.Success<object?>(new()).IsSuccess());
     }
 
     [Fact]
-    public void Should_BeUnsuccess_When_ItGetsCreatedAsFailure()
+    public void ShouldBeUnsuccessResult()
     {
-        Assert.False(_failure.IsSuccess());
+        Assert.False(Result.Failure(_error).IsSuccess());
     }
 
     [Fact]
-    public void Should_BeUnsuccess_When_GenericResultGetsCreatedAsFailure()
+    public void ShouldBeGenericUnsuccessResult()
     {
-        Assert.False(_failureGeneric.IsSuccess());
+        Assert.False(Result.Failure<object?>(_error).IsSuccess());
     }
 
     [Fact]
-    public void Should_BeFailure_When_ItGetsCreatedAsFailure()
+    public void ShouldBeFailureResult()
     {
-        Assert.True(_failure.IsFailure());
+        Assert.True(Result.Failure(_error).IsFailure());
     }
 
     [Fact]
-    public void Should_BeFailure_When_GenericResultGetsCreatedAsFailure()
+    public void ShouldBeGenericFailureResult()
     {
-        Assert.True(_failureGeneric.IsFailure());
+        Assert.True(Result.Failure<object?>(_error).IsFailure());
     }
 
     [Fact]
-    public void Should_NotBeFailure_When_ItGetsCreatedAsSuccess()
+    public void ShouldNotBeFailureResultGivenSuccessResult()
     {
-        Assert.False(_success.IsFailure());
+        Assert.False(Result.Success().IsFailure());
     }
 
     [Fact]
-    public void Should_NotBeFailure_When_GenericResultGetsCreatedAsSuccess()
+    public void ShouldNotBeGenericFailureResultGivenGenericSuccessResult()
     {
-        Assert.False(_successGeneric.IsFailure());
+        Assert.False(Result.Success<object?>(new()).IsFailure());
     }
 
     [Fact]
-    public void Should_BeCreated_When_PerformImplictOperator()
+    public void ShouldBeCreated()
     {
         Result<Guid> result = Guid.NewGuid();
         Assert.NotNull(result);
     }
 
     [Fact]
-    public void Should_BeCreatedAsASuccessGenericResult_When_PerformImplictOperator()
+    public void ShouldBeCreatedAsASuccessGenericResult()
     {
         Result<Guid> result = Guid.NewGuid();
         Assert.True(result.IsSuccess());
     }
 
     [Fact]
-    public void Should_GetValue_When_GenericResultIsCreatedByPerformingImplictOperator()
+    public void ShouldGetValueGivenGenericSuccessResultCreatedByPerformingImplicitOperator()
     {
         Guid guid = Guid.NewGuid();
         var result = (Result<Guid>)guid;
