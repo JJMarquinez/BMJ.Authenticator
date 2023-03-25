@@ -37,5 +37,9 @@
   </PropertyGroup>
   
   <PropertyGroup Label="Test Package Versions">
+    <MicrosoftNETTestSdk>17.3.2</MicrosoftNETTestSdk>
+    <xunit>2.4.2</xunit>
+    <xunitrunnervisualstudio>2.4.5</xunitrunnervisualstudio>
+    <coverletcollector>3.1.2</coverletcollector>
   </PropertyGroup>
 </Project>
