@@ -9,7 +9,7 @@ public class EmailTests
     [InlineData("andres@jmb.com")]
     [InlineData("jaime@localhost.es")]
     [InlineData("sebas.gomez@test.cat")]
-    public void Should_CreateAnEmail_When_AddressFullfilsTheEmailPattern(string address)
+    public void ShouldCreateAnEmailGivenValidAddress(string address)
     {
         Email email = Email.From(address);
         Assert.Equal(address, email.ToString());
@@ -19,7 +19,7 @@ public class EmailTests
     [InlineData("andres@jmb.com")]
     [InlineData("jaime@localhost.es")]
     [InlineData("sebas.gomez@test.cat")]
-    public void Should_ConvertToString_When_PerformImplicitOperator(string address)
+    public void ShouldConvertToString(string address)
     {
         string email = Email.From(address);
         Assert.Equal(email, address);
@@ -29,7 +29,7 @@ public class EmailTests
     [InlineData("andres@jmb.com")]
     [InlineData("jaime@localhost.es")]
     [InlineData("sebas.gomez@test.cat")]
-    public void Should_ConvertToEmail_When_PerformExplicitOperator(string address)
+    public void ShouldConvertToEmail(string address)
     {
         Email email = (Email)address;
         Assert.True(email.Equals(Email.From(address)));
@@ -39,38 +39,38 @@ public class EmailTests
     [InlineData("andres.jmb.com")]
     [InlineData("@localhost.es")]
     [InlineData("")]
-    public void Should_ThrowArgumentException_When_AddressDoesNotFullfitEmailPattern(string address)
+    public void ShouldThrowArgumentExceptionGivenInvalidAddress(string address)
     {
         Assert.Throws<ArgumentException>(() => Email.From(address));
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullAddress()
+    public void ShouldThrowArgumentNullExceptionGivenNullAddress()
     {
-        Assert.Throws<ArgumentNullException>(() => Email.From(null));
+        Assert.Throws<ArgumentNullException>(() => Email.From(null!));
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithEmptyAddress()
+    public void ShouldThrowArgumentNullExceptionGivenEmptyStringAsAddress()
     {
         Assert.Throws<ArgumentException>(() => Email.From(string.Empty));
     }
 
     [Fact]
-    public void Should_EmailBeDifference_When_CompareToOtherObject()
+    public void ShouldEmailBeDifferenceGivenDifferentObject()
     {
         Assert.False(Email.From("sebas.gomez@test.cat").Equals(new object()));
     }
 
     [Fact]
-    public void Should_EmailBeDifference_When_CompareEmailToNull()
+    public void ShouldEmailBeDifferenceGivenNullToCompare()
     {
         Assert.False(Email.From("sebas.gomez@test.cat").Equals(null));
     }
 
     [Fact]
-    public void Should_BeInteger_When_GetHashCode()
+    public void ShouldCreateEmail()
     {
-        Assert.IsType<int>(Email.From("sebas.gomez@test.cat").GetHashCode());
+        Assert.NotNull(Email.From("sebas.gomez@test.cat"));
     }
 }
