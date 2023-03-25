@@ -3,14 +3,14 @@ using BMJ.Authenticator.Domain.Common.Results;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 
-public class ResultTest
+public class ResultTests
 {
     Error _error;
     Result _success;
     Result _failure;
     Result<object?> _successGeneric;
     Result<object?> _failureGeneric;
-    public ResultTest()
+    public ResultTests()
     {
         _error = Error.New(
             "Identity.InvalidOperation.UserNameOrPasswordNotValid",

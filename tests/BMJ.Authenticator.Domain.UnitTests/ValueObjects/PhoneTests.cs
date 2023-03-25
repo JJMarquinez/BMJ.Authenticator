@@ -2,7 +2,7 @@ using BMJ.Authenticator.Domain.ValueObjects;
 
 namespace BMJ.Authenticator.Domain.UnitTests.ValueObjects;
 
-public class PhoneTest
+public class PhoneTests
 {
     [Theory]
     [InlineData("673 921 4850")]

@@ -3,7 +3,7 @@ using System.Net;
 
 namespace BMJ.Authenticator.Domain.UnitTests.ValueObjects;
 
-public class EmailTest
+public class EmailTests
 {
     [Theory]
     [InlineData("andres@jmb.com")]

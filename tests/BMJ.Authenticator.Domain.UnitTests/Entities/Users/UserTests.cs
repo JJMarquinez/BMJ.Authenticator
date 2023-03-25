@@ -5,116 +5,126 @@ namespace BMJ.Authenticator.Domain.UnitTests.Entities.Users;
 
 public class UserTests
 {
-    User _user;
     string _userId;
     string _userName;
     string _email;
-    string[] _roles;
-    string _phone;
-    string _password;
-
 
     public UserTests()
     {
         _userId = Guid.NewGuid().ToString();
         _userName = "Jaden";
         _email = "jaden@authenticator.com";
-        _roles = new[] { "Standard" };
-        _phone = "111-222-3333";
-        _password = Guid.NewGuid().ToString();
-        _user = User.New(
-            _userId, 
-            _userName, 
-            Email.From(_email), 
-            _roles, 
-            Phone.New(_phone), 
-            _password);
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullId()
+    public void ShouldThrowArgumentNullExceptionGivenNullId()
     {
         Assert.Throws<ArgumentNullException>(() 
             => { 
-                User.New(null, _userName, Email.From(_email), null, null, null); 
+                User.New(null!, _userName, Email.From(_email), null, null, null!); 
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentException_When_IsAttemptToBeCreatedWithEmptyId()
+    public void ShouldThrowArgumentExceptionGivenEmptyId()
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New(string.Empty, _userName, Email.From(_email), null, null, null);
+                User.New(string.Empty, _userName, Email.From(_email), null, null, null!);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullUserName()
+    public void ShouldThrowArgumentNullExceptionGivenNullUserName()
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New(_userId, null, Email.From(_email), null, null, null);
+                User.New(_userId, null!, Email.From(_email), null, null, null!);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentException_When_IsAttemptToBeCreatedWithEmptyUserName()
+    public void ShouldThrowArgumentExceptionGivenEmptyUserName()
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New(_userId, string.Empty, Email.From(_email), null, null, null);
+                User.New(_userId, string.Empty, Email.From(_email), null, null, null!);
             });
     }
 
     [Fact]
-    public void Should_ThrowArgumentNullException_When_IsAttemptToBeCreatedWithNullEmail()
+    public void ShouldThrowArgumentNullExceptionGivenNullEmail()
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New(_userId, _userName, null, null, null, null);
+                User.New(_userId, _userName, null!, null, null, null!);
             });
     }
 
     [Fact]
-    public void Should_CreateNewUser_When_ParametersAreValid()
+    public void ShouldCreateNewUser()
     {
-        Assert.NotNull(User.New(_userId, _userName, Email.From(_email), null, null, null));
+        Assert.NotNull(User.New(_userId, _userName, Email.From(_email), null, null, null!));
     }
 
-    [Fact]
-    public void Should_GetId_When_UserIsCreated()
+    [Theory]
+    [InlineData("12345")]
+    [InlineData("asdfg")]
+    [InlineData("qw98e")]
+    public void ShouldGetIdGivenACreatedUser(string id)
     {
-        Assert.Equal(_userId, _user.GetId());
+        User user = User.New(id, _userName, Email.From(_email), null, null, null!);
+        Assert.Equal(id, user.GetId());
     }
 
-    [Fact]
-    public void Should_GetUserName_When_UserIsCreated()
+    [Theory]
+    [InlineData("Angel")]
+    [InlineData("MEelna")]
+    [InlineData("crsanchez")]
+    public void ShouldGetUserNameGivenACreatedUser(string userName)
     {
-        Assert.Equal(_userName, _user.GetUserName());
+        User user = User.New(_userId, userName, Email.From(_email), null, null, null!);
+        Assert.Equal(userName, user.GetUserName());
     }
 
-    [Fact]
-    public void Should_GetEmail_When_UserIsCreated()
+    [Theory]
+    [InlineData("andres@jmb.com")]
+    [InlineData("jaime@localhost.es")]
+    [InlineData("sebas.gomez@test.cat")]
+    public void ShouldGetEmailGivenACreatedUser(string address)
     {
-        Assert.Equal(_email, _user.GetEmail());
+        User user = User.New(_userId, _userName, Email.From(address), null, null, null!);
+        Assert.Equal(address, user.GetEmail());
     }
 
-    [Fact]
-    public void Should_GetRoles_When_UserIsCreated()
+    [Theory]
+    [InlineData("Administrator", "Standard")]
+    [InlineData("SalesMan", "Manager")]
+    [InlineData("CEO", "Developer")]
+    public void ShouldGetRolesGivenACreatedUser(string firstRole, string secondRole)
     {
-        Assert.Equal(_roles, _user.GetRoles());
+        string[] roles = new[] { firstRole, secondRole };
+        User user = User.New(_userId, _userName, Email.From(_email), roles, null, null!);
+        Assert.Equal(roles, user.GetRoles());
     }
 
-    [Fact]
-    public void Should_GetPhone_When_UserIsCreated()
+    [Theory]
+    [InlineData("673 921 4850")]
+    [InlineData("673.921.4850")]
+    [InlineData("673-921-4850")]
+    public void ShouldGetPhoneGivenACreatedUser(string phoneNumber)
     {
-        Assert.Equal(_phone, _user.GetPhoneNumber());
+        User user = User.New(_userId, _userName, Email.From(_email), null, Phone.New(phoneNumber), null!);
+        Assert.Equal(phoneNumber, user.GetPhoneNumber()!);
     }
 
-    [Fact]
-    public void Should_GetPassword_When_UserIsCreated()
+    [Theory]
+    [InlineData("Ts!39H1z")]
+    [InlineData("6V5$zRg2")]
+    [InlineData("#553zP1k")]
+    public void ShouldGetPasswordGivenACreatedUser(string password)
     {
-        Assert.Equal(_password, _user.GetPasswordHash());
+        User user = User.New(_userId, _userName, Email.From(_email), null, null, password);
+        Assert.Equal(password, user.GetPasswordHash());
     }
 }
