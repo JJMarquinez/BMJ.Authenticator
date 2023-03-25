@@ -31,7 +31,7 @@ namespace BMJ.Authenticator.Infrastructure
             services.AddScoped<ApplicationDbContextInitialiser>();
             
             services
-                .AddDefaultIdentity<ApplicationUser>()
+                .AddIdentityCore<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 

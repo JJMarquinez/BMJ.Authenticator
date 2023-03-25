@@ -4,7 +4,6 @@ using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -18,8 +17,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService,
             IAuthLogger authLogger)
         {
             _userManager = userManager;
