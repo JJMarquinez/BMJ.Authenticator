@@ -7,31 +7,26 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
 {
     public class JwtProviderTests
     {
-        JwtOptions _jwtOptions = null!;
-        JwtProvider _jwtProvider = null!;
-        User _user = null!;
-        public JwtProviderTests()
+        [Fact]
+        public void ShouldGenerateToken()
         {
-            _jwtOptions = new JwtOptions
+            JwtOptions jwtOptions = new JwtOptions
             {
                 SecretKey = "03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA",
                 Audience = "http://localhost",
                 Issuer = "http://localhost"
             };
-            _jwtProvider = new(Options.Create(_jwtOptions));
-            _user = User.New(
+            JwtProvider jwtProvider = new(Options.Create(jwtOptions));
+            User user = User.New(
                 Guid.NewGuid().ToString(),
                 "Jaden",
                 Email.From("jaden@authenticator.com"),
                 new[] { "Standard" },
                 Phone.New("111-222-3333"),
                 Guid.NewGuid().ToString());
-        }
 
-        [Fact]
-        public void ShouldGenerateToken()
-        {
-            string token = _jwtProvider.Generate(_user);
+            string token = jwtProvider.Generate(user);
+
             Assert.NotNull(token);  
             Assert.NotEmpty(token);
         }
