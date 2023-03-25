@@ -63,7 +63,7 @@ public class EmailTests
     }
 
     [Fact]
-    public void ShouldEmailBeDifferenceGivenNullToCompare()
+    public void ShouldEmailBeDifferenceGivenNullToCompareWith()
     {
         Assert.False(Email.From("sebas.gomez@test.cat").Equals(null));
     }

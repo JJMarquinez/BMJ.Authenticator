@@ -5,7 +5,7 @@ namespace BMJ.Authenticator.Domain.UnitTests.Common;
 public class ValueObjectTests
 {
     [Fact]
-    public void Should_BeEqual_When_TheyAreTheSame()
+    public void ShouldBeEqualGivenSameValueObject()
     {
         Phone firstPhone = Phone.New("111 222 3333");
         Phone secondPhone = Phone.New("111 222 3333");
@@ -13,7 +13,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_NotBeEqual_When_TheRightOneOfThemIsNull()
+    public void ShouldNotBeEqualGivenNullAsSecondValueObject()
     {   
         Phone firstPhone = Phone.New("111 222 3333");
         Phone secondPhone = null!;
@@ -21,7 +21,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_NotBeEqual_When_TheLeftOneOfThemIsNull()
+    public void ShouldNotBeEqualGivenNullAsFirstValueObject()
     {
         Phone firstPhone = null!;
         Phone secondPhone = Phone.New("111 222 3333");
@@ -29,7 +29,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_BeEqual_When_BothOfThemAreNull()
+    public void ShouldBeEqualGivenNullsToCampreWith()
     {
         Phone firstPhone = null!;
         Phone secondPhone = null!;
@@ -37,7 +37,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_NotBeDifferent_When_TheyAreTheSame()
+    public void ShouldNotBeDifferentGivenSameValueObjects()
     {
         Phone firstPhone = Phone.New("111 222 3333");
         Phone secondPhone = Phone.New("111 222 3333");
@@ -45,7 +45,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_BeDifferent_When_TheRightOneOfThemIsNull()
+    public void ShouldBeDifferentGivenNullAsSecondValueObject()
     {
         Phone firstPhone = Phone.New("111 222 3333");
         Phone secondPhone = null!;
@@ -53,7 +53,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_BeDifferent_When_TheLeftOneOfThemIsNull()
+    public void ShouldBeDifferentGivenNullAsFirstValueObject()
     {
         Phone firstPhone = null!;
         Phone secondPhone = Phone.New("111 222 3333");
@@ -61,7 +61,7 @@ public class ValueObjectTests
     }
 
     [Fact]
-    public void Should_NotBeDifferent_When_BothOfThemAreNull()
+    public void ShouldNotBeDifferentGivenNullsToCompareWith()
     {
         Phone firstPhone = null!;
         Phone secondPhone = null!;

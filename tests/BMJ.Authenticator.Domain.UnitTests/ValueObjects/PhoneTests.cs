@@ -61,7 +61,7 @@ public class PhoneTests
     }
 
     [Fact]
-    public void ShouldPhoneBeDifferenceGivenNullToCompare()
+    public void ShouldPhoneBeDifferenceGivenNullToCompareWith()
     {
         Assert.False(Phone.New("584-932-6789").Equals(null));
     }
