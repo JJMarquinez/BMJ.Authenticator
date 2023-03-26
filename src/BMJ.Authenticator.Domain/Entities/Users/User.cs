@@ -10,7 +10,7 @@ public class User
     private Email _email;
     private Phone? _phoneNumber;
     private string _passwordHash;
-    private string[] _roles;
+    private string[]? _roles;
 
     private User(string id, string userName, Email email, string[]? roles, Phone? phoneNumber, string passwordHash)
     {
@@ -32,7 +32,7 @@ public class User
     public string GetId() => _id;
     public string GetUserName() => _userName;
     public Email GetEmail() => _email;
-    public string[] GetRoles() => _roles;
+    public string[]? GetRoles() => _roles;
     public Phone? GetPhoneNumber() => _phoneNumber;
     public string GetPasswordHash() => _passwordHash;
 }
