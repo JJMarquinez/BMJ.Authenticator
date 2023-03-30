@@ -35,7 +35,7 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         }
 
         [Fact]
-        public void ShoulNotdGenerateTokenGivenSecretKeyWithLenthLessThen128bit()
+        public void ShouldThrowArgumentOutOfRangeExceptionGivenSecretKeyWithLenthLessThen128bit()
         {
             JwtOptions jwtOptions = new JwtOptions
             {
@@ -56,7 +56,7 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         }
 
         [Fact]
-        public void ShouldNotGenerateTokenGivenNullSecretKey()
+        public void ShouldThrowArgumentNullExceptionGivenNullSecretKey()
         {
             JwtOptions jwtOptions = new JwtOptions
             {
@@ -77,7 +77,7 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         }
 
         [Fact]
-        public void ShouldTokenHasTheUserDataAsClaims()
+        public void ShouldGenarateTokenWithTheUserData()
         {
             JwtOptions jwtOptions = new JwtOptions
             {
@@ -90,7 +90,7 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Guid.NewGuid().ToString(),
                 "Jaden",
                 Email.From("jaden@authenticator.com"),
-                new[] { "Standard" },
+                new[] { "Standard", "Administratot" },
                 Phone.New("111-222-3333"),
                 Guid.NewGuid().ToString());
 
@@ -100,11 +100,34 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
             Assert.Equal(user.GetId(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
             Assert.Equal(user.GetUserName(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
             Assert.Equal(user.GetEmail(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
+            Assert.Equal(user.GetRoles(), jwtSecurityToken.Claims.Where(claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal)).Select(claim => claim.Value).ToArray());
+        }
 
-            //if(user.GetRoles() != null)
-            //{
-            //    Assert.Equals(user.GetRoles(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal)).Value);
-            //}
+        [Fact]
+        public void ShouldGenarateTokenWithTheUserDataExceptFromRoles()
+        {
+            JwtOptions jwtOptions = new JwtOptions
+            {
+                SecretKey = "03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA",
+                Audience = "http://localhost",
+                Issuer = "http://localhost"
+            };
+            JwtProvider jwtProvider = new(Options.Create(jwtOptions));
+            User user = User.New(
+                Guid.NewGuid().ToString(),
+                "Jaden",
+                Email.From("jaden@authenticator.com"),
+                null,
+                Phone.New("111-222-3333"),
+                Guid.NewGuid().ToString());
+
+            string token = jwtProvider.Generate(user);
+            JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
+
+            Assert.Equal(user.GetId(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
+            Assert.Equal(user.GetUserName(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
+            Assert.Equal(user.GetEmail(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
+            Assert.DoesNotContain(jwtSecurityToken.Claims, claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal));
         }
     }
 }
