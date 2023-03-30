@@ -6,10 +6,7 @@ namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 public class ResultTests
 {
     Error _error;
-    //Result _success;
-    //Result _failure;
-    //Result<object?> _successGeneric;
-    //Result<object?> _failureGeneric;
+
     public ResultTests()
     {
         _error = Error.New(
@@ -17,10 +14,6 @@ public class ResultTests
             "User name or password aren't valid.",
             "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
             409);
-        //_success = Result.Success();
-        //_failure = Result.Failure(_error);
-        //_successGeneric = Result.Success<object?>(new());
-        //_failureGeneric = Result.Failure<object?>(_error);
     }
 
     [Fact]
