@@ -2,7 +2,6 @@ using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Domain.ValueObjects;
 using BMJ.Authenticator.Infrastructure.Authentication;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -20,13 +19,15 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Issuer = "http://localhost"
             };
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-            User user = User.New(
-                Guid.NewGuid().ToString(),
-                "Jaden",
-                Email.From("jaden@authenticator.com"),
-                new[] { "Standard" },
-                Phone.New("111-222-3333"),
-                Guid.NewGuid().ToString());
+            User user =
+                User.Builder()
+                .WithId(Guid.NewGuid().ToString())
+                .WithName("Jaden")
+                .WithEmail(Email.From("jaden@authenticator.com"))
+                .WithRoles(new[] { "Standard" })
+                .WithPhone(Phone.New("111-222-3333"))
+                .WithPasswordHash(Guid.NewGuid().ToString())
+                .Build();
 
             string token = jwtProvider.Generate(user);
 
@@ -44,13 +45,15 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Issuer = "http://localhost"
             };
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-            User user = User.New(
-                Guid.NewGuid().ToString(),
-                "Jaden",
-                Email.From("jaden@authenticator.com"),
-                new[] { "Standard" },
-                Phone.New("111-222-3333"),
-                Guid.NewGuid().ToString());
+            User user =
+                User.Builder()
+                .WithId(Guid.NewGuid().ToString())
+                .WithName("Jaden")
+                .WithEmail(Email.From("jaden@authenticator.com"))
+                .WithRoles(new[] { "Standard" })
+                .WithPhone(Phone.New("111-222-3333"))
+                .WithPasswordHash(Guid.NewGuid().ToString())
+                .Build();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => jwtProvider.Generate(user));
         }
@@ -65,13 +68,15 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Issuer = "http://localhost"
             };
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-            User user = User.New(
-                Guid.NewGuid().ToString(),
-                "Jaden",
-                Email.From("jaden@authenticator.com"),
-                new[] { "Standard" },
-                Phone.New("111-222-3333"),
-                Guid.NewGuid().ToString());
+            User user =
+                User.Builder()
+                .WithId(Guid.NewGuid().ToString())
+                .WithName("Jaden")
+                .WithEmail(Email.From("jaden@authenticator.com"))
+                .WithRoles(new[] { "Standard" })
+                .WithPhone(Phone.New("111-222-3333"))
+                .WithPasswordHash(Guid.NewGuid().ToString())
+                .Build();
 
             Assert.Throws<ArgumentNullException>(() => jwtProvider.Generate(user));
         }
@@ -86,13 +91,15 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Issuer = "http://localhost"
             };
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-            User user = User.New(
-                Guid.NewGuid().ToString(),
-                "Jaden",
-                Email.From("jaden@authenticator.com"),
-                new[] { "Standard", "Administratot" },
-                Phone.New("111-222-3333"),
-                Guid.NewGuid().ToString());
+            User user =
+                User.Builder()
+                .WithId(Guid.NewGuid().ToString())
+                .WithName("Jaden")
+                .WithEmail(Email.From("jaden@authenticator.com"))
+                .WithRoles(new[] { "Standard" })
+                .WithPhone(Phone.New("111-222-3333"))
+                .WithPasswordHash(Guid.NewGuid().ToString())
+                .Build();
 
             string token = jwtProvider.Generate(user);
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
@@ -113,13 +120,14 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
                 Issuer = "http://localhost"
             };
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-            User user = User.New(
-                Guid.NewGuid().ToString(),
-                "Jaden",
-                Email.From("jaden@authenticator.com"),
-                null,
-                Phone.New("111-222-3333"),
-                Guid.NewGuid().ToString());
+            User user =
+                User.Builder()
+                .WithId(Guid.NewGuid().ToString())
+                .WithName("Jaden")
+                .WithEmail(Email.From("jaden@authenticator.com"))
+                .WithPhone(Phone.New("111-222-3333"))
+                .WithPasswordHash(Guid.NewGuid().ToString())
+                .Build();
 
             string token = jwtProvider.Generate(user);
             JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);

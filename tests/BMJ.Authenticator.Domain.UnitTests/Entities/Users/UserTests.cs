@@ -21,7 +21,11 @@ public class UserTests
     {
         Assert.Throws<ArgumentNullException>(() 
             => { 
-                User.New(null!, _userName, Email.From(_email), null, null, null!); 
+                User.Builder()
+                .WithId(null!)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .Build();
             });
     }
 
@@ -30,7 +34,11 @@ public class UserTests
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New(string.Empty, _userName, Email.From(_email), null, null, null!);
+                User.Builder()
+                .WithId(string.Empty)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .Build();
             });
     }
 
@@ -39,7 +47,11 @@ public class UserTests
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New(_userId, null!, Email.From(_email), null, null, null!);
+                User.Builder()
+                .WithId(_userId)
+                .WithName(null!)
+                .WithEmail(Email.From(_email))
+                .Build();
             });
     }
 
@@ -48,7 +60,11 @@ public class UserTests
     {
         Assert.Throws<ArgumentException>(()
             => {
-                User.New(_userId, string.Empty, Email.From(_email), null, null, null!);
+                User.Builder()
+                .WithId(_userId)
+                .WithName(string.Empty)
+                .WithEmail(Email.From(_email))
+                .Build();
             });
     }
 
@@ -57,14 +73,23 @@ public class UserTests
     {
         Assert.Throws<ArgumentNullException>(()
             => {
-                User.New(_userId, _userName, null!, null, null, null!);
+                User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(null!)
+                .Build();
             });
     }
 
     [Fact]
     public void ShouldCreateNewUser()
     {
-        Assert.NotNull(User.New(_userId, _userName, Email.From(_email), null, null, null!));
+        Assert.NotNull(
+            User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .Build());
     }
 
     [Theory]
@@ -73,7 +98,12 @@ public class UserTests
     [InlineData("qw98e")]
     public void ShouldGetIdGivenACreatedUser(string id)
     {
-        User user = User.New(id, _userName, Email.From(_email), null, null, null!);
+        User user = User.Builder()
+                .WithId(id)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .Build();
+
         Assert.Equal(id, user.GetId());
     }
 
@@ -83,7 +113,13 @@ public class UserTests
     [InlineData("crsanchez")]
     public void ShouldGetUserNameGivenACreatedUser(string userName)
     {
-        User user = User.New(_userId, userName, Email.From(_email), null, null, null!);
+        User user =
+            User.Builder()
+                .WithId(_userId)
+                .WithName(userName)
+                .WithEmail(Email.From(_email))
+                .Build();
+
         Assert.Equal(userName, user.GetUserName());
     }
 
@@ -93,7 +129,12 @@ public class UserTests
     [InlineData("sebas.gomez@test.cat")]
     public void ShouldGetEmailGivenACreatedUser(string address)
     {
-        User user = User.New(_userId, _userName, Email.From(address), null, null, null!);
+        User user = User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(Email.From(address))
+                .Build();
+
         Assert.Equal(address, user.GetEmail());
     }
 
@@ -104,7 +145,13 @@ public class UserTests
     public void ShouldGetRolesGivenACreatedUser(string firstRole, string secondRole)
     {
         string[] roles = new[] { firstRole, secondRole };
-        User user = User.New(_userId, _userName, Email.From(_email), roles, null, null!);
+        User user = User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .WithRoles(roles)
+                .Build();
+
         Assert.Equal(roles, user.GetRoles());
     }
 
@@ -114,7 +161,13 @@ public class UserTests
     [InlineData("673-921-4850")]
     public void ShouldGetPhoneGivenACreatedUser(string phoneNumber)
     {
-        User user = User.New(_userId, _userName, Email.From(_email), null, Phone.New(phoneNumber), null!);
+        User user = User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .WithPhone(Phone.New(phoneNumber))
+                .Build();
+
         Assert.Equal(phoneNumber, user.GetPhoneNumber()!);
     }
 
@@ -124,7 +177,13 @@ public class UserTests
     [InlineData("#553zP1k")]
     public void ShouldGetPasswordGivenACreatedUser(string password)
     {
-        User user = User.New(_userId, _userName, Email.From(_email), null, null, password);
+        User user = User.Builder()
+                .WithId(_userId)
+                .WithName(_userName)
+                .WithEmail(Email.From(_email))
+                .WithPasswordHash(password)
+                .Build();
+
         Assert.Equal(password, user.GetPasswordHash());
     }
 }
