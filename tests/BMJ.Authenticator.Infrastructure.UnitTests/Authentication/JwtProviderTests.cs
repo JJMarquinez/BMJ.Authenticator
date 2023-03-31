@@ -12,12 +12,11 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         [Fact]
         public void ShouldGenerateToken()
         {
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                SecretKey = "03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA",
-                Audience = "http://localhost",
-                Issuer = "http://localhost"
-            };
+            JwtOptions jwtOptions = JwtOptions.Builder()
+                .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
+                .WithAudience("http://localhost")
+                .WithIssuer("http://localhost")
+                .Build();
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
             User user =
                 User.Builder()
@@ -38,12 +37,11 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         [Fact]
         public void ShouldThrowArgumentOutOfRangeExceptionGivenSecretKeyWithLenthLessThen128bit()
         {
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                SecretKey = "nO7*!%xGX59!1nM",
-                Audience = "http://localhost",
-                Issuer = "http://localhost"
-            };
+            JwtOptions jwtOptions = JwtOptions.Builder()
+                .WithSecretKey("nO7*!%xGX59!1nM")
+                .WithAudience("http://localhost")
+                .WithIssuer("http://localhost")
+                .Build(); ;
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
             User user =
                 User.Builder()
@@ -61,12 +59,10 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         [Fact]
         public void ShouldThrowArgumentNullExceptionGivenNullSecretKey()
         {
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                SecretKey = null!,
-                Audience = "http://localhost",
-                Issuer = "http://localhost"
-            };
+            JwtOptions jwtOptions = JwtOptions.Builder()
+                .WithAudience("http://localhost")
+                .WithIssuer("http://localhost")
+                .Build(); ;
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
             User user =
                 User.Builder()
@@ -84,12 +80,11 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         [Fact]
         public void ShouldGenarateTokenWithTheUserData()
         {
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                SecretKey = "03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA",
-                Audience = "http://localhost",
-                Issuer = "http://localhost"
-            };
+            JwtOptions jwtOptions = JwtOptions.Builder()
+                .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
+                .WithAudience("http://localhost")
+                .WithIssuer("http://localhost")
+                .Build(); ;
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
             User user =
                 User.Builder()
@@ -113,12 +108,11 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication
         [Fact]
         public void ShouldGenarateTokenWithTheUserDataExceptFromRoles()
         {
-            JwtOptions jwtOptions = new JwtOptions
-            {
-                SecretKey = "03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA",
-                Audience = "http://localhost",
-                Issuer = "http://localhost"
-            };
+            JwtOptions jwtOptions = JwtOptions.Builder()
+                .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
+                .WithAudience("http://localhost")
+                .WithIssuer("http://localhost")
+                .Build(); ;
             JwtProvider jwtProvider = new(Options.Create(jwtOptions));
             User user =
                 User.Builder()
