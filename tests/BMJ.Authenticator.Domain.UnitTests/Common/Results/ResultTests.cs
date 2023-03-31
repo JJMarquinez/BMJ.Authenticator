@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Common.Results;
+using System.Net;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 
@@ -9,11 +10,13 @@ public class ResultTests
 
     public ResultTests()
     {
-        _error = Error.New(
-            "Identity.InvalidOperation.UserNameOrPasswordNotValid",
-            "User name or password aren't valid.",
-            "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
-            409);
+        _error = 
+            Error.Builder()
+            .WithCode("Identity.InvalidOperation.UserNameOrPasswordNotValid")
+            .WithTitle("User name or password aren't valid.")
+            .WithDetail("The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.")
+            .WithHttpStatusCode(409)
+            .Build();
     }
 
     [Fact]

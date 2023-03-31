@@ -19,98 +19,49 @@ public class ErrorTests
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullCode()
     {
-        Assert.Throws<ArgumentNullException>(()
-            => {
-                Error.New(
-                    null!, 
-                    _title,
-                    _detail,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentNullException>(() => Error.Builder().WithCode(null!).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenEmptyStringAsCode()
     {
-        Assert.Throws<ArgumentException>(()
-            => {
-                Error.New(
-                    string.Empty,
-                    _title,
-                    _detail,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentException>(() => Error.Builder().WithCode(string.Empty).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullTitle()
     {
-        Assert.Throws<ArgumentNullException>(()
-            => {
-                Error.New(
-                    _code,
-                    null!,
-                    _detail,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentNullException>(() => Error.Builder().WithCode(_code).WithTitle(null!).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenEmptyStringAsTitle()
     {
-        Assert.Throws<ArgumentException>(()
-            => {
-                Error.New(
-                    _code,
-                    string.Empty,
-                    _detail,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentException>(() => Error.Builder().WithCode(_code).WithTitle(string.Empty).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullDetail()
     {
-        Assert.Throws<ArgumentNullException>(()
-            => {
-                Error.New(
-                    _code,
-                    _title,
-                    null!,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentNullException>(() => Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(null!).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenEmptyStringDetail()
     {
-        Assert.Throws<ArgumentException>(()
-            => {
-                Error.New(
-                    _code,
-                    _title,
-                    string.Empty,
-                    _httpStatusCode);
-            });
+        Assert.Throws<ArgumentException>(() => Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(string.Empty).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenZeroAsfHttpStatusCode()
     {
-        Assert.Throws<ArgumentException>(()
-            => {
-                Error.New(
-                    _code,
-                    _title,
-                    _detail,
-                    0);
-            });
+        Assert.Throws<ArgumentException>(() => Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(0).Build());
     }
 
     [Fact]
     public void ShouldCreateNewError()
     {
-        Assert.NotNull(Error.New(_code, _title, _detail, _httpStatusCode));
+        Assert.NotNull(Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build());
     }
 
     [Theory]
@@ -119,7 +70,7 @@ public class ErrorTests
     [InlineData("Identity.InvalidOperation.ItDoesNotExistAnyUser")]
     public void ShouldGetCodeGivenCreatedError(string code)
     {
-        Error error = Error.New(code, _title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.Equal(code, error.GetCode());
     }
 
@@ -129,7 +80,7 @@ public class ErrorTests
     [InlineData("User name or password aren't valid.")]
     public void ShouldGetTitleGivenCreatedError(string title)
     {
-        Error error = Error.New(_code, title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.Equal(title, error.GetTitle());
     }
 
@@ -139,7 +90,7 @@ public class ErrorTests
     [InlineData("The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.")]
     public void ShouldGetDetailGivenCreatedError(string detail)
     {
-        Error error = Error.New(_code, _title, detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.Equal(detail, error.GetDetail());
     }
 
@@ -149,14 +100,14 @@ public class ErrorTests
     [InlineData(500)]
     public void Should_GetHttpStatusCode_When_ErrorIsCreated(int httpStatusCode)
     {
-        Error error = Error.New(_code, _title, _detail, httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(httpStatusCode).Build();
         Assert.Equal(httpStatusCode, error.GetHttpStatusCode());
     }
 
     [Fact]
     public void ShouldConvertToString()
     {
-        Error error = Error.New(_code, _title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         string errorCode = error;
         Assert.Equal(error.GetCode(), errorCode);
     }
@@ -164,28 +115,29 @@ public class ErrorTests
     [Fact]
     public void ShouldBeEqualGivenSameErrors()
     {
-        Error none = Error.New("None", "None", "None", 200);
+        string noneValue = "None";
+        Error none = Error.Builder().WithCode(noneValue).WithTitle(noneValue).WithDetail(noneValue).WithHttpStatusCode(200).Build();
         Assert.True(none.Equals(Error.None));
     }
 
     [Fact]
     public void ShouldNotBeEqualGivenDifferentErrors()
     {
-        Error error = Error.New(_code, _title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.False(error.Equals(Error.None));
     }
 
     [Fact]
     public void ShouldNotBeEqualGivenNullToCampareWith()
     {
-        Error error = Error.New(_code, _title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.False(error.Equals(null));
     }
 
     [Fact]
     public void ShouldNotBeEqualGivenDifferentObjectToCompareWith()
     {
-        Error error = Error.New(_code, _title, _detail, _httpStatusCode);
+        Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         Assert.False(error.Equals(new object()));
     }
 }

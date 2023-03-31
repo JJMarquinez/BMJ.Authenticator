@@ -9,7 +9,7 @@ public class ErrorBuilder : IErrorBuilder, IErrorWithTitleBuilder, IErrorWithDet
 
     private ErrorBuilder() { }
 
-    public static IErrorBuilder New() => new ErrorBuilder();
+    internal static ErrorBuilder New() => new();
 
     public Error Build() => Error.New(_code, _title, _detail, _httpStatusCode);
 
