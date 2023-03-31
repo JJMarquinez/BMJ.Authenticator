@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Domain.Common;
+﻿using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Common.Results;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;

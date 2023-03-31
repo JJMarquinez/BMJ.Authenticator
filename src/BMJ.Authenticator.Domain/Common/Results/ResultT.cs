@@ -1,4 +1,6 @@
-﻿namespace BMJ.Authenticator.Domain.Common.Results;
+﻿using BMJ.Authenticator.Domain.Common.Errors;
+
+namespace BMJ.Authenticator.Domain.Common.Results;
 
 public class Result<TValue> : Result
 {

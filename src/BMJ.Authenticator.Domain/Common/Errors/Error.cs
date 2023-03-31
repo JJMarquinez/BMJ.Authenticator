@@ -1,4 +1,4 @@
-﻿namespace BMJ.Authenticator.Domain.Common;
+﻿namespace BMJ.Authenticator.Domain.Common.Errors;
 
 public class Error
 {

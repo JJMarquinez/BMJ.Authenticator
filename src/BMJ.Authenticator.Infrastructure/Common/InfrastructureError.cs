@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Domain.Common;
+﻿using BMJ.Authenticator.Domain.Common.Errors;
 
 namespace BMJ.Authenticator.Infrastructure.Common;
 
