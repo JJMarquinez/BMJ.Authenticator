@@ -25,12 +25,12 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<Result<List<User>?>> GetAllUserAsync()
         {
-            IEnumerable<ApplicationUser> users = _userManager.Users.AsEnumerable();
+            IEnumerable<ApplicationUser> applicationUsers = _userManager.Users.AsEnumerable();
             List<User> userList= new List<User>();
-            foreach (ApplicationUser user in users)
+            foreach (ApplicationUser applicationUser in applicationUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                userList.Add(user.ToApplicationUser(roles?.ToArray()));
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                userList.Add(applicationUser.ToUser(roles?.ToArray()));
             }
 
             if (userList.Count() == 0)
@@ -45,7 +45,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         {
             ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
             var roles = await _userManager.GetRolesAsync(applicationUser);
-            User user = applicationUser.ToApplicationUser(roles?.ToArray());
+            User user = applicationUser.ToUser(roles?.ToArray());
 
             return user;
         }
@@ -135,14 +135,14 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result<User?>> AuthenticateMemberAsync(string userName, string password)
         {
             Result<User?> result = Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
-            ApplicationUser? user = await _userManager.FindByNameAsync(userName);
-            if (user is not null)
+            ApplicationUser? applicationUser = await _userManager.FindByNameAsync(userName);
+            if (applicationUser is not null)
             {
-                bool isValidPassword = await _userManager.CheckPasswordAsync(user, password);
+                bool isValidPassword = await _userManager.CheckPasswordAsync(applicationUser, password);
                 if (isValidPassword)
                 {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    result = user.ToApplicationUser(roles?.ToArray());
+                    var roles = await _userManager.GetRolesAsync(applicationUser);
+                    result = applicationUser.ToUser(roles?.ToArray());
                 }
                 else
                     _authLogger.Warning<string>("The password ({password}) doesn't match with any user", password);

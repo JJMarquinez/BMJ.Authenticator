@@ -5,7 +5,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 {
     public static class ApplicationUserExtensions
     {
-        public static User ToApplicationUser(this ApplicationUser applicationUser, string[]? roles)
+        public static User ToUser(this ApplicationUser applicationUser, string[]? roles)
             => User.Builder()
             .WithId(applicationUser.Id)
             .WithName(applicationUser.UserName!)
