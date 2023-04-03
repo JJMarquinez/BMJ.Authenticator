@@ -41,5 +41,6 @@
     <xunit>2.4.2</xunit>
     <xunitrunnervisualstudio>2.4.5</xunitrunnervisualstudio>
     <coverletcollector>3.1.2</coverletcollector>
+    <Moq>4.18.4</Moq>
   </PropertyGroup>
 </Project>
