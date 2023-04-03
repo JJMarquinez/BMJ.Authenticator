@@ -138,4 +138,20 @@ public class ResultTests
         var result = (Result<Guid>)guid;
         Assert.True(guid.Equals(result.GetValue()));
     }
+
+    [Fact]
+    public void ShouldResultValueNotToBeNullGivenSuccessResult()
+    {
+        string guid = Guid.NewGuid().ToString();
+        Result<string> result = Result.Success(guid);
+        Assert.NotNull(result.GetValue());
+    }
+
+    [Fact]
+    public void ShouldResultValueBeNullGivenFailureResult()
+    {
+        string guid = Guid.NewGuid().ToString();
+        Result<string?> result = Result.Failure<string?>(_error);
+        Assert.Null(result.GetValue());
+    }
 }
