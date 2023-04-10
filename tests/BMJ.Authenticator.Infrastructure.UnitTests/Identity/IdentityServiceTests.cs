@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
+using BMJ.Authenticator.Infrastructure.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Moq;
@@ -12,19 +13,24 @@ public class IdentityServiceTests
 {
     Mock<IAuthLogger> _authLogger;
     Mock<UserManager<ApplicationUser>> _userManager;
-    private List<ApplicationUser> _users;
+    List<ApplicationUser> _users;
+    List<ApplicationUser> _noUsers;
+    List<string> _roles;
     public IdentityServiceTests()
     {
+        _noUsers= new List<ApplicationUser>();
         _users = new List<ApplicationUser>()
          {
               new ApplicationUser() 
               {
+                  Id = "98ac978e-da91-4932-a4b4-7c703e98efc3",
                   UserName = "Ven",
                   Email = "ven@authenticator.com",
                   PhoneNumber = "111-222-3333",
                   PasswordHash = "#553zP1k"
               }
         };
+        _roles = new List<string>() { "Administrator", "Standard" };
         _authLogger = new();
         _userManager = MockUserManager(_users);
     }
@@ -45,9 +51,9 @@ public class IdentityServiceTests
 
 
     [Fact]
-    public async void ShouldGetAllUsers()
+    public async void ShouldGetAllUse()
     {
-        _userManager.Setup(u => u.Users).Returns(_users.AsQueryable());
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
 
         Result<List<User>?> result = await _identityService.GetAllUserAsync();
@@ -57,12 +63,160 @@ public class IdentityServiceTests
         Assert.Collection(result.GetValue()!,
             user => 
             {
-                Assert.NotNull(user.GetId());
+                Assert.Equal("98ac978e-da91-4932-a4b4-7c703e98efc3", user.GetId());
                 Assert.Equal("Ven", user.GetUserName());
                 Assert.Equal("ven@authenticator.com", user.GetEmail());
                 Assert.Equal("111-222-3333", user.GetPhoneNumber()!);
                 Assert.Equal("#553zP1k", user.GetPasswordHash());
                 Assert.Null(user.GetRoles());
             });
+    }
+
+    [Fact]
+    public async void ShouldGetAllUsersWithRoles()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
+        _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<List<User>?> result = await _identityService.GetAllUserAsync();
+
+        Assert.True(result.IsSuccess());
+        Assert.Single(result.GetValue()!);
+        Assert.Collection(result.GetValue()!,
+            user =>
+            {
+                Assert.Equal("98ac978e-da91-4932-a4b4-7c703e98efc3", user.GetId());
+                Assert.Equal("Ven", user.GetUserName());
+                Assert.Equal("ven@authenticator.com", user.GetEmail());
+                Assert.Equal("111-222-3333", user.GetPhoneNumber()!);
+                Assert.Equal("#553zP1k", user.GetPasswordHash());
+                Assert.Equal(_roles, user.GetRoles()!);
+            });
+    }
+
+    [Fact]
+    public async void ShouldNotGetAnyUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_noUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<List<User>?> result = await _identityService.GetAllUserAsync();
+
+        Assert.True(result.IsFailure());
+        Assert.Null(result.GetValue());
+        Assert.Equal(InfrastructureError.Identity.ItDoesNotExistAnyUser, result.GetError());
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentNullExceptionGivenAUserWithoutUserName()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>() 
+        {
+            new ApplicationUser()
+            {
+                Email = "ven@authenticator.com",
+                PhoneNumber = "111-222-3333",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentExceptionGivenAUserWithEmptyUserName()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
+        {
+            new ApplicationUser()
+            {
+                UserName = string.Empty,
+                Email = "ven@authenticator.com",
+                PhoneNumber = "111-222-3333",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentNullExceptionGivenAUserWithoutEmail()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
+        {
+            new ApplicationUser()
+            {
+                UserName = "Ven",
+                PhoneNumber = "111-222-3333",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentNullException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentExceptionGivenAUserWithEmptyEmail()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
+        {
+            new ApplicationUser()
+            {
+                UserName = "Ven",
+                Email = string.Empty,
+                PhoneNumber = "111-222-3333",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentExceptionGivenAUserWithInvalidEmail()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
+        {
+            new ApplicationUser()
+            {
+                UserName = "Ven",
+                Email = "ven.auth.com",
+                PhoneNumber = "111-222-3333",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentExceptionGivenAUserWithInvalidPhone()
+    {
+        List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
+        {
+            new ApplicationUser()
+            {
+                UserName = "Ven",
+                Email = "ven@authenticator.com",
+                PhoneNumber = "673921485",
+                PasswordHash = "#553zP1k"
+            }
+        };
+        _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        await Assert.ThrowsAsync<ArgumentException>(_identityService.GetAllUserAsync);
     }
 }

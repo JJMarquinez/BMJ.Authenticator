@@ -42,7 +42,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Domain.Un
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{DD0A5BFB-F9A3-4657-BD53-D7493B1134C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Infrastructure.UnitTests", "tests\BMJ.Authenticator.Infrastructure.UnitTests\BMJ.Authenticator.Infrastructure.UnitTests.csproj", "{9BF146E4-A865-4C1E-B9E6-F33B931067EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Infrastructure.UnitTests", "tests\BMJ.Authenticator.Infrastructure.UnitTests\BMJ.Authenticator.Infrastructure.UnitTests.csproj", "{9BF146E4-A865-4C1E-B9E6-F33B931067EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InterfaceAdapters", "InterfaceAdapters", "{8BC110B9-E313-425F-AAF3-1A2A76E7F118}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,7 +96,8 @@ Global
 		{9D2E5A0D-946B-4ED1-83EC-01B932B01DDF} = {404DDA6F-8B10-4A3D-8082-F2D4F4C1971F}
 		{5B7FCD49-8F39-4047-8FCF-C41CB093D6AE} = {DD0A5BFB-F9A3-4657-BD53-D7493B1134C1}
 		{DD0A5BFB-F9A3-4657-BD53-D7493B1134C1} = {B52B1953-212E-40B9-B8D4-135FFD03BB24}
-		{9BF146E4-A865-4C1E-B9E6-F33B931067EA} = {DD0A5BFB-F9A3-4657-BD53-D7493B1134C1}
+		{9BF146E4-A865-4C1E-B9E6-F33B931067EA} = {8BC110B9-E313-425F-AAF3-1A2A76E7F118}
+		{8BC110B9-E313-425F-AAF3-1A2A76E7F118} = {B52B1953-212E-40B9-B8D4-135FFD03BB24}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}
