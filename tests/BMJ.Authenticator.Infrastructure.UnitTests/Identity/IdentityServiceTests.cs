@@ -6,6 +6,7 @@ using BMJ.Authenticator.Infrastructure.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
+using MockQueryable.Moq;
 using Moq;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
@@ -17,13 +18,15 @@ public class IdentityServiceTests
     List<ApplicationUser> _users;
     List<ApplicationUser> _noUsers;
     List<string> _roles;
+    string _userId;
     public IdentityServiceTests()
     {
+        _userId = "98ac978e-da91-4932-a4b4-7c703e98efc3";
         _noUsers = new List<ApplicationUser>();
         _users = new List<ApplicationUser>()
          {
               ApplicationUserBuilder.New()
-            .WithId("98ac978e-da91-4932-a4b4-7c703e98efc3")
+            .WithId(_userId)
             .WithUserName("Ven")
             .WithEmail("ven@authenticator.com")
             .WithPhoneNumber("111-222-3333")
@@ -63,7 +66,7 @@ public class IdentityServiceTests
         Assert.Collection(result.GetValue()!,
             user => 
             {
-                Assert.Equal("98ac978e-da91-4932-a4b4-7c703e98efc3", user.GetId());
+                Assert.Equal(_userId, user.GetId());
                 Assert.Equal("Ven", user.GetUserName());
                 Assert.Equal("ven@authenticator.com", user.GetEmail());
                 Assert.Equal("111-222-3333", user.GetPhoneNumber()!);
@@ -86,7 +89,7 @@ public class IdentityServiceTests
         Assert.Collection(result.GetValue()!,
             user =>
             {
-                Assert.Equal("98ac978e-da91-4932-a4b4-7c703e98efc3", user.GetId());
+                Assert.Equal(_userId, user.GetId());
                 Assert.Equal("Ven", user.GetUserName());
                 Assert.Equal("ven@authenticator.com", user.GetEmail());
                 Assert.Equal("111-222-3333", user.GetPhoneNumber()!);
@@ -207,5 +210,43 @@ public class IdentityServiceTests
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
 
         await Assert.ThrowsAsync<ArgumentException>(_identityService.GetAllUserAsync);
+    }
+
+    [Fact]
+    public async void ShouldGetUserById()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<User?> result = await _identityService.GetUserByIdAsync(_userId);
+
+        Assert.True(result.IsSuccess());
+        Assert.NotNull(result.GetValue());
+        Assert.Equal(_userId, result.GetValue()!.GetId());
+        Assert.Equal("Ven", result.GetValue()!.GetUserName());
+        Assert.Equal("ven@authenticator.com", result.GetValue()!.GetEmail());
+        Assert.Equal("111-222-3333", result.GetValue()!.GetPhoneNumber()!);
+        Assert.Equal("#553zP1k", result.GetValue()!.GetPasswordHash());
+        Assert.Null(result.GetValue()!.GetRoles());
+    }
+
+    [Fact]
+    public async void ShouldGetUserByIdWithRole()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<User?> result = await _identityService.GetUserByIdAsync(_userId);
+
+        Assert.True(result.IsSuccess());
+        Assert.NotNull(result.GetValue());
+        Assert.Equal(_userId, result.GetValue()!.GetId());
+        Assert.Equal("Ven", result.GetValue()!.GetUserName());
+        Assert.Equal("ven@authenticator.com", result.GetValue()!.GetEmail());
+        Assert.Equal("111-222-3333", result.GetValue()!.GetPhoneNumber()!);
+        Assert.Equal("#553zP1k", result.GetValue()!.GetPasswordHash());
+        Assert.Equal(_roles, result.GetValue()!.GetRoles()!);
+
     }
 }
