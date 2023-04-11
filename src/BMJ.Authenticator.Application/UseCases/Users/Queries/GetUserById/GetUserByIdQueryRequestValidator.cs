@@ -3,11 +3,11 @@ using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
-public class GetUserByNameQueryRequestValidator : AbstractValidator<GetUserByIdQueryRequest>
+public class GetUserByIdQueryRequestValidator : AbstractValidator<GetUserByIdQueryRequest>
 {
     private readonly IIdentityService _identityService;
 
-    public GetUserByNameQueryRequestValidator(IIdentityService identityService)
+    public GetUserByIdQueryRequestValidator(IIdentityService identityService)
     {
         _identityService = identityService;
         RuleFor(v => v.Id)
