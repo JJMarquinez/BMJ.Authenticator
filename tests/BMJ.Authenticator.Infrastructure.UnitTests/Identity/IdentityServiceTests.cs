@@ -4,6 +4,7 @@ using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
 using Moq;
 
@@ -18,17 +19,16 @@ public class IdentityServiceTests
     List<string> _roles;
     public IdentityServiceTests()
     {
-        _noUsers= new List<ApplicationUser>();
+        _noUsers = new List<ApplicationUser>();
         _users = new List<ApplicationUser>()
          {
-              new ApplicationUser() 
-              {
-                  Id = "98ac978e-da91-4932-a4b4-7c703e98efc3",
-                  UserName = "Ven",
-                  Email = "ven@authenticator.com",
-                  PhoneNumber = "111-222-3333",
-                  PasswordHash = "#553zP1k"
-              }
+              ApplicationUserBuilder.New()
+            .WithId("98ac978e-da91-4932-a4b4-7c703e98efc3")
+            .WithUserName("Ven")
+            .WithEmail("ven@authenticator.com")
+            .WithPhoneNumber("111-222-3333")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _roles = new List<string>() { "Administrator", "Standard" };
         _authLogger = new();
@@ -113,12 +113,10 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>() 
         {
-            new ApplicationUser()
-            {
-                Email = "ven@authenticator.com",
-                PhoneNumber = "111-222-3333",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithEmail("ven@authenticator.com")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -131,13 +129,11 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            new ApplicationUser()
-            {
-                UserName = string.Empty,
-                Email = "ven@authenticator.com",
-                PhoneNumber = "111-222-3333",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithUserName(string.Empty)
+            .WithEmail("ven@authenticator.com")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -150,12 +146,10 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            new ApplicationUser()
-            {
-                UserName = "Ven",
-                PhoneNumber = "111-222-3333",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithUserName("Ven")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -168,13 +162,11 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            new ApplicationUser()
-            {
-                UserName = "Ven",
-                Email = string.Empty,
-                PhoneNumber = "111-222-3333",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithUserName("Ven")
+            .WithEmail(string.Empty)
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -187,13 +179,11 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            new ApplicationUser()
-            {
-                UserName = "Ven",
-                Email = "ven.auth.com",
-                PhoneNumber = "111-222-3333",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithUserName("Ven")
+            .WithEmail("ven.auth.com")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -206,13 +196,12 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            new ApplicationUser()
-            {
-                UserName = "Ven",
-                Email = "ven@authenticator.com",
-                PhoneNumber = "673921485",
-                PasswordHash = "#553zP1k"
-            }
+            ApplicationUserBuilder.New()
+            .WithUserName("Ven")
+            .WithEmail("ven@authenticator.com")
+            .WithPhoneNumber("673921485")
+            .WithPasswordHash("#553zP1k")
+            .Build()
         };
         _userManager.Setup(userManager => userManager.Users).Returns(_notValidUsers.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
