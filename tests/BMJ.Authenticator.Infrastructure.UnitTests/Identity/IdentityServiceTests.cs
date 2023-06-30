@@ -35,10 +35,10 @@ public class IdentityServiceTests
         };
         _roles = new List<string>() { "Administrator", "Standard" };
         _authLogger = new();
-        _userManager = MockUserManager(_users);
+        _userManager = MockUserManager<ApplicationUser>();
     }
 
-    public static Mock<UserManager<TUser>> MockUserManager<TUser>(List<TUser> ls) where TUser : class
+    public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
     {
         var store = new Mock<IUserStore<TUser>>();
         var mgr = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
@@ -46,7 +46,6 @@ public class IdentityServiceTests
         mgr.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
 
         mgr.Setup(x => x.DeleteAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
-        mgr.Setup(x => x.CreateAsync(It.IsAny<TUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success).Callback<TUser, string>((x, y) => ls.Add(x));
         mgr.Setup(x => x.UpdateAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
 
         return mgr;
@@ -109,6 +108,7 @@ public class IdentityServiceTests
         Assert.True(result.IsFailure());
         Assert.Null(result.GetValue());
         Assert.Equal(InfrastructureError.Identity.ItDoesNotExistAnyUser, result.GetError());
+        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
@@ -247,6 +247,30 @@ public class IdentityServiceTests
         Assert.Equal("111-222-3333", result.GetValue()!.GetPhoneNumber()!);
         Assert.Equal("#553zP1k", result.GetValue()!.GetPasswordHash());
         Assert.Equal(_roles, result.GetValue()!.GetRoles()!);
+    }
 
+    [Fact]
+    public async void ShouldCreateUser()
+    {
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<string?> result = await _identityService.CreateUserAsync("Jhon", "Jhon1234!", "jhon@auth.com", "67543218");
+
+        Assert.True(result.IsSuccess());
+        Assert.NotNull(result.GetValue());
+    }
+
+    [Fact]
+    public async void ShouldNotCreateUser()
+    {
+        _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<string?> result = await _identityService.CreateUserAsync("Jhon", "1234", "jhonauth.com", "67543218");
+
+        Assert.True(result.IsFailure());
+        Assert.Equal(result.GetError(), InfrastructureError.Identity.UserWasNotCreated);
+        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 }
