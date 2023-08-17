@@ -385,7 +385,7 @@ public class IdentityServiceTests
         Result<User?> result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
         Assert.True(result.IsFailure());
-        _authLogger.Verify(m => m.Warning(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
@@ -399,6 +399,6 @@ public class IdentityServiceTests
         Result<User?> result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
         Assert.True(result.IsFailure());
-        _authLogger.Verify(m => m.Warning(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 }

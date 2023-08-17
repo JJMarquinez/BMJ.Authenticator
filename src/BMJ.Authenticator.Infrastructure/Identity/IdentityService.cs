@@ -115,19 +115,14 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         {
             Result<User?> result = Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
             ApplicationUser? applicationUser = await _userManager.FindByNameAsync(userName);
-            if (applicationUser is not null)
-            {
-                bool isValidPassword = await _userManager.CheckPasswordAsync(applicationUser, password);
-                if (isValidPassword)
-                {
-                    var roles = await _userManager.GetRolesAsync(applicationUser);
-                    result = applicationUser.ToUser(roles?.ToArray());
-                }
-                else
-                    _authLogger.Warning<string>("The password ({password}) doesn't match with any user", password);
-            }
+
+            if (applicationUser == default || !await _userManager.CheckPasswordAsync(applicationUser, password))
+                _authLogger.Warning("Invalid username or password!");
             else
-                _authLogger.Warning<string>("The userName ({userName}) doesn't match with any user", userName);
+            {
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                result = applicationUser.ToUser(roles?.ToArray());
+            }
 
             return result;
         }
