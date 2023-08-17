@@ -43,7 +43,6 @@ public class IdentityServiceTests
         var userManager = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
         userManager.Object.UserValidators.Add(new UserValidator<TUser>());
         userManager.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
-        userManager.Setup(x => x.DeleteAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
         return userManager;
     }
 
@@ -302,15 +301,40 @@ public class IdentityServiceTests
         Result result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
 
         Assert.True(result.IsFailure());
+        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 
     [Fact]
     public void ShouldThrowNullReferenceExceptionWhenUpdateUserAsyncIsCalledGivenNonexistentUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
 
         _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.UpdateUserAsync(Guid.NewGuid().ToString(), "Jhon", "jhon@auth.com", "67543218"));
+    }
+
+    [Fact]
+    public async void ShouldDeleteUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result result = await _identityService.DeleteUserAsync(_userId);
+
+        Assert.True(result.IsSuccess());
+    }
+
+    [Fact]
+    public async void ShouldNotDeleteUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result result = await _identityService.DeleteUserAsync(_userId);
+
+        Assert.True(result.IsFailure());
+        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 }

@@ -98,19 +98,14 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result> DeleteUserAsync(string userId)
         {
             ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
-            return await DeleteUserAsync(user); 
-        }
-
-        private async Task<Result> DeleteUserAsync(ApplicationUser user)
-        {
             IdentityResult identityResult = await _userManager.DeleteAsync(user);
 
-            if(!identityResult.Succeeded) 
+            if (!identityResult.Succeeded)
                 _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
                     "The following errors {@Errors} don't allow delete the user {@user}",
-                    identityResult.Errors, 
+                    identityResult.Errors,
                     user);
-                
+
             return identityResult.Succeeded
                 ? Result.Success()
                 : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
