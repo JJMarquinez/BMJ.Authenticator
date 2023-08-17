@@ -282,4 +282,16 @@ public class IdentityServiceTests
 
         Assert.True(result.IsSuccess());
     }
+
+    [Fact]
+    public async void ShouldNotUpdateUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
+
+        Assert.True(result.IsFailure());
+    }
 }
