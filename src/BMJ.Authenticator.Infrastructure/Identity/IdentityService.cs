@@ -72,13 +72,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         {
             Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
 
-            ApplicationUser? applicationUser = await GetUserByIdInstrumentedAsync(userId);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
             applicationUser.UserName = userName;
             applicationUser.Email = email;
             applicationUser.PhoneNumber = phoneNumber;
 
-            IdentityResult identityResult = await UpdateUserIntrumentedAsync(applicationUser);
+            IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
 
             if (identityResult.Succeeded)
                 result = Result.Success();
@@ -158,29 +158,5 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public bool IsUserIdAssigned(string userId)
             => _userManager.Users.Any(u => u.Id == userId);
-
-        private async ValueTask<ApplicationUser?> GetUserByIdInstrumentedAsync(string UserId)
-        {
-            using Activity? identityGetUserById = Telemetry.Source.StartActivity("GetUserById", ActivityKind.Internal);
-            identityGetUserById.DisplayName = "Identity - GetUserById";
-
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
-
-            identityGetUserById.SetTag("UserId", applicationUser.Id);
-
-            return applicationUser;
-        }
-
-        private async ValueTask<IdentityResult> UpdateUserIntrumentedAsync(ApplicationUser? user)
-        {
-            using Activity? identityUpdateUser = Telemetry.Source.StartActivity("UpdateUser", ActivityKind.Internal);
-            identityUpdateUser.DisplayName = "Identity - UpdateUser";
-
-            IdentityResult identityResult = await _userManager.UpdateAsync(user);
-
-            identityUpdateUser.SetTag("Succeeded", identityResult.Succeeded);
-
-            return identityResult;
-        }
     }
 }
