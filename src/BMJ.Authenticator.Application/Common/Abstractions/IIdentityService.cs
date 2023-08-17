@@ -11,8 +11,6 @@ namespace BMJ.Authenticator.Application.Common.Interfaces
 
         Task<Result<User?>> AuthenticateMemberAsync(string userName, string password);
 
-        Task<Result<bool>> IsInRoleAsync(string userId, string role);
-
         Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber);
 
         Task<Result> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber);

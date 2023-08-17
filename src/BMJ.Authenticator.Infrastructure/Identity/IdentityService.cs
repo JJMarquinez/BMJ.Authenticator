@@ -1,12 +1,10 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Instrumentation;
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -91,18 +89,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             }
 
             return result;
-        }
-
-        public async Task<Result<bool>> IsInRoleAsync(string userId, string role)
-        {
-            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
-
-            if (user is null)
-                _authLogger.Warning<string>("The user with id {userId} wasn't found, it is not possible to check what roles he has", userId);
-
-            return user is null
-                ? Result.Failure<bool>(InfrastructureError.Identity.UserWasNotFound)
-                : await _userManager.IsInRoleAsync(user, role);
         }
 
         public async Task<Result> DeleteUserAsync(string userId)
