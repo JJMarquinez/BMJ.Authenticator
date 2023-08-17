@@ -294,4 +294,14 @@ public class IdentityServiceTests
 
         Assert.True(result.IsFailure());
     }
+
+    [Fact]
+    public void ShouldThrowNullReferenceExceptionGivenNonexistentUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.UpdateUserAsync(Guid.NewGuid().ToString(), "Jhon", "jhon@auth.com", "67543218"));
+    }
 }
