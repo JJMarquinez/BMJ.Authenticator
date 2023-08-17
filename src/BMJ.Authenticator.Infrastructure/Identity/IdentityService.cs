@@ -84,16 +84,10 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 result = Result.Success();
             else
             {
-                using Activity? loggingActivity = Telemetry.Source.StartActivity("Logging", System.Diagnostics.ActivityKind.Internal);
-                loggingActivity.DisplayName = "Logging errors got from Identity";
-
                 _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
                     "The following errors {@Errors} don't allow delete the user {@applicationUser}",
                     identityResult.Errors,
                     applicationUser);
-
-                loggingActivity.SetTag("Error", identityResult.Errors);
-                loggingActivity.Stop();
             }
 
             return result;
