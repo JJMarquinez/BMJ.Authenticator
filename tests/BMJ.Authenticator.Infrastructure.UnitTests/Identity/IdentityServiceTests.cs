@@ -8,6 +8,7 @@ using BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
 using Moq;
+using System.Diagnostics;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
@@ -16,16 +17,15 @@ public class IdentityServiceTests
     Mock<IAuthLogger> _authLogger;
     Mock<UserManager<ApplicationUser>> _userManager;
     List<ApplicationUser> _users;
-    List<ApplicationUser> _noUsers;
     List<string> _roles;
     string _userId;
+
     public IdentityServiceTests()
     {
         _userId = "98ac978e-da91-4932-a4b4-7c703e98efc3";
-        _noUsers = new List<ApplicationUser>();
         _users = new List<ApplicationUser>()
          {
-              ApplicationUserBuilder.New()
+            ApplicationUserBuilder.New()
             .WithId(_userId)
             .WithUserName("Ven")
             .WithEmail("ven@authenticator.com")
@@ -41,19 +41,16 @@ public class IdentityServiceTests
     public static Mock<UserManager<TUser>> MockUserManager<TUser>() where TUser : class
     {
         var store = new Mock<IUserStore<TUser>>();
-        var mgr = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
-        mgr.Object.UserValidators.Add(new UserValidator<TUser>());
-        mgr.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
-
-        mgr.Setup(x => x.DeleteAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
-        mgr.Setup(x => x.UpdateAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
-
-        return mgr;
+        var userManager = new Mock<UserManager<TUser>>(store.Object, null, null, null, null, null, null, null, null);
+        userManager.Object.UserValidators.Add(new UserValidator<TUser>());
+        userManager.Object.PasswordValidators.Add(new PasswordValidator<TUser>());
+        userManager.Setup(x => x.DeleteAsync(It.IsAny<TUser>())).ReturnsAsync(IdentityResult.Success);
+        return userManager;
     }
 
 
     [Fact]
-    public async void ShouldGetAllUse()
+    public async void ShouldGetAllUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
@@ -100,7 +97,7 @@ public class IdentityServiceTests
     [Fact]
     public async void ShouldNotGetAnyUser()
     {
-        _userManager.Setup(userManager => userManager.Users).Returns(_noUsers.AsQueryable());
+        _userManager.Setup(userManager => userManager.Users).Returns(new List<ApplicationUser>().AsQueryable());
         IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
 
         Result<List<User>?> result = await _identityService.GetAllUserAsync();
@@ -272,5 +269,17 @@ public class IdentityServiceTests
         Assert.True(result.IsFailure());
         Assert.Equal(result.GetError(), InfrastructureError.Identity.UserWasNotCreated);
         _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
+    }
+
+    [Fact]
+    public async void ShouldUpdateUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
+
+        Assert.True(result.IsSuccess());
     }
 }
