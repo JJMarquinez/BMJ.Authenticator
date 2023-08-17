@@ -1,8 +1,6 @@
-﻿using BMJ.Authenticator.Infrastructure.Identity;
+﻿namespace BMJ.Authenticator.Infrastructure.Identity.Builders;
 
-namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
-
-internal class ApplicationUserBuilder : IApplicationUserBuilder
+public class ApplicationUserBuilder : IApplicationUserBuilder
 {
     private ApplicationUser _applicationUser = new ApplicationUser();
     private ApplicationUserBuilder() { }

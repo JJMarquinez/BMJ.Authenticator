@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 

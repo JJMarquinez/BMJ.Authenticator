@@ -3,6 +3,7 @@ using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,8 +52,11 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
             Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotCreated); 
-            ApplicationUser user = new ApplicationUser { UserName = userName, Email = email, PhoneNumber = phoneNumber };
-
+            ApplicationUser user = ApplicationUserBuilder.New()
+                .WithUserName(userName)
+                .WithEmail(email)
+                .WithPhoneNumber(phoneNumber)
+                .Build();
 
             IdentityResult identityResult = await _userManager.CreateAsync(user, password);
             if (identityResult.Succeeded)

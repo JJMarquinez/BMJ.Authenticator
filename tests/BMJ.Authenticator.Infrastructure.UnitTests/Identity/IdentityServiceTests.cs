@@ -4,11 +4,10 @@ using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.UnitTests.Identity.Builders;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
 using Moq;
-using System.Diagnostics;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
@@ -247,6 +246,16 @@ public class IdentityServiceTests
     }
 
     [Fact]
+    public void ShouldThrowNullReferenceExceptionWhenGetUserByIdAsyncIsCalledGivenNonexistentUser()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        _ = Assert.ThrowsAsync<NullReferenceException>(async() => await _identityService.GetUserByIdAsync(Guid.NewGuid().ToString()));
+    }
+
+    [Fact]
     public async void ShouldCreateUser()
     {
         _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
@@ -296,7 +305,7 @@ public class IdentityServiceTests
     }
 
     [Fact]
-    public void ShouldThrowNullReferenceExceptionGivenNonexistentUser()
+    public void ShouldThrowNullReferenceExceptionWhenUpdateUserAsyncIsCalledGivenNonexistentUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
