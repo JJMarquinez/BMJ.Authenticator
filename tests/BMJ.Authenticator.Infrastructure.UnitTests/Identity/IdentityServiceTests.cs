@@ -337,4 +337,24 @@ public class IdentityServiceTests
         Assert.True(result.IsFailure());
         _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
+
+    [Fact]
+    public async void ShouldAuthenticateUser()
+    {
+        _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(_users.FirstOrDefault());
+        _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(true);
+        _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
+
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        Result<User?> result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
+
+        Assert.True(result.IsSuccess());
+        Assert.Equal(_userId, result.GetValue()!.GetId());
+        Assert.Equal("Ven", result.GetValue()!.GetUserName());
+        Assert.Equal("ven@authenticator.com", result.GetValue()!.GetEmail());
+        Assert.Equal("111-222-3333", result.GetValue()!.GetPhoneNumber()!);
+        Assert.Equal("#553zP1k", result.GetValue()!.GetPasswordHash());
+        Assert.Equal(_roles, result.GetValue()!.GetRoles()!);
+    }
 }
