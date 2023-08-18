@@ -54,7 +54,7 @@ services:
       SA_PASSWORD: "Password123"
       MSSQL_PID: "Express"
     ports:
-      - "1434:1433"
+      - "1435:1433"
 
 volumes:
   data01:
