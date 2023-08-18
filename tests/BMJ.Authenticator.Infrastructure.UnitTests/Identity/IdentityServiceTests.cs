@@ -423,4 +423,37 @@ public class IdentityServiceTests
 
         Assert.True(result);
     }
+
+    [Fact]
+    public void ShouldFindUserId()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        bool result = _identityService.IsUserIdAssigned(_userId);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void ShouldNotFindUserId()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        bool result = _identityService.IsUserIdAssigned(Guid.NewGuid().ToString());
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void ShouldNotFindUserId2()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        bool result = _identityService.IsUserIdAssigned(null!);
+
+        Assert.False(result);
+    }
 }
