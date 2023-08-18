@@ -1,13 +1,10 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Instrumentation;
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Infrastructure.Common;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -18,8 +15,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IUserClaimsPrincipalFactory<ApplicationUser> userClaimsPrincipalFactory,
-            IAuthorizationService authorizationService,
             IAuthLogger authLogger)
         {
             _userManager = userManager;
@@ -28,12 +23,12 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<Result<List<User>?>> GetAllUserAsync()
         {
-            IEnumerable<ApplicationUser> users = _userManager.Users.AsEnumerable();
+            IEnumerable<ApplicationUser> applicationUsers = _userManager.Users.AsEnumerable();
             List<User> userList= new List<User>();
-            foreach (ApplicationUser user in users)
+            foreach (ApplicationUser applicationUser in applicationUsers)
             {
-                var roles = await _userManager.GetRolesAsync(user);
-                userList.Add(user.ToApplicationUser(roles?.ToArray()));
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                userList.Add(applicationUser.ToUser(roles?.ToArray()));
             }
 
             if (userList.Count() == 0)
@@ -48,7 +43,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         {
             ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
             var roles = await _userManager.GetRolesAsync(applicationUser);
-            User user = applicationUser.ToApplicationUser(roles?.ToArray());
+            User user = applicationUser.ToUser(roles?.ToArray());
 
             return user;
         }
@@ -56,8 +51,11 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
             Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotCreated); 
-            ApplicationUser user = new ApplicationUser { UserName = userName, Email = email, PhoneNumber = phoneNumber };
-
+            ApplicationUser user = ApplicationUser.Builder()
+                .WithUserName(userName)
+                .WithEmail(email)
+                .WithPhoneNumber(phoneNumber)
+                .Build();
 
             IdentityResult identityResult = await _userManager.CreateAsync(user, password);
             if (identityResult.Succeeded)
@@ -75,61 +73,38 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         {
             Result result = Result.Failure(InfrastructureError.Identity.UserWasNotUpdated);
 
-            ApplicationUser? applicationUser = await GetUserByIdInstrumentedAsync(userId);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
             applicationUser.UserName = userName;
             applicationUser.Email = email;
             applicationUser.PhoneNumber = phoneNumber;
 
-            IdentityResult identityResult = await UpdateUserIntrumentedAsync(applicationUser);
+            IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
 
             if (identityResult.Succeeded)
                 result = Result.Success();
             else
             {
-                using Activity? loggingActivity = Telemetry.Source.StartActivity("Logging", System.Diagnostics.ActivityKind.Internal);
-                loggingActivity.DisplayName = "Logging errors got from Identity";
-
                 _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
                     "The following errors {@Errors} don't allow delete the user {@applicationUser}",
                     identityResult.Errors,
                     applicationUser);
-
-                loggingActivity.SetTag("Error", identityResult.Errors);
-                loggingActivity.Stop();
             }
 
             return result;
         }
 
-        public async Task<Result<bool>> IsInRoleAsync(string userId, string role)
-        {
-            ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
-
-            if (user is null)
-                _authLogger.Warning<string>("The user with id {userId} wasn't found, it is not possible to check what roles he has", userId);
-
-            return user is null
-                ? Result.Failure<bool>(InfrastructureError.Identity.UserWasNotFound)
-                : await _userManager.IsInRoleAsync(user, role);
-        }
-
         public async Task<Result> DeleteUserAsync(string userId)
         {
             ApplicationUser? user = await _userManager.Users.SingleOrDefaultAsync(u => u.Id == userId);
-            return await DeleteUserAsync(user); 
-        }
-
-        private async Task<Result> DeleteUserAsync(ApplicationUser user)
-        {
             IdentityResult identityResult = await _userManager.DeleteAsync(user);
 
-            if(!identityResult.Succeeded) 
+            if (!identityResult.Succeeded)
                 _authLogger.Error<IEnumerable<IdentityError>, ApplicationUser>(
                     "The following errors {@Errors} don't allow delete the user {@user}",
-                    identityResult.Errors, 
+                    identityResult.Errors,
                     user);
-                
+
             return identityResult.Succeeded
                 ? Result.Success()
                 : Result.Failure(InfrastructureError.Identity.UserWasNotDeleted);
@@ -138,20 +113,15 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result<User?>> AuthenticateMemberAsync(string userName, string password)
         {
             Result<User?> result = Result.Failure<User?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
-            ApplicationUser? user = await _userManager.FindByNameAsync(userName);
-            if (user is not null)
-            {
-                bool isValidPassword = await _userManager.CheckPasswordAsync(user, password);
-                if (isValidPassword)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    result = user.ToApplicationUser(roles?.ToArray());
-                }
-                else
-                    _authLogger.Warning<string>("The password ({password}) doesn't match with any user", password);
-            }
+            ApplicationUser? applicationUser = await _userManager.FindByNameAsync(userName);
+
+            if (applicationUser == default || !await _userManager.CheckPasswordAsync(applicationUser, password))
+                _authLogger.Warning("Invalid username or password!");
             else
-                _authLogger.Warning<string>("The userName ({userName}) doesn't match with any user", userName);
+            {
+                var roles = await _userManager.GetRolesAsync(applicationUser);
+                result = applicationUser.ToUser(roles?.ToArray());
+            }
 
             return result;
         }
@@ -161,29 +131,5 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public bool IsUserIdAssigned(string userId)
             => _userManager.Users.Any(u => u.Id == userId);
-
-        private async ValueTask<ApplicationUser?> GetUserByIdInstrumentedAsync(string UserId)
-        {
-            using Activity? identityGetUserById = Telemetry.Source.StartActivity("GetUserById", ActivityKind.Internal);
-            identityGetUserById.DisplayName = "Identity - GetUserById";
-
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == UserId);
-
-            identityGetUserById.SetTag("UserId", applicationUser.Id);
-
-            return applicationUser;
-        }
-
-        private async ValueTask<IdentityResult> UpdateUserIntrumentedAsync(ApplicationUser? user)
-        {
-            using Activity? identityUpdateUser = Telemetry.Source.StartActivity("UpdateUser", ActivityKind.Internal);
-            identityUpdateUser.DisplayName = "Identity - UpdateUser";
-
-            IdentityResult identityResult = await _userManager.UpdateAsync(user);
-
-            identityUpdateUser.SetTag("Succeeded", identityResult.Succeeded);
-
-            return identityResult;
-        }
     }
 }

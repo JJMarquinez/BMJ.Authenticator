@@ -11,7 +11,7 @@ namespace BMJ.Authenticator.Infrastructure.Persistence
     public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
     {
         public ApplicationDbContext(
-            DbContextOptions<ApplicationDbContext> options, 
+            DbContextOptions<ApplicationDbContext> options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) 
             : base(options, operationalStoreOptions)
         {

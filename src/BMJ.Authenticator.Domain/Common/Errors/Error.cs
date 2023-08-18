@@ -1,4 +1,4 @@
-﻿namespace BMJ.Authenticator.Domain.Common;
+﻿namespace BMJ.Authenticator.Domain.Common.Errors;
 
 public class Error
 {
@@ -24,11 +24,27 @@ public class Error
     public string GetTitle() => _title;
     public string GetDetail() => _detail;
 
-    public int GetHttpStatusCode => _httpStatusCode;
+    public int GetHttpStatusCode() => _httpStatusCode;
 
-    public static Error New(string code, string title, string detail, int httpStatusCode) => new(code, title, detail, httpStatusCode);
+    internal static Error New(string code, string title, string detail, int httpStatusCode) => new(code, title, detail, httpStatusCode);
 
     public static implicit operator string(Error error) => error.GetCode();
 
     public static Error None = new("None", "None", "None", 200);
+
+    public override bool Equals(object? obj)
+    {
+        if (obj == null || obj.GetType() != GetType())
+        {
+            return false;
+        }
+
+        Error other = (Error)obj;
+        return string.Equals(_code, other.GetCode(), StringComparison.Ordinal)
+            && string.Equals(_title, other.GetTitle(), StringComparison.Ordinal)
+            && string.Equals(_detail, other.GetDetail(), StringComparison.Ordinal)
+            && _httpStatusCode == other.GetHttpStatusCode();
+    }
+
+    public static IErrorBuilder Builder() => ErrorBuilder.New();
 }

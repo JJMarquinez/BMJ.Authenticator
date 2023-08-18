@@ -8,13 +8,13 @@ using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
-public class GetUserByNameQueryRequestHandler
+public class GetUserByIdQueryRequestHandler
     : IRequestHandler<GetUserByIdQueryRequest, ResultDto<UserDto?>>
 {
     private readonly IIdentityService _identityService;
     private readonly IMapper _mapper;
 
-    public GetUserByNameQueryRequestHandler(IIdentityService identityService, IMapper mapper)
+    public GetUserByIdQueryRequestHandler(IIdentityService identityService, IMapper mapper)
     {
         _identityService = identityService;
         _mapper = mapper;

@@ -25,7 +25,7 @@ namespace BMJ.Authenticator.Infrastructure.Authentication
                 new (JwtRegisteredClaimNames.Email, user.GetEmail())
             };
             
-            foreach (var role in user.GetRoles())
+            foreach (string role in user.GetRoles() ?? Array.Empty<string>())
                 claims.Add(new Claim(ClaimTypes.Role, role));
             
             

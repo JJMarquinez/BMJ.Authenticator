@@ -47,6 +47,15 @@ services:
       - "16686:16686"
       - "4317:4317"
 
+  sqlserver:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password123"
+      MSSQL_PID: "Express"
+    ports:
+      - "1435:1433"
+
 volumes:
   data01:
     driver: local

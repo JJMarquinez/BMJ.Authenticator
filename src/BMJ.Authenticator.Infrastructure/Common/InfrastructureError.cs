@@ -1,4 +1,5 @@
-﻿using BMJ.Authenticator.Domain.Common;
+﻿using BMJ.Authenticator.Domain.Common.Errors;
+using System.Net;
 
 namespace BMJ.Authenticator.Infrastructure.Common;
 
@@ -10,59 +11,67 @@ public class InfrastructureError
         private static readonly string _codeInvalidOperationPrefix = "Identity.InvalidOperation.";
 
         public static readonly Error UserNameOrPasswordNotValid
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameOrPasswordNotValid)), 
-                "User name or password aren't valid.",
-                "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
-                409);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserNameOrPasswordNotValid)))
+            .WithTitle("User name or password aren't valid.")
+            .WithDetail("The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.")
+            .WithHttpStatusCode(409)
+            .Build();
 
         public static readonly Error UserMustHaveAtLeastOneRole
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserMustHaveAtLeastOneRole)),
-                "The user must has at least one role assigned.",
-                "The user doesn't have any role assigned and must have at least one.",
-                409);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserMustHaveAtLeastOneRole)))
+            .WithTitle("The user must has at least one role assigned.")
+            .WithDetail("The user doesn't have any role assigned and must have at least one.")
+            .WithHttpStatusCode(409)
+            .Build();
 
         public static readonly Error UserWasNotDeleted
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)),
-                "User was not deleted.",
-                "Because of internal error the user wasn't deleted, please contact with user administrator.",
-                409);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotDeleted)))
+            .WithTitle("User was not deleted.")
+            .WithDetail("Because of internal error the user wasn't deleted, please contact with user administrator.")
+            .WithHttpStatusCode(409)
+            .Build();
 
         public static readonly Error UserWasNotFound
-            = Error.New(
-                string.Concat(_codeArgumentPrefix, nameof(UserWasNotFound)),
-                "User was not found.",
-                "Any user isn't found with the data acquired.",
-                404);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeArgumentPrefix, nameof(UserWasNotFound)))
+            .WithTitle("User was not found.")
+            .WithDetail("Any user isn't found with the data acquired.")
+            .WithHttpStatusCode(404)
+            .Build();
 
         public static readonly Error UserWasNotCreated
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotCreated)),
-                "User was not created.",
-                "Because of internal error the user wasn't created, please contact with user administrator.",
-                404);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotCreated)))
+            .WithTitle("User was not created.")
+            .WithDetail("Because of internal error the user wasn't created, please contact with user administrator.")
+            .WithHttpStatusCode(409)
+            .Build();
 
         public static readonly Error ItDoesNotExistAnyUser
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(ItDoesNotExistAnyUser)),
-                "It doesn't exist any user.",
-                "There is no saved users to get",
-                404);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(ItDoesNotExistAnyUser)))
+            .WithTitle("It doesn't exist any user.")
+            .WithDetail("There is no saved users to get.")
+            .WithHttpStatusCode(404)
+            .Build();
 
         public static readonly Error UserNameIsNotAvailable
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserNameIsNotAvailable)),
-                "User name is not available.",
-                "The user name is already in use, please change the user name.",
-                409);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserNameIsNotAvailable)))
+            .WithTitle("User name is not available.")
+            .WithDetail("The user name is already in use, please change the user name.")
+            .WithHttpStatusCode(409)
+            .Build();
 
         public static readonly Error UserWasNotUpdated
-            = Error.New(
-                string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotUpdated)),
-                "User was not updated.",
-                "Because of internal error the user wasn't updated, please contact with user administrator.",
-                409);
+            = Error.Builder()
+            .WithCode(string.Concat(_codeInvalidOperationPrefix, nameof(UserWasNotUpdated)))
+            .WithTitle("User was not updated.")
+            .WithDetail("Because of internal error the user wasn't updated, please contact with user administrator.")
+            .WithHttpStatusCode(409)
+            .Build();
     }
 }

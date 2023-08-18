@@ -12,16 +12,16 @@
     <MicrosoftAspNetCoreMvcVersioning>5.0.0</MicrosoftAspNetCoreMvcVersioning>
     <StackExchangeRedis>2.6.96</StackExchangeRedis>
     <MicrosoftAspNetCoreOpenApi>7.0.2</MicrosoftAspNetCoreOpenApi>
-    <MicrosoftEntityFrameworkCoreTools>7.0.2</MicrosoftEntityFrameworkCoreTools>
+    <MicrosoftEntityFrameworkCoreTools>7.0.4</MicrosoftEntityFrameworkCoreTools>
     <NSwagAspNetCore>13.18.2</NSwagAspNetCore>
     <SerilogAspNetCore>6.1.0</SerilogAspNetCore>
     <SerilogEnrichersEnvironment>2.2.0</SerilogEnrichersEnvironment>
     <SerilogSinksElasticsearch>8.4.1</SerilogSinksElasticsearch>
-    <MicrosoftAspNetCoreApiAuthorizationIdentityServer>7.0.2</MicrosoftAspNetCoreApiAuthorizationIdentityServer>
     <MicrosoftAspNetCoreAuthenticationJwtBearer>7.0.2</MicrosoftAspNetCoreAuthenticationJwtBearer>
     <MicrosoftEntityFrameworkCoreDesign>7.0.2</MicrosoftEntityFrameworkCoreDesign>
     <MicrosoftEntityFrameworkCoreInMemory>7.0.2</MicrosoftEntityFrameworkCoreInMemory>
     <MicrosoftEntityFrameworkCoreSqlServer>7.0.2</MicrosoftEntityFrameworkCoreSqlServer>
+    <MicrosoftAspNetCoreIdentityEntityFrameworkCore>7.0.4</MicrosoftAspNetCoreIdentityEntityFrameworkCore>
     <AutoMapperExtensionsMicrosoftDependencyInjection>11.0.0</AutoMapperExtensionsMicrosoftDependencyInjection>
     <MicrosoftExtensionsLogging>7.0.0</MicrosoftExtensionsLogging>
     <OpenTelemetry>1.5.0-alpha.1</OpenTelemetry>
@@ -37,5 +37,10 @@
   </PropertyGroup>
   
   <PropertyGroup Label="Test Package Versions">
+    <MicrosoftNETTestSdk>17.3.2</MicrosoftNETTestSdk>
+    <xunit>2.4.2</xunit>
+    <xunitrunnervisualstudio>2.4.5</xunitrunnervisualstudio>
+    <coverletcollector>3.1.2</coverletcollector>
+    <Moq>4.18.4</Moq>
   </PropertyGroup>
 </Project>
