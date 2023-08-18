@@ -5,7 +5,7 @@ public class ApplicationUserBuilder : IApplicationUserBuilder
     private ApplicationUser _applicationUser = new ApplicationUser();
     private ApplicationUserBuilder() { }
 
-    public static ApplicationUserBuilder New() => new ApplicationUserBuilder();
+    internal static ApplicationUserBuilder New() => new ApplicationUserBuilder();
 
     public ApplicationUser Build() => _applicationUser;
 

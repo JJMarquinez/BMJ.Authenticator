@@ -24,7 +24,7 @@ public class IdentityServiceTests
         _userId = "98ac978e-da91-4932-a4b4-7c703e98efc3";
         _users = new List<ApplicationUser>()
          {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId(_userId)
             .WithUserName("Ven")
             .WithEmail("ven@authenticator.com")
@@ -111,7 +111,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>() 
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithEmail("ven@authenticator.com")
             .WithPasswordHash("#553zP1k")
             .Build()
@@ -127,7 +127,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithUserName(string.Empty)
             .WithEmail("ven@authenticator.com")
             .WithPasswordHash("#553zP1k")
@@ -144,7 +144,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithUserName("Ven")
             .WithPasswordHash("#553zP1k")
             .Build()
@@ -160,7 +160,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithUserName("Ven")
             .WithEmail(string.Empty)
             .WithPasswordHash("#553zP1k")
@@ -177,7 +177,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithUserName("Ven")
             .WithEmail("ven.auth.com")
             .WithPasswordHash("#553zP1k")
@@ -194,7 +194,7 @@ public class IdentityServiceTests
     {
         List<ApplicationUser> _notValidUsers = new List<ApplicationUser>()
         {
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithUserName("Ven")
             .WithEmail("ven@authenticator.com")
             .WithPhoneNumber("673921485")
@@ -400,5 +400,27 @@ public class IdentityServiceTests
 
         Assert.True(result.IsFailure());
         _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public void ShouldNotFindUserByUsername()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        bool result = _identityService.DoesUserNameNotExist("Ven");
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void ShouldFindUserByUsername()
+    {
+        _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+
+        bool result = _identityService.DoesUserNameNotExist("Maberic");
+
+        Assert.True(result);
     }
 }

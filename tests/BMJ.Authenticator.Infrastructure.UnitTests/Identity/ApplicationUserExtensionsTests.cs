@@ -10,7 +10,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUser() 
     {
         ApplicationUser applicationUser = 
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -34,7 +34,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordAndNoRoles()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -55,7 +55,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentNullExceptionGivenNullIdConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId(null!)
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -71,7 +71,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentExceptionGivenEmptyIdConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId(string.Empty)
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -87,7 +87,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentNullExceptionGivenNullUserNameConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithEmail("jame@auth.com")
             .WithPhoneNumber("111-222-3333")
@@ -102,7 +102,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentExceptionGivenEmptyUserNameConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithUserName(string.Empty)
             .WithEmail("jame@auth.com")
@@ -118,7 +118,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentNullExceptionGivenNullEmailConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithPhoneNumber("111-222-3333")
             .WithPasswordHash("tOcR1%oH6F0B")
@@ -132,7 +132,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldThrowArgumentExceptionGivenEmptyEmailConvertingApplicationUserToUser()
     {
         ApplicationUser applicationUser =
-            ApplicationUserBuilder.New()
+            ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
             .WithUserName("James")
             .WithEmail(string.Empty)

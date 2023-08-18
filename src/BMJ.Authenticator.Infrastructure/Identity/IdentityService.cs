@@ -52,7 +52,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         public async Task<Result<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
             Result<string?> result = Result.Failure<string?>(InfrastructureError.Identity.UserWasNotCreated); 
-            ApplicationUser user = ApplicationUserBuilder.New()
+            ApplicationUser user = ApplicationUser.Builder()
                 .WithUserName(userName)
                 .WithEmail(email)
                 .WithPhoneNumber(phoneNumber)
