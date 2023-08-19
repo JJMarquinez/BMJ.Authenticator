@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using Microsoft.Extensions.Logging;
 
-namespace BMJ.Authenticator.Infrastructure.Logger;
+namespace BMJ.Authenticator.Infrastructure.Loggers;
 
 public sealed class BMJAuthenticator
 {
