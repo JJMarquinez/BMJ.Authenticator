@@ -28,7 +28,6 @@ namespace BMJ.Authenticator.Infrastructure
                         builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
             }
 
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<ApplicationDbContextInitialiser>();
             
             services
