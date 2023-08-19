@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Abstractions;
+﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;

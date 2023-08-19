@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Abstractions;
+﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Diagnostics;

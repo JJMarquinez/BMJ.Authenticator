@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Adapter.Common.Abstractions;
 
 namespace BMJ.Authenticator.Api.Filters;
 

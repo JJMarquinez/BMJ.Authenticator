@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using BMJ.Authenticator.Adapter.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure
 {

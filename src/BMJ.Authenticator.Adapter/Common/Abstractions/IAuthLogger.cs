@@ -1,4 +1,4 @@
-﻿namespace BMJ.Authenticator.Application.Common.Abstractions;
+﻿namespace BMJ.Authenticator.Adapter.Common.Abstractions;
 
 public interface IAuthLogger
 {

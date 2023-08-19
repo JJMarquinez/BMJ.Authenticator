@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BMJ.Authenticator.Adapter\BMJ.Authenticator.Adapter.csproj" />
     <ProjectReference Include="..\BMJ.Authenticator.Application\BMJ.Authenticator.Application.csproj" />
   </ItemGroup>
 
