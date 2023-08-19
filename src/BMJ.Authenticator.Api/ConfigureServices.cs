@@ -23,7 +23,6 @@ public static class ConfigureServices
                                                                 new MediaTypeApiVersionReader("x-api-version"));
             })
             .AddProblemDetails()
-            .AddEndpointsApiExplorer()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
             .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration.GetValue<string>("Redis:Configuration")))
             .AddRedisOutputCache(options =>
@@ -39,6 +38,7 @@ public static class ConfigureServices
                 options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<AuthenticatorResultFilterAttribute>();
             })
+            .AddApiExplorer()
             .AddApplicationPart(typeof(ConfigureServices).Assembly);
         return services;
     }

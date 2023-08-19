@@ -16,6 +16,11 @@ namespace BMJ.Authenticator.Api.Controllers.v1.Members;
 [ApiVersion("1.0")]
 public class MemberController : ApiControllerBase
 {
+    /// <summary>
+    /// Reatrieves a user token to an authenticated user.
+    /// </summary>
+    /// <param name="loginCommandRequest">User information to get authenticated</param>
+    /// <returns>Json Web Token</returns>
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
     [HttpPost("loginAsync")]
