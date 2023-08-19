@@ -1,7 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
-using System.Net;
 
-namespace BMJ.Authenticator.Infrastructure.Common;
+namespace BMJ.Authenticator.Adapter.Common;
 
 public class InfrastructureError
 {

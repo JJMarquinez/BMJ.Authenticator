@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
-using BMJ.Authenticator.Infrastructure.Common;
+using BMJ.Authenticator.Adapter.Common;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Common;
 

@@ -2,7 +2,7 @@
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
-using BMJ.Authenticator.Infrastructure.Common;
+using BMJ.Authenticator.Adapter.Common;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

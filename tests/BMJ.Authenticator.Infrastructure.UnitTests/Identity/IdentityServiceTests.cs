@@ -2,7 +2,7 @@
 using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Domain.Common.Results;
 using BMJ.Authenticator.Domain.Entities.Users;
-using BMJ.Authenticator.Infrastructure.Common;
+using BMJ.Authenticator.Adapter.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
