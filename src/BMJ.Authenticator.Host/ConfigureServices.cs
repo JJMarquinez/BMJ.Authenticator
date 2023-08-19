@@ -3,13 +3,12 @@ using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Text;
-using BMJ.Authenticator.Infrastructure.Authentication;
+using BMJ.Authenticator.Adapter.Authentication;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Reflection;
 
 namespace BMJ.Authenticator.Host
 {

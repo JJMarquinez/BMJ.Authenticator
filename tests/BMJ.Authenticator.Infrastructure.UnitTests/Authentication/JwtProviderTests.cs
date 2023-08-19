@@ -1,6 +1,6 @@
+using BMJ.Authenticator.Adapter.Authentication;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Domain.ValueObjects;
-using BMJ.Authenticator.Infrastructure.Authentication;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Infrastructure.Authentication;
+using BMJ.Authenticator.Adapter.Authentication;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Logger;
 using BMJ.Authenticator.Infrastructure.Persistence;

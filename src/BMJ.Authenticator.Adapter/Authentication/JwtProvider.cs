@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace BMJ.Authenticator.Infrastructure.Authentication
+namespace BMJ.Authenticator.Adapter.Authentication
 {
     public class JwtProvider : IJwtProvider
     {
