@@ -9,6 +9,7 @@ using Serilog.Sinks.Elasticsearch;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using System.Reflection;
 
 namespace BMJ.Authenticator.Host
 {
@@ -49,9 +50,27 @@ namespace BMJ.Authenticator.Host
 
         private static IServiceCollection AddCustomOpenApiDocument(this IServiceCollection services)
         {
-            services.AddOpenApiDocument(configure =>
-            {
-                configure.Title = "BMJ Authenticator API";
+            services.AddOpenApiDocument(configure => {
+                configure.PostProcess = document =>
+                {
+                    document.Info = new OpenApiInfo
+                    {
+                        Title = "BMJ Query Authenticator API",
+                        Description = "An ASP.NET Core Web API to query identity users' detials",
+                        TermsOfService = "https://example.com/terms",
+                        Contact = new OpenApiContact
+                        {
+                            Name = "IT Team",
+                            Url = "https://example.com/contact"
+                        },
+                        License = new OpenApiLicense
+                        {
+                            Name = "IT License",
+                            Url = "https://example.com/license"
+                        }
+                    };
+                };
+
                 configure.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
                 {
                     Type = OpenApiSecuritySchemeType.ApiKey,
@@ -62,6 +81,8 @@ namespace BMJ.Authenticator.Host
 
                 configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
             });
+
+
             return services;
         }
 
