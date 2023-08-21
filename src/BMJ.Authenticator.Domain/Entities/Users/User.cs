@@ -10,10 +10,9 @@ public class User
     private string _userName;
     private Email _email;
     private Phone? _phone;
-    private string _passwordHash;
     private string[]? _roles;
 
-    private User(string id, string userName, Email email, string[]? roles, Phone? phone, string passwordHash)
+    private User(string id, string userName, Email email, string[]? roles, Phone? phone)
     {
         Ensure.Argument.NotNullOrEmpty(id, string.Format("{0} cannot be null or empty.", nameof(id)));
         Ensure.Argument.NotNullOrEmpty(userName, string.Format("{0} cannot be null or empty.", nameof(userName)));
@@ -23,19 +22,17 @@ public class User
         _userName = userName;
         _email = email;
         _phone = phone;
-        _passwordHash = passwordHash;
         _roles = roles;
     }
 
-    internal static User New(string id, string userName, Email email, string[]? roles, Phone? phone, string passwordHash)
-        => new(id, userName, email, roles, phone, passwordHash);
+    internal static User New(string id, string userName, Email email, string[]? roles, Phone? phone)
+        => new(id, userName, email, roles, phone);
 
     public string GetId() => _id;
     public string GetUserName() => _userName;
     public Email GetEmail() => _email;
     public string[]? GetRoles() => _roles;
     public Phone? GetPhoneNumber() => _phone;
-    public string GetPasswordHash() => _passwordHash;
 
     public static IUserBuilder Builder() => UserBuilder.New();
 }

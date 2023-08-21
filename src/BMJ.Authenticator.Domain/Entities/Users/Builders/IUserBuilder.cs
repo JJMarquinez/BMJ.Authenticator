@@ -21,6 +21,5 @@ public interface IUserRolesPhonePasswordBuilder
 {
     IUserRolesPhonePasswordBuilder WithRoles(string[] roles);
     IUserRolesPhonePasswordBuilder WithPhone(Phone phone);
-    IUserRolesPhonePasswordBuilder WithPasswordHash(string passwordHash);
     User Build();
 }

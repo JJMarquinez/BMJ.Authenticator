@@ -8,14 +8,13 @@ public class UserBuilder : IUserBuilder, IUserNameBuilder, IUserEmailBuilder, IU
     private string _userName = null!;
     private Email _email = null!;
     private Phone? _phone = null!;
-    private string _passwordHash = null!;
     private string[]? _roles;
 
     private UserBuilder() { }
 
     internal static UserBuilder New() => new();
 
-    public User Build() => User.New(_id, _userName, _email, _roles, _phone, _passwordHash);
+    public User Build() => User.New(_id, _userName, _email, _roles, _phone);
 
     public IUserRolesPhonePasswordBuilder WithEmail(Email email)
     {
@@ -32,12 +31,6 @@ public class UserBuilder : IUserBuilder, IUserNameBuilder, IUserEmailBuilder, IU
     public IUserEmailBuilder WithName(string name)
     {
         _userName = name;
-        return this;
-    }
-
-    public IUserRolesPhonePasswordBuilder WithPasswordHash(string passwordHash)
-    {
-        _passwordHash = passwordHash;
         return this;
     }
 
