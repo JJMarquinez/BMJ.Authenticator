@@ -1,12 +1,9 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
-using BMJ.Authenticator.Domain.Common.Results;
-using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Adapter.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
 using Moq;
-using BMJ.Authenticator.Application.Common.Models;
 using System.Text.Json;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
