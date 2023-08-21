@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.Common;
 using FluentValidation;
 
@@ -6,7 +6,7 @@ namespace BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
 
 public class CreateUserCommandRequestValidator : UserCommandRequestValidator<CreateUserCommandRequest>
 {
-    public CreateUserCommandRequestValidator(IIdentityService identityService) 
+    public CreateUserCommandRequestValidator(IIdentityAdapter identityService) 
         : base(identityService)
     {
         RuleFor(v => v.Password)

@@ -1,18 +1,18 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
 
 public class DeleteUserCommandRequestValidator : AbstractValidator<DeleteUserCommandRequest>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IIdentityAdapter _identityAdapter;
 
-    public DeleteUserCommandRequestValidator(IIdentityService identityService)
+    public DeleteUserCommandRequestValidator(IIdentityAdapter identityService)
     {
-        _identityService = identityService;
+        _identityAdapter = identityService;
 
         RuleFor(v => v.Id)
             .NotEmpty()
-            .Must(_identityService.IsUserIdAssigned).WithMessage("It doesn't exist any user with the Id sent.");
+            .Must(_identityAdapter.IsUserIdAssigned).WithMessage("It doesn't exist any user with the Id sent.");
     }
 }

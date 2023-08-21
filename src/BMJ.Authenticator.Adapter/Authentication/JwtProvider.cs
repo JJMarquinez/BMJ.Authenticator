@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Domain.Entities.Users;
+using BMJ.Authenticator.Application.Common.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,15 +17,15 @@ namespace BMJ.Authenticator.Adapter.Authentication
             _options = options.Value;
         }
 
-        public string Generate(User user)
+        public string Generate(UserDto user)
         {
             var claims = new List<Claim> {
-                new (JwtRegisteredClaimNames.Sub, user.GetId()),
-                new (JwtRegisteredClaimNames.Name, user.GetUserName()),
-                new (JwtRegisteredClaimNames.Email, user.GetEmail())
+                new (JwtRegisteredClaimNames.Sub, user.Id),
+                new (JwtRegisteredClaimNames.Name, user.UserName),
+                new (JwtRegisteredClaimNames.Email, user.Email)
             };
             
-            foreach (string role in user.GetRoles() ?? Array.Empty<string>())
+            foreach (string role in user.Roles ?? Array.Empty<string>())
                 claims.Add(new Claim(ClaimTypes.Role, role));
             
             

@@ -4,13 +4,11 @@ namespace BMJ.Authenticator.Domain.Common.Results;
 
 public class Result<TValue> : Result
 {
-    private readonly TValue _value;
-
     private Result(TValue value, bool success, Error error)
         : base(success, error)
-        => _value = value;
+        => Value = value;
 
-    public TValue GetValue() => _value;
+    public TValue Value { get; }
 
     public static implicit operator Result<TValue>(TValue value) => Success(value);
 

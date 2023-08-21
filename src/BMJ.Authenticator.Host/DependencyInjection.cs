@@ -12,7 +12,7 @@ using OpenTelemetry.Trace;
 
 namespace BMJ.Authenticator.Host
 {
-    public static class ConfigureServices
+    public static class DependencyInjection
     {
         public static IServiceCollection AddHostServices(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
         {

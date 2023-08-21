@@ -14,8 +14,4 @@
     <ProjectReference Include="..\BMJ.Authenticator.Application\BMJ.Authenticator.Application.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Identity\" />
-  </ItemGroup>
-
 </Project>

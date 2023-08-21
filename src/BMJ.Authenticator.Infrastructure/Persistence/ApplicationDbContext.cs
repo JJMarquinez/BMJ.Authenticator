@@ -1,5 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Infrastructure.Identity;
+﻿using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;

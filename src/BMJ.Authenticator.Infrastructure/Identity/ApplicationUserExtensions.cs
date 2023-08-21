@@ -5,14 +5,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 {
     public static class ApplicationUserExtensions
     {
-        public static User ToUser(this ApplicationUser applicationUser, string[]? roles)
-            => User.Builder()
+        public static UserIdentification ToUserIdentification(this ApplicationUser applicationUser, string[]? roles)
+            => UserIdentification.Builder()
             .WithId(applicationUser.Id)
-            .WithName(applicationUser.UserName!)
-            .WithEmail(Email.From(applicationUser.Email!))
-            .WithRoles(roles!)
-            .WithPhone(applicationUser.PhoneNumber is not null ? Phone.New(applicationUser.PhoneNumber) : null!)
-            .WithPasswordHash(applicationUser.PasswordHash!)
+            .WithUserName(applicationUser.UserName!)
+            .WithEmail(applicationUser.Email!)
+            .WithRoles(roles)
+            .WithPhoneNumber(applicationUser.PhoneNumber)
             .Build();
     }
 }

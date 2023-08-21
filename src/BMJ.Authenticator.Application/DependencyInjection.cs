@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace BMJ.Authenticator.Application
 {
-    public static class ConfigureServices
+    public static class DependencyInjection
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {

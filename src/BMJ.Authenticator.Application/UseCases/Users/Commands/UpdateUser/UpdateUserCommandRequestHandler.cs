@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Instrumentation;
-using BMJ.Authenticator.Application.Common.Interfaces;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Domain.Common.Results;
-using BMJ.Authenticator.Domain.Entities.Users;
 using MediatR;
 using System.Diagnostics;
 
@@ -12,12 +10,12 @@ namespace BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 public class UpdateUserCommandRequestHandler
     : IRequestHandler<UpdateUserCommandRequest, ResultDto>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IIdentityAdapter _identityAdapter;
     private readonly IMapper _mapper;
 
-    public UpdateUserCommandRequestHandler(IIdentityService identityService, IMapper mapper)
+    public UpdateUserCommandRequestHandler(IIdentityAdapter identityService, IMapper mapper)
     {
-        _identityService = identityService;
+        _identityAdapter = identityService;
         _mapper = mapper;
     }
 
@@ -26,15 +24,15 @@ public class UpdateUserCommandRequestHandler
         using Activity? updateUserActivity = Telemetry.Source.StartActivity("UpdateUserHandler", ActivityKind.Internal);
         updateUserActivity.DisplayName = "MediatR - UpdateUserHandler";
 
-        Result userResult = await _identityService.UpdateUserAsync(request.Id, request.UserName, request.Email, request.PhoneNumber);
+        ResultDto userResult = await _identityAdapter.UpdateUserAsync(request.Id!, request.UserName!, request.Email!, request.PhoneNumber);
 
-        updateUserActivity.SetTag("Succeeded", userResult.IsSuccess());
+        updateUserActivity.SetTag("Succeeded", userResult.Success);
 
-        if (userResult.IsSuccess())
+        if (userResult.Success)
             updateUserActivity.AddEvent(new ActivityEvent("User was updated"));
         else
-            updateUserActivity.SetTag("Error", userResult.GetError());
-       
-        return _mapper.Map<ResultDto>(userResult);
+            updateUserActivity.SetTag("Error", userResult.Error);
+
+        return userResult;
     }
 }

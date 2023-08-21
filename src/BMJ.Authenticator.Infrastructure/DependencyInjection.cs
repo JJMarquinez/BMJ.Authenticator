@@ -1,5 +1,4 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Interfaces;
 using BMJ.Authenticator.Adapter.Authentication;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Loggers;
@@ -12,7 +11,7 @@ using BMJ.Authenticator.Adapter.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure
 {
-    public static class ConfigureServices
+    public static class DependencyInjection
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {

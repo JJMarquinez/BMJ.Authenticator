@@ -59,14 +59,14 @@ public class ResultTests
     public void ShouldGetErrorGivenAError()
     {
         Result result = Result.Failure(_error);
-        Assert.True(_error.Equals(result.GetError()));
+        Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
     public void ShouldGetErrorGivenAErrorToGenericResult()
     {
         Result<object?> result = Result.Failure<object?>(_error);
-        Assert.True(_error.Equals(result.GetError()));
+        Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class ResultTests
     {
         Guid guid = Guid.NewGuid();
         var result = (Result<Guid>)guid;
-        Assert.True(guid.Equals(result.GetValue()));
+        Assert.True(guid.Equals(result.Value));
     }
 
     [Fact]
@@ -144,7 +144,7 @@ public class ResultTests
     {
         string guid = Guid.NewGuid().ToString();
         Result<string> result = Result.Success(guid);
-        Assert.NotNull(result.GetValue());
+        Assert.NotNull(result.Value);
     }
 
     [Fact]
@@ -152,6 +152,6 @@ public class ResultTests
     {
         string guid = Guid.NewGuid().ToString();
         Result<string?> result = Result.Failure<string?>(_error);
-        Assert.Null(result.GetValue());
+        Assert.Null(result.Value);
     }
 }
