@@ -44,9 +44,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Entities", "Entities", "{DD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Infrastructure.UnitTests", "tests\BMJ.Authenticator.Infrastructure.UnitTests\BMJ.Authenticator.Infrastructure.UnitTests.csproj", "{9BF146E4-A865-4C1E-B9E6-F33B931067EA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InterfaceAdapters", "InterfaceAdapters", "{8BC110B9-E313-425F-AAF3-1A2A76E7F118}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FrameworksAndDrivers", "FrameworksAndDrivers", "{8BC110B9-E313-425F-AAF3-1A2A76E7F118}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Adapter", "src\BMJ.Authenticator.Adapter\BMJ.Authenticator.Adapter.csproj", "{843FFBC1-AA98-445D-970B-EE366F65CA2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Adapter", "src\BMJ.Authenticator.Adapter\BMJ.Authenticator.Adapter.csproj", "{843FFBC1-AA98-445D-970B-EE366F65CA2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

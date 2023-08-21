@@ -36,7 +36,7 @@ public class IdentityAdapter : IIdentityAdapter
     {
         var result = await _identityService.GetAllUserAsync();
         return result.Success
-            ? ResultDto<List<UserDto>>.NewSuccess(JsonSerializer.Deserialize<List<UserDto>?> (result.Value!))
+            ? ResultDto<List<UserDto>>.NewSuccess(JsonSerializer.Deserialize<List<UserDto>?>(result.Value!))
             : ResultDto<List<UserDto>>.NewFailure<List<UserDto>?>(result.Error);
     }
 
