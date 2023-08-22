@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Handlers;
+using BMJ.Authenticator.Infrastructure.Consumers;
+using Confluent.Kafka;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -17,7 +19,7 @@ namespace BMJ.Authenticator.Infrastructure
             if (configuration.GetValue<bool>("UseInMemoryDatabase"))
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseInMemoryDatabase("BMJAuthenticatorDb"));
+                    options.UseInMemoryDatabase("BMJAuthenticator"));
             }
             else
             {
@@ -37,6 +39,8 @@ namespace BMJ.Authenticator.Infrastructure
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IAuthLogger, AuthLogger>();
             services.AddTransient<IEventHandler, Handlers.EventHandler>();
+            services.AddTransient<IEventConsumer, EventConsumer>();
+            services.Configure<ConsumerConfig>(configuration.GetSection(nameof(ConsumerConfig)));
 
             return services;
         }

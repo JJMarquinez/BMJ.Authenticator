@@ -9,6 +9,7 @@ using Serilog.Sinks.Elasticsearch;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using BMJ.Authenticator.Host.Consumers;
 
 namespace BMJ.Authenticator.Host
 {
@@ -22,7 +23,8 @@ namespace BMJ.Authenticator.Host
                 .AddCustomAuthentication(webApplicationBuilder.Configuration)
                 .AddCustomOpenApiDocument()
                 .AddCustomOpenTelemetry(webApplicationBuilder.Configuration)
-                .AddCustomHealthChecks(webApplicationBuilder.Configuration);
+                .AddCustomHealthChecks(webApplicationBuilder.Configuration)
+                .AddHostedService<ConsumerHostedService>();
             return services;
         }
 
@@ -34,7 +36,7 @@ namespace BMJ.Authenticator.Host
                 .Enrich.WithMachineName()
                 .WriteTo.Console()
                 .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri(context.Configuration.GetValue<string>("Elasticsearch:Url")))
+                    new ElasticsearchSinkOptions(new Uri(context.Configuration.GetValue<string>("Elasticsearch:Url")!))
                     {
                         IndexFormat = $"BMJ.Authenticator-logs-{context.HostingEnvironment.EnvironmentName?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}",
                         AutoRegisterTemplate = true,
@@ -100,7 +102,7 @@ namespace BMJ.Authenticator.Host
                         ValidIssuer = configuration.GetValue<string>("JwtOptions:Issuer"),
                         ValidAudience = configuration.GetValue<string>("JwtOptions:Audience"),
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtOptions:SecretKey"))
+                            Encoding.UTF8.GetBytes(configuration.GetValue<string>("JwtOptions:SecretKey")!)
                         )
                     };
                 }
@@ -132,7 +134,7 @@ namespace BMJ.Authenticator.Host
                 .AddElasticsearchClientInstrumentation()
                 .AddOtlpExporter(options =>
                 {
-                    options.Endpoint = new Uri(configuration.GetValue<string>("OtlpExporter:Endpoint"));
+                    options.Endpoint = new Uri(configuration.GetValue<string>("OtlpExporter:Endpoint")!);
                 });
             });
             return services;
@@ -142,9 +144,9 @@ namespace BMJ.Authenticator.Host
         {
             services
                 .AddHealthChecks()
-                .AddSqlServer(configuration.GetValue<string>("ConnectionStrings:DefaultConnection"))
-                .AddRedis(configuration.GetValue<string>("Redis:Configuration"))
-                .AddElasticsearch(configuration.GetValue<string>("Elasticsearch:Url"));
+                .AddSqlServer(configuration.GetValue<string>("ConnectionStrings:DefaultConnection")!)
+                .AddRedis(configuration.GetValue<string>("Redis:Configuration")!)
+                .AddElasticsearch(configuration.GetValue<string>("Elasticsearch:Url")!);
             services.AddHealthChecksUI().AddInMemoryStorage();
             return services;
         }

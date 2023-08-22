@@ -21,7 +21,7 @@
     <MicrosoftEntityFrameworkCoreDesign>7.0.2</MicrosoftEntityFrameworkCoreDesign>
     <MicrosoftEntityFrameworkCoreInMemory>7.0.2</MicrosoftEntityFrameworkCoreInMemory>
     <MicrosoftEntityFrameworkCoreSqlServer>7.0.2</MicrosoftEntityFrameworkCoreSqlServer>
-    <MicrosoftAspNetCoreIdentityEntityFrameworkCore>7.0.4</MicrosoftAspNetCoreIdentityEntityFrameworkCore>
+	<MicrosoftAspNetCoreIdentityEntityFrameworkCore>7.0.2</MicrosoftAspNetCoreIdentityEntityFrameworkCore>
     <AutoMapperExtensionsMicrosoftDependencyInjection>11.0.0</AutoMapperExtensionsMicrosoftDependencyInjection>
     <MicrosoftExtensionsLogging>7.0.0</MicrosoftExtensionsLogging>
     <OpenTelemetry>1.5.0-alpha.1</OpenTelemetry>
@@ -34,6 +34,7 @@
     <AspNetCoreHealthChecksUI>6.0.5</AspNetCoreHealthChecksUI>
     <AspNetCoreHealthChecksUIClient>6.0.5</AspNetCoreHealthChecksUIClient>
     <AspNetCoreHealthChecksUIInMemoryStorage>6.0.5</AspNetCoreHealthChecksUIInMemoryStorage>
+	<ConfluentKafka>2.2.0</ConfluentKafka>
   </PropertyGroup>
   
   <PropertyGroup Label="Test Package Versions">
