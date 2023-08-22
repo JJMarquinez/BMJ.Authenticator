@@ -1,11 +1,7 @@
 ﻿using BMJ.Authenticator.Api.Caching;
-using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -23,7 +19,7 @@ public class MemberController : ApiControllerBase
     /// <returns>Json Web Token</returns>
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
-    [HttpPost("loginAsync")]
+    [HttpGet("getTokenAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     {
         return Ok(await Mediator.Send(loginCommandRequest));
@@ -41,41 +37,5 @@ public class MemberController : ApiControllerBase
     public async Task<IActionResult> GetByIdAsync(GetUserByIdQueryRequest getUserByIdRequest)
     {
         return Ok(await Mediator.Send(getUserByIdRequest));
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpPost("createAsync")]
-    public async Task<IActionResult> CreateAsync(CreateUserCommandRequest createUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto<string> result = await Mediator.Send(createUserCommandRequest);
-        if (result.Success)
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        return Ok(result);
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpPut("updateAsync")]
-    public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto result = await Mediator.Send(updateUserCommandRequest);
-        if (result.Success)
-        {
-            await Cache.EvictByTagAsync(updateUserCommandRequest.Id, ct);
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpDelete("deleteAsync")]
-    public async Task<IActionResult> DeleteAsync(DeleteUserCommandRequest deleteUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto result = await Mediator.Send(deleteUserCommandRequest);
-        if (result.Success)
-        {
-            await Cache.EvictByTagAsync(deleteUserCommandRequest.Id, ct);
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        }
-        return Ok(result);
     }
 }

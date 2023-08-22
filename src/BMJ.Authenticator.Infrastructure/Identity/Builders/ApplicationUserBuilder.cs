@@ -27,7 +27,7 @@ public class ApplicationUserBuilder : IApplicationUserBuilder
         return this;
     }
 
-    public IApplicationUserBuilder WithPhoneNumber(string phoneNumber)
+    public IApplicationUserBuilder WithPhoneNumber(string? phoneNumber)
     {
         _applicationUser.PhoneNumber = phoneNumber;
         return this;

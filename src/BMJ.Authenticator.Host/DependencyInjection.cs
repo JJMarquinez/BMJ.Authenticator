@@ -3,17 +3,16 @@ using Microsoft.IdentityModel.Tokens;
 using NSwag;
 using NSwag.Generation.Processors.Security;
 using System.Text;
-using BMJ.Authenticator.Infrastructure.Authentication;
+using BMJ.Authenticator.Adapter.Authentication;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using System.Reflection;
 
 namespace BMJ.Authenticator.Host
 {
-    public static class ConfigureServices
+    public static class DependencyInjection
     {
         public static IServiceCollection AddHostServices(this IServiceCollection services, WebApplicationBuilder webApplicationBuilder)
         {
@@ -56,7 +55,7 @@ namespace BMJ.Authenticator.Host
                     document.Info = new OpenApiInfo
                     {
                         Title = "BMJ Query Authenticator API",
-                        Description = "An ASP.NET Core Web API to query identity users' detials",
+                        Description = "An ASP.NET Core Web API to query identity users' detials and get tokens",
                         TermsOfService = "https://example.com/terms",
                         Contact = new OpenApiContact
                         {

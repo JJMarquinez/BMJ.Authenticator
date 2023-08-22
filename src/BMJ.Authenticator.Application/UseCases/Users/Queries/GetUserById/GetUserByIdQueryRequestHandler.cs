@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
-using BMJ.Authenticator.Application.Common.Interfaces;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
-using BMJ.Authenticator.Domain.Common.Results;
-using BMJ.Authenticator.Domain.Entities.Users;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
@@ -11,18 +9,22 @@ namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 public class GetUserByIdQueryRequestHandler
     : IRequestHandler<GetUserByIdQueryRequest, ResultDto<UserDto?>>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IIdentityAdapter _identityAdapter;
     private readonly IMapper _mapper;
 
-    public GetUserByIdQueryRequestHandler(IIdentityService identityService, IMapper mapper)
+    public GetUserByIdQueryRequestHandler(IIdentityAdapter identityAdapter, IMapper mapper)
     {
-        _identityService = identityService;
+        _identityAdapter = identityAdapter;
         _mapper = mapper;
     }
 
     public async Task<ResultDto<UserDto?>> Handle(GetUserByIdQueryRequest request, CancellationToken cancellationToken)
     {
-        Result<User?> allUsersResult = await _identityService.GetUserByIdAsync(request.Id);
-        return _mapper.Map<ResultDto<UserDto?>>(allUsersResult);
+        var resultDto = await _identityAdapter.GetUserByIdAsync(request.Id!);
+
+        if (resultDto.Success)
+            resultDto.Value = _mapper.Map<UserDto>(resultDto.Value!.ToUser());
+
+        return resultDto;
     }
 }

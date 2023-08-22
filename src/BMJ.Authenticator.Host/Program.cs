@@ -1,16 +1,17 @@
+using BMJ.Authenticator.Adapter;
 using BMJ.Authenticator.Api;
 using BMJ.Authenticator.Application;
 using BMJ.Authenticator.Host;
 using BMJ.Authenticator.Infrastructure;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using HealthChecks.UI.Client;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services
     .AddApplicationServices()
+    .AddAdapterServices()
     .AddInfrastructureServices(builder.Configuration)
     .AddApiServices(builder.Configuration)
     .AddHostServices(builder);

@@ -1,17 +1,17 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
 public class GetUserByIdQueryRequestValidator : AbstractValidator<GetUserByIdQueryRequest>
 {
-    private readonly IIdentityService _identityService;
+    private readonly IIdentityAdapter _identityAdapter;
 
-    public GetUserByIdQueryRequestValidator(IIdentityService identityService)
+    public GetUserByIdQueryRequestValidator(IIdentityAdapter identityService)
     {
-        _identityService = identityService;
+        _identityAdapter = identityService;
         RuleFor(v => v.Id)
             .NotEmpty().WithMessage("The Id is mandatory to look for the user.")
-            .Must(_identityService.IsUserIdAssigned).WithMessage("It doesn't exist any user with the Id sent."); ;
+            .Must(_identityAdapter.IsUserIdAssigned).WithMessage("It doesn't exist any user with the Id sent.");
     }
 }

@@ -9,9 +9,9 @@ public class ErrorBuilder : IErrorBuilder, IErrorWithTitleBuilder, IErrorWithDet
 
     private ErrorBuilder() { }
 
-    internal static ErrorBuilder New() => new();
+    internal static ErrorBuilder NewInstance() => new();
 
-    public Error Build() => Error.New(_code, _title, _detail, _httpStatusCode);
+    public Error Build() => Error.NewInstance(_code, _title, _detail, _httpStatusCode);
 
     public IErrorWithTitleBuilder WithCode(string code)
     {

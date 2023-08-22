@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Interfaces;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.Common;
@@ -7,11 +7,11 @@ public class UserCommandRequestValidator<T>
     : AbstractValidator<T>
     where T : UserCommandRequest
 {
-    private readonly IIdentityService _identityService;
+    private readonly IIdentityAdapter _identityAdapter;
 
-    public UserCommandRequestValidator(IIdentityService identityService)
+    public UserCommandRequestValidator(IIdentityAdapter identityService)
     {
-        _identityService = identityService;
+        _identityAdapter = identityService;
 
         RuleFor(v => v.UserName)
             .NotEmpty()
@@ -25,6 +25,6 @@ public class UserCommandRequestValidator<T>
     }
     public bool BeUniqueUserName(string userName)
     {
-        return _identityService.DoesUserNameNotExist(userName);
+        return _identityAdapter.DoesUserNameNotExist(userName);
     }
 }

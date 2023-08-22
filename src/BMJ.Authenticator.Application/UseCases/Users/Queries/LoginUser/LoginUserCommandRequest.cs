@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
 using MediatR;
 
-namespace BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
+namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 
 /// <summary>
 /// Authentication request

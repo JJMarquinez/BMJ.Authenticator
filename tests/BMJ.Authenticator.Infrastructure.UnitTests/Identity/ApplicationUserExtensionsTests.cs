@@ -1,13 +1,11 @@
-﻿using BMJ.Authenticator.Domain.Entities.Users;
-using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.Identity.Builders;
+﻿using BMJ.Authenticator.Infrastructure.Identity;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
 public class ApplicationUserExtensionsTests
 {
     [Fact]
-    public void ShouldConvertApplicationUserToUser() 
+    public void ShouldConvertApplicationUserToUserIdentification() 
     {
         ApplicationUser applicationUser = 
             ApplicationUser.Builder()
@@ -19,15 +17,34 @@ public class ApplicationUserExtensionsTests
             .Build();
         string[] roles = new[] { "Standard" };
 
-        User user = applicationUser.ToUser(roles);
+        UserIdentification user = applicationUser.ToUserIdentification(roles);
 
-        Assert.NotNull(user);
-        Assert.Equal(applicationUser.Id, user.GetId());
-        Assert.Equal(applicationUser.UserName, user.GetUserName());
-        Assert.Equal(applicationUser.Email, user.GetEmail());
-        Assert.Equal(applicationUser.PhoneNumber, user.GetPhoneNumber()!);
-        Assert.Equal(applicationUser.PasswordHash, user.GetPasswordHash());
-        Assert.Equal(roles, user.GetRoles());
+        Assert.Equal(applicationUser.Id, user.Id);
+        Assert.Equal(applicationUser.UserName, user.UserName);
+        Assert.Equal(applicationUser.Email, user.Email);
+        Assert.Equal(applicationUser.PhoneNumber, user.PhoneNumber!);
+        Assert.Equal(roles, user.Roles);
+    }
+
+    [Fact]
+    public void ShouldConvertApplicationUserToUserIdentificationGivenNullPhoneNumber()
+    {
+        ApplicationUser applicationUser =
+            ApplicationUser.Builder()
+            .WithId("8sIi8NZcD34l")
+            .WithUserName("Jame")
+            .WithEmail("jame@auth.com")
+            .WithPasswordHash("tOcR1%oH6F0B")
+            .Build();
+        string[] roles = new[] { "Standard" };
+
+        UserIdentification user = applicationUser.ToUserIdentification(roles);
+
+        Assert.Equal(applicationUser.Id, user.Id);
+        Assert.Equal(applicationUser.UserName, user.UserName);
+        Assert.Equal(applicationUser.Email, user.Email);
+        Assert.Equal(roles, user.Roles);
+        Assert.Null(user.PhoneNumber!);
     }
 
     [Fact]
@@ -40,107 +57,64 @@ public class ApplicationUserExtensionsTests
             .WithEmail("jame@auth.com")
             .Build();
 
-        User user = applicationUser.ToUser(null!);
+        UserIdentification user = applicationUser.ToUserIdentification(null!);
 
-        Assert.NotNull(user);
-        Assert.Equal(applicationUser.Id, user.GetId());
-        Assert.Equal(applicationUser.UserName, user.GetUserName());
-        Assert.Equal(applicationUser.Email, user.GetEmail());
-        Assert.Null(user.GetPhoneNumber());
-        Assert.Null(user.GetPasswordHash());
-        Assert.Null(user.GetRoles());
+        Assert.Equal(applicationUser.Id, user.Id);
+        Assert.Equal(applicationUser.UserName, user.UserName);
+        Assert.Equal(applicationUser.Email, user.Email);
+        Assert.Null(user.PhoneNumber);
+        Assert.Null(user.Roles);
     }
 
     [Fact]
-    public void ShouldThrowArgumentNullExceptionGivenNullIdConvertingApplicationUserToUser()
+    public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesAndNoEmail()
     {
         ApplicationUser applicationUser =
             ApplicationUser.Builder()
-            .WithId(null!)
+            .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
-            .WithEmail("jame@auth.com")
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
             .Build();
-        string[] roles = new[] { "Standard" };
 
-        Assert.Throws<ArgumentNullException>(() => applicationUser.ToUser(roles));
+        UserIdentification user = applicationUser.ToUserIdentification(null!);
+
+        Assert.Equal(applicationUser.Id, user.Id);
+        Assert.Equal(applicationUser.UserName, user.UserName);
+        Assert.Null(user.Email);
+        Assert.Null(user.PhoneNumber);
+        Assert.Null(user.Roles);
     }
 
     [Fact]
-    public void ShouldThrowArgumentExceptionGivenEmptyIdConvertingApplicationUserToUser()
-    {
-        ApplicationUser applicationUser =
-            ApplicationUser.Builder()
-            .WithId(string.Empty)
-            .WithUserName("Jame")
-            .WithEmail("jame@auth.com")
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
-            .Build();
-        string[] roles = new[] { "Standard" };
-
-        Assert.Throws<ArgumentException>(() => applicationUser.ToUser(roles));
-    }
-
-    [Fact]
-    public void ShouldThrowArgumentNullExceptionGivenNullUserNameConvertingApplicationUserToUser()
+    public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesNoEmailAndNoUsername()
     {
         ApplicationUser applicationUser =
             ApplicationUser.Builder()
             .WithId("8sIi8NZcD34l")
-            .WithEmail("jame@auth.com")
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
-            .Build();
-        string[] roles = new[] { "Standard" };
 
-        Assert.Throws<ArgumentNullException>(() => applicationUser.ToUser(roles));
+            .Build();
+
+        UserIdentification user = applicationUser.ToUserIdentification(null!);
+
+        Assert.Equal(applicationUser.Id, user.Id);
+        Assert.Null(user.UserName);
+        Assert.Null(user.Email);
+        Assert.Null(user.PhoneNumber);
+        Assert.Null(user.Roles);
     }
 
     [Fact]
-    public void ShouldThrowArgumentExceptionGivenEmptyUserNameConvertingApplicationUserToUser()
+    public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesNoEmailNoUsernameAndNoId()
     {
         ApplicationUser applicationUser =
             ApplicationUser.Builder()
-            .WithId("8sIi8NZcD34l")
-            .WithUserName(string.Empty)
-            .WithEmail("jame@auth.com")
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
             .Build();
-        string[] roles = new[] { "Standard" };
 
-        Assert.Throws<ArgumentException>(() => applicationUser.ToUser(roles));
-    }
+        UserIdentification user = applicationUser.ToUserIdentification(null!);
 
-    [Fact]
-    public void ShouldThrowArgumentNullExceptionGivenNullEmailConvertingApplicationUserToUser()
-    {
-        ApplicationUser applicationUser =
-            ApplicationUser.Builder()
-            .WithId("8sIi8NZcD34l")
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
-            .Build();
-        string[] roles = new[] { "Standard" };
-
-        Assert.Throws<ArgumentNullException>(() => applicationUser.ToUser(roles));
-    }
-
-    [Fact]
-    public void ShouldThrowArgumentExceptionGivenEmptyEmailConvertingApplicationUserToUser()
-    {
-        ApplicationUser applicationUser =
-            ApplicationUser.Builder()
-            .WithId("8sIi8NZcD34l")
-            .WithUserName("James")
-            .WithEmail(string.Empty)
-            .WithPhoneNumber("111-222-3333")
-            .WithPasswordHash("tOcR1%oH6F0B")
-            .Build();
-        string[] roles = new[] { "Standard" };
-
-        Assert.Throws<ArgumentException>(() => applicationUser.ToUser(roles));
+        Assert.NotNull(user.Id);
+        Assert.Null(user.UserName);
+        Assert.Null(user.Email);
+        Assert.Null(user.PhoneNumber);
+        Assert.Null(user.Roles);
     }
 }

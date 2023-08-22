@@ -1,6 +1,7 @@
-using BMJ.Authenticator.Domain.Entities.Users;
+using BMJ.Authenticator.Adapter.Authentication;
+using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Domain.ValueObjects;
-using BMJ.Authenticator.Infrastructure.Authentication;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,16 +18,16 @@ public class JwtProviderTests
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
             .Build();
-        JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-        User user =
-            User.Builder()
-            .WithId(Guid.NewGuid().ToString())
-            .WithName("Jaden")
-            .WithEmail(Email.From("jaden@authenticator.com"))
-            .WithRoles(new[] { "Standard" })
-            .WithPhone(Phone.New("111-222-3333"))
-            .WithPasswordHash(Guid.NewGuid().ToString())
-            .Build();
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
+        
+        UserDto user = new UserDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Jaden",
+            Email = Email.From("jaden@authenticator.com"),
+            Roles = new[] { "Standard" },
+            PhoneNumber = Phone.New("111-222-3333"),
+        };
 
         string token = jwtProvider.Generate(user);
 
@@ -42,16 +43,16 @@ public class JwtProviderTests
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
             .Build(); ;
-        JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-        User user =
-            User.Builder()
-            .WithId(Guid.NewGuid().ToString())
-            .WithName("Jaden")
-            .WithEmail(Email.From("jaden@authenticator.com"))
-            .WithRoles(new[] { "Standard" })
-            .WithPhone(Phone.New("111-222-3333"))
-            .WithPasswordHash(Guid.NewGuid().ToString())
-            .Build();
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
+
+        UserDto user = new UserDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Jaden",
+            Email = Email.From("jaden@authenticator.com"),
+            Roles = new[] { "Standard" },
+            PhoneNumber = Phone.New("111-222-3333"),
+        };
 
         Assert.Throws<ArgumentOutOfRangeException>(() => jwtProvider.Generate(user));
     }
@@ -62,17 +63,18 @@ public class JwtProviderTests
         JwtOptions jwtOptions = JwtOptions.Builder()
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
-            .Build(); ;
-        JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-        User user =
-            User.Builder()
-            .WithId(Guid.NewGuid().ToString())
-            .WithName("Jaden")
-            .WithEmail(Email.From("jaden@authenticator.com"))
-            .WithRoles(new[] { "Standard" })
-            .WithPhone(Phone.New("111-222-3333"))
-            .WithPasswordHash(Guid.NewGuid().ToString())
-            .Build();
+            .Build(); 
+
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
+
+        UserDto user = new UserDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Jaden",
+            Email = Email.From("jaden@authenticator.com"),
+            Roles = new[] { "Standard" },
+            PhoneNumber = Phone.New("111-222-3333"),
+        };
 
         Assert.Throws<ArgumentNullException>(() => jwtProvider.Generate(user));
     }
@@ -85,24 +87,24 @@ public class JwtProviderTests
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
             .Build(); ;
-        JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-        User user =
-            User.Builder()
-            .WithId(Guid.NewGuid().ToString())
-            .WithName("Jaden")
-            .WithEmail(Email.From("jaden@authenticator.com"))
-            .WithRoles(new[] { "Standard" })
-            .WithPhone(Phone.New("111-222-3333"))
-            .WithPasswordHash(Guid.NewGuid().ToString())
-            .Build();
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
+
+        UserDto user = new UserDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Jaden",
+            Email = Email.From("jaden@authenticator.com"),
+            Roles = new[] { "Standard" },
+            PhoneNumber = Phone.New("111-222-3333"),
+        };
 
         string token = jwtProvider.Generate(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
 
-        Assert.Equal(user.GetId(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
-        Assert.Equal(user.GetUserName(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
-        Assert.Equal(user.GetEmail(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
-        Assert.Equal(user.GetRoles(), jwtSecurityToken.Claims.Where(claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal)).Select(claim => claim.Value).ToArray());
+        Assert.Equal(user.Id, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.UserName, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.Email, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.Roles, jwtSecurityToken.Claims.Where(claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal)).Select(claim => claim.Value).ToArray());
     }
 
     [Fact]
@@ -112,23 +114,24 @@ public class JwtProviderTests
             .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
-            .Build(); ;
-        JwtProvider jwtProvider = new(Options.Create(jwtOptions));
-        User user =
-            User.Builder()
-            .WithId(Guid.NewGuid().ToString())
-            .WithName("Jaden")
-            .WithEmail(Email.From("jaden@authenticator.com"))
-            .WithPhone(Phone.New("111-222-3333"))
-            .WithPasswordHash(Guid.NewGuid().ToString())
             .Build();
+
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
+
+        UserDto user = new UserDto
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Jaden",
+            Email = Email.From("jaden@authenticator.com"),
+            PhoneNumber = Phone.New("111-222-3333"),
+        };
 
         string token = jwtProvider.Generate(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
 
-        Assert.Equal(user.GetId(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
-        Assert.Equal(user.GetUserName(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
-        Assert.Equal(user.GetEmail(), jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.Id, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.UserName, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Name, StringComparison.Ordinal)).Value);
+        Assert.Equal(user.Email, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Email, StringComparison.Ordinal)).Value);
         Assert.DoesNotContain(jwtSecurityToken.Claims, claim => string.Equals(claim.Type, ClaimTypes.Role, StringComparison.Ordinal));
     }
 }

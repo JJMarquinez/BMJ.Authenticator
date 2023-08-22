@@ -1,17 +1,15 @@
-﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Interfaces;
-using BMJ.Authenticator.Infrastructure.Authentication;
-using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.Logger;
+﻿using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using BMJ.Authenticator.Adapter.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure
 {
-    public static class ConfigureServices
+    public static class DependencyInjection
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
@@ -27,7 +25,6 @@ namespace BMJ.Authenticator.Infrastructure
                         builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
             }
 
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
             services.AddScoped<ApplicationDbContextInitialiser>();
             
             services
@@ -37,7 +34,6 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IJwtProvider, JwtProvider>();
             services.AddTransient<IAuthLogger, AuthLogger>();
 
             return services;

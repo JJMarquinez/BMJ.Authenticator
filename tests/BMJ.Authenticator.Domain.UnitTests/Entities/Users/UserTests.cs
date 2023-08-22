@@ -104,7 +104,7 @@ public class UserTests
                 .WithEmail(Email.From(_email))
                 .Build();
 
-        Assert.Equal(id, user.GetId());
+        Assert.Equal(id, user.Id);
     }
 
     [Theory]
@@ -120,7 +120,7 @@ public class UserTests
                 .WithEmail(Email.From(_email))
                 .Build();
 
-        Assert.Equal(userName, user.GetUserName());
+        Assert.Equal(userName, user.UserName);
     }
 
     [Theory]
@@ -135,7 +135,7 @@ public class UserTests
                 .WithEmail(Email.From(address))
                 .Build();
 
-        Assert.Equal(address, user.GetEmail());
+        Assert.Equal(address, user.Email);
     }
 
     [Theory]
@@ -152,7 +152,7 @@ public class UserTests
                 .WithRoles(roles)
                 .Build();
 
-        Assert.Equal(roles, user.GetRoles());
+        Assert.Equal(roles, user.Roles);
     }
 
     [Theory]
@@ -168,22 +168,6 @@ public class UserTests
                 .WithPhone(Phone.New(phoneNumber))
                 .Build();
 
-        Assert.Equal(phoneNumber, user.GetPhoneNumber()!);
-    }
-
-    [Theory]
-    [InlineData("Ts!39H1z")]
-    [InlineData("6V5$zRg2")]
-    [InlineData("#553zP1k")]
-    public void ShouldGetPasswordGivenACreatedUser(string password)
-    {
-        User user = User.Builder()
-                .WithId(_userId)
-                .WithName(_userName)
-                .WithEmail(Email.From(_email))
-                .WithPasswordHash(password)
-                .Build();
-
-        Assert.Equal(password, user.GetPasswordHash());
+        Assert.Equal(phoneNumber, user.Phone!);
     }
 }

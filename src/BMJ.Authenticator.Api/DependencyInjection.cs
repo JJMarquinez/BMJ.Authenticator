@@ -8,7 +8,7 @@ using StackExchange.Redis;
 
 namespace BMJ.Authenticator.Api;
 
-public static class ConfigureServices
+public static class DependencyInjection
 {
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
@@ -39,7 +39,7 @@ public static class ConfigureServices
                 options.Filters.Add<AuthenticatorResultFilterAttribute>();
             })
             .AddApiExplorer()
-            .AddApplicationPart(typeof(ConfigureServices).Assembly);
+            .AddApplicationPart(typeof(DependencyInjection).Assembly);
         return services;
     }
 }

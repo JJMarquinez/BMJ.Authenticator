@@ -71,7 +71,7 @@ public class ErrorTests
     public void ShouldGetCodeGivenCreatedError(string code)
     {
         Error error = Error.Builder().WithCode(code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
-        Assert.Equal(code, error.GetCode());
+        Assert.Equal(code, error.Code);
     }
 
     [Theory]
@@ -81,7 +81,7 @@ public class ErrorTests
     public void ShouldGetTitleGivenCreatedError(string title)
     {
         Error error = Error.Builder().WithCode(_code).WithTitle(title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
-        Assert.Equal(title, error.GetTitle());
+        Assert.Equal(title, error.Title);
     }
 
     [Theory]
@@ -91,7 +91,7 @@ public class ErrorTests
     public void ShouldGetDetailGivenCreatedError(string detail)
     {
         Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(detail).WithHttpStatusCode(_httpStatusCode).Build();
-        Assert.Equal(detail, error.GetDetail());
+        Assert.Equal(detail, error.Detail);
     }
 
     [Theory]
@@ -101,7 +101,7 @@ public class ErrorTests
     public void Should_GetHttpStatusCode_When_ErrorIsCreated(int httpStatusCode)
     {
         Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(httpStatusCode).Build();
-        Assert.Equal(httpStatusCode, error.GetHttpStatusCode());
+        Assert.Equal(httpStatusCode, error.HttpStatusCode);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class ErrorTests
     {
         Error error = Error.Builder().WithCode(_code).WithTitle(_title).WithDetail(_detail).WithHttpStatusCode(_httpStatusCode).Build();
         string errorCode = error;
-        Assert.Equal(error.GetCode(), errorCode);
+        Assert.Equal(error.Code, errorCode);
     }
 
     [Fact]

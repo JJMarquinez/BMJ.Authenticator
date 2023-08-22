@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.OutputCaching;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 
 namespace BMJ.Authenticator.Api.Caching;
@@ -53,8 +52,7 @@ public class AuthenticatorBaseCachePolicy : IOutputCachePolicy
         var request = context.HttpContext.Request;
 
         // Verify the method
-        if (!HttpMethods.IsGet(request.Method) &&
-            !HttpMethods.IsPost(request.Method))
+        if (!HttpMethods.IsGet(request.Method))
         {
             return false;
         }
