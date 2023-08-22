@@ -20,7 +20,7 @@ public class MemberController : ApiControllerBase
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
     [HttpGet("getTokenAsync")]
-    public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
+    public async Task<IActionResult> GetTokenAsync(LoginUserCommandRequest loginCommandRequest)
     {
         return Ok(await Mediator.Send(loginCommandRequest));
     }
