@@ -2,9 +2,9 @@
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 
-public class LoginUserCommandRequestValidator : AbstractValidator<LoginUserCommandRequest>
+public class LoginUserQueryValidator : AbstractValidator<LoginUserQuery>
 {
-    public LoginUserCommandRequestValidator()
+    public LoginUserQueryValidator()
     {
         RuleFor(v => v.UserName).NotEmpty();
         RuleFor(v => v.Password).NotEmpty();

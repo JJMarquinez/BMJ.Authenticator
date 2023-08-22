@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
 
-public class CreateUserCommandRequestValidator : UserCommandRequestValidator<CreateUserCommandRequest>
+public class CreateUserCommandValidator : UserCommandValidator<CreateUserCommand>
 {
-    public CreateUserCommandRequestValidator(IIdentityAdapter identityService) 
+    public CreateUserCommandValidator(IIdentityAdapter identityService) 
         : base(identityService)
     {
         RuleFor(v => v.Password)

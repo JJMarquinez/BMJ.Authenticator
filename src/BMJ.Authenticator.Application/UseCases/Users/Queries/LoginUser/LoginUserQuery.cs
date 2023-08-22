@@ -6,7 +6,7 @@ namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 /// <summary>
 /// Authentication request
 /// </summary>
-public record LoginUserCommandRequest() : IRequest<ResultDto<string?>>
+public record LoginUserQuery() : IRequest<ResultDto<string?>>
 {
     /// <summary>
     /// Username

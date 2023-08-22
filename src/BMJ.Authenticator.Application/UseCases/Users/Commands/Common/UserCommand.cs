@@ -1,6 +1,6 @@
 ﻿namespace BMJ.Authenticator.Application.UseCases.Users.Commands.Common;
 
-public record UserCommandRequest
+public record UserCommand
 {
     public string? UserName { get; init; }
     public string? Email { get; init; }

@@ -7,19 +7,19 @@ using System.Diagnostics;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 
-public class UpdateUserCommandRequestHandler
-    : IRequestHandler<UpdateUserCommandRequest, ResultDto>
+public class UpdateUserCommandHandler
+    : IRequestHandler<UpdateUserCommand, ResultDto>
 {
     private readonly IIdentityAdapter _identityAdapter;
     private readonly IMapper _mapper;
 
-    public UpdateUserCommandRequestHandler(IIdentityAdapter identityService, IMapper mapper)
+    public UpdateUserCommandHandler(IIdentityAdapter identityService, IMapper mapper)
     {
         _identityAdapter = identityService;
         _mapper = mapper;
     }
 
-    public async Task<ResultDto> Handle(UpdateUserCommandRequest request, CancellationToken cancellationToken)
+    public async Task<ResultDto> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         using Activity? updateUserActivity = Telemetry.Source.StartActivity("UpdateUserHandler", ActivityKind.Internal);
         updateUserActivity.DisplayName = "MediatR - UpdateUserHandler";

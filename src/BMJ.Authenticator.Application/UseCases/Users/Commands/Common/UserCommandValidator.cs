@@ -3,13 +3,13 @@ using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.Common;
 
-public class UserCommandRequestValidator<T> 
+public class UserCommandValidator<T> 
     : AbstractValidator<T>
-    where T : UserCommandRequest
+    where T : UserCommand
 {
     private readonly IIdentityAdapter _identityAdapter;
 
-    public UserCommandRequestValidator(IIdentityAdapter identityService)
+    public UserCommandValidator(IIdentityAdapter identityService)
     {
         _identityAdapter = identityService;
 

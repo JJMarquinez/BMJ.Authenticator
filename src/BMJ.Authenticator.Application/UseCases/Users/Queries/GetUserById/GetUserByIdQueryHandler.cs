@@ -6,19 +6,19 @@ using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
-public class GetUserByIdQueryRequestHandler
-    : IRequestHandler<GetUserByIdQueryRequest, ResultDto<UserDto?>>
+public class GetUserByIdQueryHandler
+    : IRequestHandler<GetUserByIdQuery, ResultDto<UserDto?>>
 {
     private readonly IIdentityAdapter _identityAdapter;
     private readonly IMapper _mapper;
 
-    public GetUserByIdQueryRequestHandler(IIdentityAdapter identityAdapter, IMapper mapper)
+    public GetUserByIdQueryHandler(IIdentityAdapter identityAdapter, IMapper mapper)
     {
         _identityAdapter = identityAdapter;
         _mapper = mapper;
     }
 
-    public async Task<ResultDto<UserDto?>> Handle(GetUserByIdQueryRequest request, CancellationToken cancellationToken)
+    public async Task<ResultDto<UserDto?>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var resultDto = await _identityAdapter.GetUserByIdAsync(request.Id!);
 

@@ -4,11 +4,11 @@ using FluentValidation;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 
-public class UpdateUserCommandRequestValidator : UserCommandRequestValidator<UpdateUserCommandRequest>
+public class UpdateUserCommandValidator : UserCommandValidator<UpdateUserCommand>
 {
     private readonly IIdentityAdapter _identityAdapter;
 
-    public UpdateUserCommandRequestValidator(IIdentityAdapter identityService) : base(identityService)
+    public UpdateUserCommandValidator(IIdentityAdapter identityService) : base(identityService)
     {
         _identityAdapter = identityService;
 

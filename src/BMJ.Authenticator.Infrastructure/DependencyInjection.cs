@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Infrastructure.Handlers;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -35,6 +36,7 @@ namespace BMJ.Authenticator.Infrastructure
 
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IAuthLogger, AuthLogger>();
+            services.AddTransient<IEventHandler, Handlers.EventHandler>();
 
             return services;
         }
