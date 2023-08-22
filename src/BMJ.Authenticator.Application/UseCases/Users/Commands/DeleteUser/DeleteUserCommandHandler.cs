@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BMJ.Authenticator.Application.Common.Abstractions;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using MediatR;
 
@@ -9,12 +8,10 @@ public class DeleteUserCommandHandler
     : IRequestHandler<DeleteUserCommand, ResultDto>
 {
     private readonly IIdentityAdapter _identityAdapter;
-    private readonly IMapper _mapper;
 
-    public DeleteUserCommandHandler(IIdentityAdapter identityService, IMapper mapper)
+    public DeleteUserCommandHandler(IIdentityAdapter identityAdapter)
     {
-        _identityAdapter = identityService;
-        _mapper = mapper;
+        _identityAdapter = identityAdapter;
     }
 
     public async Task<ResultDto> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
