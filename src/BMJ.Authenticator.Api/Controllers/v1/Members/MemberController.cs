@@ -42,40 +42,4 @@ public class MemberController : ApiControllerBase
     {
         return Ok(await Mediator.Send(getUserByIdRequest));
     }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpPost("createAsync")]
-    public async Task<IActionResult> CreateAsync(CreateUserCommandRequest createUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto<string> result = await Mediator.Send(createUserCommandRequest);
-        if (result.Success)
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        return Ok(result);
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpPut("updateAsync")]
-    public async Task<IActionResult> UpdateAsync(UpdateUserCommandRequest updateUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto result = await Mediator.Send(updateUserCommandRequest);
-        if (result.Success)
-        {
-            await Cache.EvictByTagAsync(updateUserCommandRequest.Id, ct);
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        }
-        return Ok(result);
-    }
-
-    [Authorize(Roles = "Administrator")]
-    [HttpDelete("deleteAsync")]
-    public async Task<IActionResult> DeleteAsync(DeleteUserCommandRequest deleteUserCommandRequest, CancellationToken ct)
-    {
-        ResultDto result = await Mediator.Send(deleteUserCommandRequest);
-        if (result.Success)
-        {
-            await Cache.EvictByTagAsync(deleteUserCommandRequest.Id, ct);
-            await Cache.EvictByTagAsync("getAllAsync", ct);
-        }
-        return Ok(result);
-    }
 }
