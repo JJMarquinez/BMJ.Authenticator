@@ -2,10 +2,10 @@
 
 public class Error
 {
-    private string _code;
-    private string _title;
-    private string _detail;
-    private int _httpStatusCode;
+    public string Code { get; }
+    public string Title { get; }
+    public string Detail { get; }
+    public int HttpStatusCode { get; }
 
     private Error(string code, string title, string detail, int httpStatusCode)
     {
@@ -13,22 +13,15 @@ public class Error
         Ensure.Argument.NotNullOrEmpty(title, string.Format("{0} cannot be null or empty.", nameof(title)));
         Ensure.Argument.NotNullOrEmpty(detail, string.Format("{0} cannot be null or empty.", nameof(detail)));
         Ensure.Argument.IsNot(httpStatusCode == default, string.Format("{0} cannot be default int value.", nameof(httpStatusCode)));
-        _code = code;
-        _title = title;
-        _detail = detail;
-        _httpStatusCode = httpStatusCode;
+        Code = code;
+        Title = title;
+        Detail = detail;
+        HttpStatusCode = httpStatusCode;
     }
 
-    public string GetCode() => _code;
+    internal static Error NewInstance(string code, string title, string detail, int httpStatusCode) => new(code, title, detail, httpStatusCode);
 
-    public string GetTitle() => _title;
-    public string GetDetail() => _detail;
-
-    public int GetHttpStatusCode() => _httpStatusCode;
-
-    internal static Error New(string code, string title, string detail, int httpStatusCode) => new(code, title, detail, httpStatusCode);
-
-    public static implicit operator string(Error error) => error.GetCode();
+    public static implicit operator string(Error error) => error.Code;
 
     public static Error None = new("None", "None", "None", 200);
 
@@ -40,11 +33,11 @@ public class Error
         }
 
         Error other = (Error)obj;
-        return string.Equals(_code, other.GetCode(), StringComparison.Ordinal)
-            && string.Equals(_title, other.GetTitle(), StringComparison.Ordinal)
-            && string.Equals(_detail, other.GetDetail(), StringComparison.Ordinal)
-            && _httpStatusCode == other.GetHttpStatusCode();
+        return string.Equals(Code, other.Code, StringComparison.Ordinal)
+            && string.Equals(Title, other.Title, StringComparison.Ordinal)
+            && string.Equals(Detail, other.Detail, StringComparison.Ordinal)
+            && HttpStatusCode == other.HttpStatusCode;
     }
 
-    public static IErrorBuilder Builder() => ErrorBuilder.New();
+    public static IErrorBuilder Builder() => ErrorBuilder.NewInstance();
 }
