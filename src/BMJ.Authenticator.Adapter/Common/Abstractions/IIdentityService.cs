@@ -11,7 +11,7 @@ public interface IIdentityService
 
     Task<ResultDto<string?>> AuthenticateMemberAsync(string userName, string password);
 
-    Task<ResultDto<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber);
+    Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber);
 
     Task<ResultDto> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber);
 

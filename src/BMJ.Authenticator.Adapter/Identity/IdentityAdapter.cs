@@ -23,8 +23,8 @@ public class IdentityAdapter : IIdentityAdapter
             : ResultDto<UserDto?>.NewFailure<UserDto?>(result.Error);
     }
 
-    public async Task<ResultDto<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
-        => await _identityService.CreateUserAsync(userName,password,email,phoneNumber);
+    public async Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
+        => await _identityService.CreateUserAsync(userName, password, email, phoneNumber);
 
     public Task<ResultDto> DeleteUserAsync(string userId)
         => _identityService.DeleteUserAsync(userId);
