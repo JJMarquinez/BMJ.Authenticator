@@ -5,7 +5,6 @@ using BMJ.Authenticator.Host;
 using BMJ.Authenticator.Infrastructure;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using HealthChecks.UI.Client;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
