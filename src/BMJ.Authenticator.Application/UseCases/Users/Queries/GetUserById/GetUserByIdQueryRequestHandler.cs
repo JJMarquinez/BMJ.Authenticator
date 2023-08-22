@@ -2,8 +2,6 @@
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Users;
-using BMJ.Authenticator.Domain.Entities.Users;
-using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
