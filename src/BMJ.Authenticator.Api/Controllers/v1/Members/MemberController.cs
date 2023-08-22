@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Api.Caching;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OutputCaching;
@@ -19,7 +19,7 @@ public class MemberController : ApiControllerBase
     /// <returns>Json Web Token</returns>
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
-    [HttpPost("loginAsync")]
+    [HttpGet("getTokenAsync")]
     public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
     {
         return Ok(await Mediator.Send(loginCommandRequest));

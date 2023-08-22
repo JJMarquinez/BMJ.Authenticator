@@ -23,9 +23,8 @@ public class GetUserByIdQueryRequestHandler
         var resultDto = await _identityAdapter.GetUserByIdAsync(request.Id!);
 
         if (resultDto.Success)
-        {
             resultDto.Value = _mapper.Map<UserDto>(resultDto.Value!.ToUser());
-        }
+
         return resultDto;
     }
 }

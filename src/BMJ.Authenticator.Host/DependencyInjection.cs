@@ -55,7 +55,7 @@ namespace BMJ.Authenticator.Host
                     document.Info = new OpenApiInfo
                     {
                         Title = "BMJ Query Authenticator API",
-                        Description = "An ASP.NET Core Web API to query identity users' detials",
+                        Description = "An ASP.NET Core Web API to query identity users' detials and get tokens",
                         TermsOfService = "https://example.com/terms",
                         Contact = new OpenApiContact
                         {

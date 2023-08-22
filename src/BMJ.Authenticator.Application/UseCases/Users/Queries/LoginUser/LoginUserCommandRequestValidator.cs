@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
+namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 
 public class LoginUserCommandRequestValidator : AbstractValidator<LoginUserCommandRequest>
 {
