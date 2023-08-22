@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using System.Text.Json;
 
 namespace BMJ.Authenticator.Adapter.Identity;

@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

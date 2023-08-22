@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Domain.Entities.Users;
 using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
@@ -14,27 +14,20 @@ public class GetUserByIdQueryRequestHandler
     private readonly IIdentityAdapter _identityAdapter;
     private readonly IMapper _mapper;
 
-    public GetUserByIdQueryRequestHandler(IIdentityAdapter identityService, IMapper mapper)
+    public GetUserByIdQueryRequestHandler(IIdentityAdapter identityAdapter, IMapper mapper)
     {
-        _identityAdapter = identityService;
+        _identityAdapter = identityAdapter;
         _mapper = mapper;
     }
 
     public async Task<ResultDto<UserDto?>> Handle(GetUserByIdQueryRequest request, CancellationToken cancellationToken)
     {
         var resultDto = await _identityAdapter.GetUserByIdAsync(request.Id!);
-        
-        var userBuilder = User.Builder()
-            .WithId(resultDto.Value!.Id)
-            .WithName(resultDto.Value!.UserName)
-            .WithEmail((Email)resultDto.Value!.Email)
-            .WithRoles(resultDto.Value!.Roles);
-        
-        if (resultDto.Value!.PhoneNumber is not null)
-            userBuilder.WithPhone((Phone)resultDto.Value!.PhoneNumber)
-;
-        var user = userBuilder.Build();
-        resultDto.Value = _mapper.Map<UserDto>(user);
+
+        if (resultDto.Success)
+        {
+            resultDto.Value = _mapper.Map<UserDto>(resultDto.Value!.ToUser());
+        }
         return resultDto;
     }
 }

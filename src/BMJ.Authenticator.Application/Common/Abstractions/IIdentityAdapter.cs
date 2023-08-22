@@ -1,5 +1,5 @@
-﻿using BMJ.Authenticator.Application.Common.Models;
-using BMJ.Authenticator.Application.Common.Models.Results;
+﻿using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Users;
 
 namespace BMJ.Authenticator.Application.Common.Abstractions
 {

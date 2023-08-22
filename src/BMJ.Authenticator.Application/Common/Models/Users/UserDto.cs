@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Application.Common.Mappings;
 using BMJ.Authenticator.Domain.Entities.Users;
 
-namespace BMJ.Authenticator.Application.Common.Models;
+namespace BMJ.Authenticator.Application.Common.Models.Users;
 
 public class UserDto : IMapFrom<User>
 {
