@@ -1,9 +1,5 @@
 ﻿using BMJ.Authenticator.Api.Caching;
-using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.LoginUser;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using Microsoft.AspNetCore.Authorization;
