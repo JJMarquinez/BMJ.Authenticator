@@ -2,7 +2,7 @@
 
 public class UserDeletedEvent : BaseEvent
 {
-    public UserDeletedEvent(string type) : base(nameof(UserDeletedEvent))
+    public UserDeletedEvent() : base(nameof(UserDeletedEvent))
     {
     }
 

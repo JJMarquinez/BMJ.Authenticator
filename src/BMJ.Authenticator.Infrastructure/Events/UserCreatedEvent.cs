@@ -2,7 +2,7 @@
 
 public class UserCreatedEvent : BaseEvent
 {
-    public UserCreatedEvent(string type) : base(nameof(UserCreatedEvent))
+    public UserCreatedEvent() : base(nameof(UserCreatedEvent))
     {
     }
 
