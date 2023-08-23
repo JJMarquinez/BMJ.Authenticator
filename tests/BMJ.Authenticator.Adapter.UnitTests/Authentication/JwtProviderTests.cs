@@ -1,4 +1,4 @@
-using BMJ.Authenticator.Adapter.Authentication;
+﻿using BMJ.Authenticator.Adapter.Authentication;
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Domain.ValueObjects;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace BMJ.Authenticator.Infrastructure.UnitTests.Authentication;
+namespace BMJ.Authenticator.Adapter.UnitTests.Authentication;
 
 public class JwtProviderTests
 {
@@ -19,7 +19,7 @@ public class JwtProviderTests
             .WithIssuer("http://localhost")
             .Build();
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
-        
+
         UserDto user = new UserDto
         {
             Id = Guid.NewGuid().ToString(),
@@ -31,7 +31,7 @@ public class JwtProviderTests
 
         string token = jwtProvider.Generate(user);
 
-        Assert.NotNull(token);  
+        Assert.NotNull(token);
         Assert.NotEmpty(token);
     }
 
@@ -63,7 +63,7 @@ public class JwtProviderTests
         JwtOptions jwtOptions = JwtOptions.Builder()
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
-            .Build(); 
+            .Build();
 
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 

@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Adapter.Common;
 using BMJ.Authenticator.Application.Common.Models;
 
-namespace BMJ.Authenticator.Infrastructure.UnitTests.Common;
+namespace BMJ.Authenticator.Adapter.UnitTests.Common;
 
 public class InfrastructureErrorTests
 {
