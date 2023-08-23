@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
 
-namespace BMJ.Authenticator.Domain.UnitTests.Common;
+namespace BMJ.Authenticator.Domain.UnitTests.Common.Errors;
 
 public class ErrorTests
 {

@@ -71,4 +71,10 @@ public class PhoneTests
     {
         Assert.NotNull(Phone.New("584-932-6789"));
     }
+
+    [Fact]
+    public void ShouldGetPhoneHashCode()
+    {
+        Assert.True(Phone.New("584-932-6789").GetHashCode() != default);
+    }
 }
