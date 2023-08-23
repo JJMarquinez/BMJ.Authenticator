@@ -123,4 +123,10 @@ public class EventJsonConverterTests
 
         Assert.Equal($"UserNonExistingEvent is not supported yet!", exception.Message);
     }
+
+    [Fact]
+    public void ShouldNotImplementedExceptionTryingToWrite()
+    {
+        Assert.Throws<NotImplementedException>(() => new EventJsonConverter().Write(null!, null!, null!));
+    }
 }
