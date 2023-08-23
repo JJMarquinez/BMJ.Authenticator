@@ -47,9 +47,9 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             return ResultDto<string?>.NewSuccess<string?>(JsonSerializer.Serialize(user));
         }
 
-        public async Task<ResultDto<string?>> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
+        public async Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
-            ResultDto<string?> result = ResultDto<string?>.NewFailure<string?>(InfrastructureError.Identity.UserWasNotCreated); 
+            ResultDto result = ResultDto.NewFailure(InfrastructureError.Identity.UserWasNotCreated); 
             ApplicationUser user = ApplicationUser.Builder()
                 .WithUserName(userName)
                 .WithEmail(email)
@@ -58,7 +58,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
             IdentityResult identityResult = await _userManager.CreateAsync(user, password);
             if (identityResult.Succeeded)
-                result = ResultDto<string?>.NewSuccess<string?>(user.Id);
+                result = ResultDto.NewSuccess();
             else
                 _authLogger.Error("The following errors {@Errors} don't allow delete the user {@user}",
                     identityResult.Errors,

@@ -17,6 +17,9 @@ services:
       - .data01:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
+    networks:
+      - mydockernetwork
+
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.9.0
@@ -25,10 +28,11 @@ services:
       ELASTICSEARCH_HOSTS: http://es01:9200
     ports:
       - 5601:5601
+    networks:
+      - mydockernetwork
 
   cache:
     image: redis:7.0.4-alpine
-    restart: always
     ports: 
       - '6379:6379'
     volumes:
@@ -43,7 +47,6 @@ services:
 
   sqlserver:
     image: "mcr.microsoft.com/mssql/server:2022-latest"
-    restart: always
     environment:
       ACCEPT_EULA: "Y"
       SA_PASSWORD: "Password123"
@@ -51,13 +54,51 @@ services:
     ports:
       - "1435:1433"
 
+  zookeeper:
+    image: bitnami/zookeeper
+    ports:
+      - "2181:2181"
+    volumes:
+      - "zookeeper_data:/bitnami"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+
+  kafka:
+    image: bitnami/kafka
+    ports:
+      - "9092:9092"
+    volumes:
+      - "kafka_data:/bitnami"
+    environment:
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    depends_on:
+      - zookeeper
+
+  mongo-container:
+    container_name: mongo-container
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - "mongodb_data_container:/data/db"
+
 volumes:
   data01:
     driver: local
   cache:
     driver: local
+  zookeeper_data:
+    driver: local
+  kafka_data:
+    driver: local
+  mongodb_data_container:
+    driver: local
 
 networks:
-  default:
-    external:
-      name: mydockernetwork
+  mydockernetwork:
+    driver: bridge

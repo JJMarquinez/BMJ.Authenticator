@@ -20,7 +20,7 @@ public class MemberController : ApiControllerBase
     [AllowAnonymous]
     [OutputCache(PolicyName = nameof(TokenCachePolicy))]
     [HttpGet("getTokenAsync")]
-    public async Task<IActionResult> LoginAsync(LoginUserCommandRequest loginCommandRequest)
+    public async Task<IActionResult> GetTokenAsync(LoginUserQuery loginCommandRequest)
     {
         return Ok(await Mediator.Send(loginCommandRequest));
     }
@@ -29,12 +29,12 @@ public class MemberController : ApiControllerBase
     [HttpGet("getAllAsync")]
     public async Task<IActionResult> GetAllAsync()
     {
-        return Ok(await Mediator.Send(new GetAllUsersQueryRequest()));
+        return Ok(await Mediator.Send(new GetAllUsersQuery()));
     }
 
     [OutputCache(PolicyName = nameof(ByIdCachePolicy))]
     [HttpGet("getByIdAsync")]
-    public async Task<IActionResult> GetByIdAsync(GetUserByIdQueryRequest getUserByIdRequest)
+    public async Task<IActionResult> GetByIdAsync(GetUserByIdQuery getUserByIdRequest)
     {
         return Ok(await Mediator.Send(getUserByIdRequest));
     }

@@ -159,7 +159,6 @@ public class IdentityServiceTests
         var result = await _identityService.CreateUserAsync("Jhon", "Jhon1234!", "jhon@auth.com", "67543218");
 
         Assert.True(result.Success);
-        Assert.NotNull(result.Value);
     }
 
     [Fact]
