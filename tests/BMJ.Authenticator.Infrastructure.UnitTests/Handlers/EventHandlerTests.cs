@@ -1,11 +1,9 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Domain.ValueObjects;
 using BMJ.Authenticator.Infrastructure.Events;
 using BMJ.Authenticator.Infrastructure.Handlers;
 using MediatR;
 using Microsoft.AspNetCore.OutputCaching;
 using Moq;
-using System;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Handlers;
 
