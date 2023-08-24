@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Adapter.Identity;
 using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using Moq;
 using System.Text.Json;
@@ -68,5 +69,41 @@ public class IdentityAdapterTests
         Assert.Equal(resultDto.Error.Code, error.Code);
         Assert.Equal(resultDto.Error.Detail, error.Detail);
         Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+    }
+
+    [Fact]
+    public async void ShouldCreateUser()
+    {
+        _identityService.Setup(x => x.CreateUserAsync(
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string?>()
+            )).ReturnsAsync(ResultDto.NewSuccess());
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object);
+
+        var resultDto = await identityAdapter.CreateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
+
+        Assert.NotNull(resultDto);
+        Assert.True(resultDto.Success);
+    }
+
+    [Fact]
+    public async void ShouldNotCreateUser()
+    {
+        var error = InfrastructureError.Identity.UserWasNotCreated;
+        _identityService.Setup(x => x.CreateUserAsync(
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string?>()
+            )).ReturnsAsync(ResultDto.NewFailure(error));
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object);
+
+        var resultDto = await identityAdapter.CreateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
+
+        Assert.NotNull(resultDto);
+        Assert.False(resultDto.Success);
+        _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 }
