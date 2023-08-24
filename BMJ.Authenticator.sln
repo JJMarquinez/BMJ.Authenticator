@@ -50,7 +50,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Adapter",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InterfaceAdapters", "InterfaceAdapters", "{6CC213C8-93CE-40DD-A906-716283F420AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Adapter.UnitTests", "tests\BMJ.Authenticator.Adapter.UnitTests\BMJ.Authenticator.Adapter.UnitTests.csproj", "{2520C90B-9E8A-4F3B-874C-A48AB861F93F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Adapter.UnitTests", "tests\BMJ.Authenticator.Adapter.UnitTests\BMJ.Authenticator.Adapter.UnitTests.csproj", "{2520C90B-9E8A-4F3B-874C-A48AB861F93F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UseCases", "UseCases", "{C430C049-9A23-4E12-A4E7-335CCC58605E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Application.UnitTests", "tests\BMJ.Authenticator.Application.UnitTests\BMJ.Authenticator.Application.UnitTests.csproj", "{599C15A1-66F5-4286-8FA5-CE105C3E7ED1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -94,6 +98,10 @@ Global
 		{2520C90B-9E8A-4F3B-874C-A48AB861F93F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2520C90B-9E8A-4F3B-874C-A48AB861F93F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2520C90B-9E8A-4F3B-874C-A48AB861F93F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -115,6 +123,8 @@ Global
 		{843FFBC1-AA98-445D-970B-EE366F65CA2B} = {1D0D64CB-1EFD-4D18-906B-AFA8CC1B91CA}
 		{6CC213C8-93CE-40DD-A906-716283F420AB} = {B52B1953-212E-40B9-B8D4-135FFD03BB24}
 		{2520C90B-9E8A-4F3B-874C-A48AB861F93F} = {6CC213C8-93CE-40DD-A906-716283F420AB}
+		{C430C049-9A23-4E12-A4E7-335CCC58605E} = {B52B1953-212E-40B9-B8D4-135FFD03BB24}
+		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1} = {C430C049-9A23-4E12-A4E7-335CCC58605E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}
