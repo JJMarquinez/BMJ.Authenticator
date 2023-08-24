@@ -1,7 +1,5 @@
-﻿using AutoMapper;
-using BMJ.Authenticator.Application.Common.Abstractions;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Application.Common.Models.Users;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
@@ -11,12 +9,10 @@ public class LoginUserQueryHandler
 {
     private readonly IIdentityAdapter _identityAdapter;
     private readonly IJwtProvider _jwtProvider;
-    private readonly IMapper _mapper;
-    public LoginUserQueryHandler(IIdentityAdapter identityAdapter, IJwtProvider jwtProvider, IMapper mapper)
+    public LoginUserQueryHandler(IIdentityAdapter identityAdapter, IJwtProvider jwtProvider)
     {
         _identityAdapter = identityAdapter;
         _jwtProvider = jwtProvider;
-        _mapper = mapper;
     }
 
     public async Task<ResultDto<string?>> Handle(LoginUserQuery request, CancellationToken cancellationToken)
@@ -26,7 +22,6 @@ public class LoginUserQueryHandler
 
         if (userResultDto.Success)
         {
-            userResultDto.Value = _mapper.Map<UserDto>(userResultDto.Value!.ToUser());
             response = ResultDto<string?>.NewSuccess<string?>(_jwtProvider.Generate(userResultDto.Value!));
         }
         else

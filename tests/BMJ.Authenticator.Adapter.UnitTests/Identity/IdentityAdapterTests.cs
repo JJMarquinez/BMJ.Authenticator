@@ -20,7 +20,7 @@ public class IdentityAdapterTests
     {
         _identityService = new();
         _logger = new();
-        _jame = new UserIdentification()
+        _jame = new UserIdentification
         {
             Id = Guid.NewGuid().ToString(),
             UserName = "Jame",
@@ -28,7 +28,7 @@ public class IdentityAdapterTests
             PhoneNumber = "111-222-3333",
             Roles = new[] { "Standard" }
         };
-        _penelope = new UserIdentification()
+        _penelope = new UserIdentification
         {
             Id = Guid.NewGuid().ToString(),
             UserName = "Penelope",
@@ -242,11 +242,11 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.True(resultDto.Success);
-        Assert.Equal(resultDto.Value!.Id, _jame.Id);
-        Assert.Equal(resultDto.Value!.UserName, _jame.UserName);
-        Assert.Equal(resultDto.Value!.Email, _jame.Email);
-        Assert.Equal(resultDto.Value!.PhoneNumber, _jame.PhoneNumber);
-        Assert.Equal(resultDto.Value!.Roles, _jame.Roles);
+        Assert.Equal(_jame.Id, resultDto.Value!.Id);
+        Assert.Equal(_jame.UserName, resultDto.Value!.UserName);
+        Assert.Equal(_jame.Email, resultDto.Value!.Email);
+        Assert.Equal(_jame.PhoneNumber, resultDto.Value!.PhoneNumber);
+        Assert.Equal(_jame.Roles, resultDto.Value!.Roles);
     }
 
     [Fact]

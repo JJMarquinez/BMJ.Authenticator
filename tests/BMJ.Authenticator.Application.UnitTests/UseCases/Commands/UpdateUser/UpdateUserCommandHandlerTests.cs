@@ -25,10 +25,41 @@ public class UpdateUserCommandHandlerTests
             PhoneNumber = "999-888-777"
         };
         var token = new CancellationTokenSource().Token;
+        _identityAdapter.Setup(x => x.UpdateUserAsync(
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewSuccess());
         IRequestHandler<UpdateUserCommand, ResultDto> handler = new UpdateUserCommandHandler(_identityAdapter.Object);
 
-        var resultDto = handler.Handle(command, token);
+        var resultDto = await handler.Handle(command, token);
 
         Assert.NotNull(resultDto);
+        Assert.True(resultDto.Success);
+    }
+
+    [Fact]
+    public async void ShouldNotUpdateUser()
+    {
+        var command = new UpdateUserCommand
+        {
+            UserName = "davis",
+            Email = "davis@auth.com",
+            PhoneNumber = "999-888-777"
+        };
+        var token = new CancellationTokenSource().Token;
+        _identityAdapter.Setup(x => x.UpdateUserAsync(
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>(),
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewFailure(new Common.Models.ErrorDto()));
+        IRequestHandler<UpdateUserCommand, ResultDto> handler = new UpdateUserCommandHandler(_identityAdapter.Object);
+
+        var resultDto = await handler.Handle(command, token);
+
+        Assert.NotNull(resultDto);
+        Assert.False(resultDto.Success);
     }
 }

@@ -23,10 +23,33 @@ public class DeleteUserCommandHandlerTests
             Id = Guid.NewGuid().ToString(),
         };
         var token = new CancellationTokenSource().Token;
+        _identityAdapter.Setup(x => x.DeleteUserAsync(
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewSuccess());
         IRequestHandler<DeleteUserCommand, ResultDto> handler = new DeleteUserCommandHandler(_identityAdapter.Object);
 
-        var resultDto = handler.Handle(command, token);
+        var resultDto = await handler.Handle(command, token);
 
         Assert.NotNull(resultDto);
+        Assert.True(resultDto.Success);
+    }
+
+    [Fact]
+    public async void ShouldNotDeleteUser()
+    {
+        var command = new DeleteUserCommand
+        {
+            Id = Guid.NewGuid().ToString(),
+        };
+        var token = new CancellationTokenSource().Token;
+        _identityAdapter.Setup(x => x.DeleteUserAsync(
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewFailure(new Common.Models.ErrorDto()));
+        IRequestHandler<DeleteUserCommand, ResultDto> handler = new DeleteUserCommandHandler(_identityAdapter.Object);
+
+        var resultDto = await handler.Handle(command, token);
+
+        Assert.NotNull(resultDto);
+        Assert.False(resultDto.Success);
     }
 }
