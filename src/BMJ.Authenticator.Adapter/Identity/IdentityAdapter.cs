@@ -60,7 +60,7 @@ public class IdentityAdapter : IIdentityAdapter
     {
         var result = await _identityService.GetUserByIdAsync(userId);
         return result.Success
-            ? ResultDto<UserDto?>.NewSuccess<UserDto?>(JsonSerializer.Deserialize<UserDto?>(result.Value!))
+            ? ResultDto<UserDto?>.NewSuccess(JsonSerializer.Deserialize<UserDto?>(result.Value!))
             : ResultDto<UserDto?>.NewFailure<UserDto?>(result.Error);
     }
 
