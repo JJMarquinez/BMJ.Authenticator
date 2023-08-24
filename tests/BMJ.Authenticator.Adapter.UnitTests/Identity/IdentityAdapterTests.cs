@@ -104,6 +104,44 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
+        Assert.Equal(resultDto.Error.Title, error.Title);
+        Assert.Equal(resultDto.Error.Code, error.Code);
+        Assert.Equal(resultDto.Error.Detail, error.Detail);
+        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
+    }
+
+    [Fact]
+    public async void ShouldDeleteUser()
+    {
+        _identityService.Setup(x => x.DeleteUserAsync(
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewSuccess());
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object);
+
+        var resultDto = await identityAdapter.DeleteUserAsync(Guid.NewGuid().ToString());
+
+        Assert.NotNull(resultDto);
+        Assert.True(resultDto.Success);
+    }
+
+    [Fact]
+    public async void ShouldNotDeleteUser()
+    {
+        var error = InfrastructureError.Identity.UserWasNotDeleted;
+        _identityService.Setup(x => x.DeleteUserAsync(
+            It.IsAny<string>()
+            )).ReturnsAsync(ResultDto.NewFailure(error));
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object);
+
+        var resultDto = await identityAdapter.DeleteUserAsync(Guid.NewGuid().ToString());
+
+        Assert.NotNull(resultDto);
+        Assert.False(resultDto.Success);
+        Assert.Equal(resultDto.Error.Title, error.Title);
+        Assert.Equal(resultDto.Error.Code, error.Code);
+        Assert.Equal(resultDto.Error.Detail, error.Detail);
+        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 }
