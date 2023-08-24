@@ -73,10 +73,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
     }
 
     [Fact]
@@ -112,10 +112,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
@@ -146,10 +146,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
@@ -223,10 +223,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
     }
 
     [Fact]
@@ -262,10 +262,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
     }
 
     [Fact]
@@ -327,10 +327,10 @@ public class IdentityAdapterTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.Equal(error.Title, resultDto.Error.Title);
+        Assert.Equal(error.Code, resultDto.Error.Code);
+        Assert.Equal(error.Detail, resultDto.Error.Detail);
+        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 }

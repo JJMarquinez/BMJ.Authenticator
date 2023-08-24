@@ -55,7 +55,7 @@ public class CreateUserCommandHandlerTests
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string?>()
-            )).ReturnsAsync(ResultDto.NewFailure(new Common.Models.ErrorDto()));
+            )).ReturnsAsync(ResultDto.NewFailure(new Application.Common.Models.ErrorDto()));
         IRequestHandler<CreateUserCommand, ResultDto> handler = new CreateUserCommandHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(command, token);

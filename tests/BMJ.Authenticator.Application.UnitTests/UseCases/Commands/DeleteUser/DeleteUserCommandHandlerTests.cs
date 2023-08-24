@@ -44,7 +44,7 @@ public class DeleteUserCommandHandlerTests
         var token = new CancellationTokenSource().Token;
         _identityAdapter.Setup(x => x.DeleteUserAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(ResultDto.NewFailure(new Common.Models.ErrorDto()));
+            )).ReturnsAsync(ResultDto.NewFailure(new Application.Common.Models.ErrorDto()));
         IRequestHandler<DeleteUserCommand, ResultDto> handler = new DeleteUserCommandHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(command, token);

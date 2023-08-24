@@ -57,7 +57,7 @@ public class GetUserByIdQueryHandlerTests
         var token = new CancellationTokenSource().Token;
         _identityAdapter.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(ResultDto<UserDto?>.NewFailure<UserDto?>(new Common.Models.ErrorDto()));
+            )).ReturnsAsync(ResultDto<UserDto?>.NewFailure<UserDto?>(new Application.Common.Models.ErrorDto()));
         IRequestHandler<GetUserByIdQuery, ResultDto<UserDto?>> handler = new GetUserByIdQueryHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(query, token);
