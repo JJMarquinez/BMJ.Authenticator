@@ -9,10 +9,10 @@ public class User
     public string Id { get; }
     public string UserName { get; }
     public Email Email { get; }
-    public Phone? Phone { get; }
+    public Phone? PhoneNumber { get; }
     public string[]? Roles { get; }
 
-    private User(string id, string userName, Email email, string[]? roles, Phone? phone)
+    private User(string id, string userName, Email email, string[]? roles, Phone? phoneNumber)
     {
         Ensure.Argument.NotNullOrEmpty(id, string.Format("{0} cannot be null or empty.", nameof(id)));
         Ensure.Argument.NotNullOrEmpty(userName, string.Format("{0} cannot be null or empty.", nameof(userName)));
@@ -21,12 +21,12 @@ public class User
         Id = id;
         UserName = userName;
         Email = email;
-        Phone = phone;
+        PhoneNumber = phoneNumber;
         Roles = roles;
     }
 
-    internal static User NewInstance(string id, string userName, Email email, string[]? roles, Phone? phone)
-        => new(id, userName, email, roles, phone);
+    internal static User NewInstance(string id, string userName, Email email, string[]? roles, Phone? phoneNumber)
+        => new(id, userName, email, roles, phoneNumber);
 
     public static IUserBuilder Builder() => UserBuilder.NewInstance();
 }

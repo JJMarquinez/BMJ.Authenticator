@@ -168,6 +168,6 @@ public class UserTests
                 .WithPhone(Phone.New(phoneNumber))
                 .Build();
 
-        Assert.Equal(phoneNumber, user.Phone!);
+        Assert.Equal(phoneNumber, user.PhoneNumber!);
     }
 }
