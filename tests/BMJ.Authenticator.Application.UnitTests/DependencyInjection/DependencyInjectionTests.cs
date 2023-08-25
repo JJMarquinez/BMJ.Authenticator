@@ -4,7 +4,6 @@ using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using FluentValidation;
 using MediatR;
-using MediatR.Pipeline;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Application.UnitTests.DependencyInjection;
@@ -17,8 +16,6 @@ public class DependencyInjectionTests
         _serviceCollection = new ServiceCollection();
         _serviceCollection.AddTransient<IIdentityAdapter, IdentityAdapterTest>();
         _serviceCollection.AddApplicationServices();
-        _serviceCollection.AddScoped(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>));
-
     }
 
     [Fact]
