@@ -4,10 +4,12 @@ using BMJ.Authenticator.Infrastructure.Handlers;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
+using Confluent.Kafka;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using System.Reflection;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests;
@@ -19,9 +21,13 @@ public class DependencyInjectionTests
     public DependencyInjectionTests()
     {
         _serviceCollection = new ServiceCollection();
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddEnvironmentVariables()
+            .Build();
         _serviceCollection.AddMediatR(Assembly.GetExecutingAssembly());
         _serviceCollection.AddOutputCache();
-        _serviceCollection.AddInfrastructureServices(new ConfigurationManager());
+        _serviceCollection.AddInfrastructureServices(configuration);
     }
 
     [Fact]
@@ -34,6 +40,7 @@ public class DependencyInjectionTests
         Assert.IsType<Infrastructure.Handlers.EventHandler>(serviceProvider.GetService<IEventHandler>());
         Assert.IsType<EventConsumer>(serviceProvider.GetService<IEventConsumer>());
         Assert.IsType<UserValidator<ApplicationUser>>(serviceProvider.GetService<IUserValidator<ApplicationUser>>());
+        Assert.NotNull(serviceProvider.GetService<IOptions<ConsumerConfig>>());
     }
 
     [Fact]
