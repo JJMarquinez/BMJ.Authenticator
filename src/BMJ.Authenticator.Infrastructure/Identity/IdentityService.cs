@@ -40,8 +40,10 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<ResultDto<string?>> GetUserByIdAsync(string userId)
         {
-            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
-            var roles = await _userManager.GetRolesAsync(applicationUser!);
+            ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId).ConfigureAwait(false);
+            IList<string>? roles = null!;
+            if(applicationUser != null) 
+                roles = await _userManager.GetRolesAsync(applicationUser).ConfigureAwait(false);
             UserIdentification user = applicationUser!.ToUserIdentification(roles?.ToArray());
 
             return ResultDto<string?>.NewSuccess<string?>(JsonSerializer.Serialize(user));

@@ -31,7 +31,7 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
             PhoneNumber = "111-444-777",
             Roles = new[] { "Guest" }
         };
-        await _testContext.AddAsync(user, "M6#?m412kNSH").ConfigureAwait(false);
+        await _testContext.AddAsync(user, "M6#?m412kNSH");
 
         var query = new GetAllUsersQuery();
         var result = await _testContext.SendAsync(query);
@@ -49,7 +49,7 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ShouldNotReturnAnyUsers()
+    public async ValueTask ShouldNotReturnAnyUsers()
     {
         var error = InfrastructureError.Identity.ItDoesNotExistAnyUser;
         var query = new GetAllUsersQuery();

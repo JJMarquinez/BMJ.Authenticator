@@ -4,6 +4,7 @@ using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
@@ -38,18 +39,9 @@ public class AuthenticatorTestConext : IDisposable
         await _database.ResetAsync();
     }
 
-    public async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues)
-    where TEntity : class
+    public async ValueTask<string?> AddAsync(UserDto userDto, string password)
     {
-        using var scope = _scopeFactory.CreateScope();
-
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-        return await context.FindAsync<TEntity>(keyValues);
-    }
-
-    public async ValueTask AddAsync(UserDto userDto, string password)
-    {
+        string? userId = null!;
         using var scope = _scopeFactory.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         var user = ApplicationUser.Builder()
@@ -58,19 +50,26 @@ public class AuthenticatorTestConext : IDisposable
             .WithPhoneNumber(userDto.PhoneNumber)
             .Build();
 
-        var result = await userManager.CreateAsync(user, password).ConfigureAwait(false);
+        var userResult = await userManager.CreateAsync(user, password).ConfigureAwait(false);
 
-        if (userDto.Roles.Any())    
+        if (userResult.Succeeded)    
         {
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            user = await userManager.Users.FirstOrDefaultAsync(user => user.Email == userDto.Email).ConfigureAwait(false);
+            userId = user?.Id;
 
-            foreach (var role in userDto.Roles)
+            if (userDto.Roles.Any()) 
             {
-                await roleManager.CreateAsync(new IdentityRole(role)).ConfigureAwait(false);
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                foreach (var role in userDto.Roles)
+                {
+                    var roleResult = await roleManager.CreateAsync(new IdentityRole(role)).ConfigureAwait(false);
+                    if (roleResult.Succeeded)
+                        await userManager.AddToRolesAsync(user!, userDto.Roles).ConfigureAwait(false);
+                }
             }
-
-            await userManager.AddToRolesAsync(user, userDto.Roles).ConfigureAwait(false);
         }
+
+        return userId;
     }
 
     public async void Dispose()
