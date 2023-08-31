@@ -24,12 +24,15 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi();
     app.UseSwaggerUi3();
 
-    // Initialise and seed database
-    using (var scope = app.Services.CreateScope())
+    if (app.Configuration.GetValue<bool>("InitialiseDatabase"))
     {
-        var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
-        await initialiser.InitialiseAsync();
-        await initialiser.SeedAsync();
+        // Initialise and seed database
+        using (var scope = app.Services.CreateScope())
+        {
+            var initialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
+            await initialiser.InitialiseAsync();
+            await initialiser.SeedAsync();
+        }
     }
 }
 

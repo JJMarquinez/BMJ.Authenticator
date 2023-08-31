@@ -1,6 +1,9 @@
-﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
+﻿using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
+using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
@@ -21,7 +24,7 @@ public class AuthenticatorTestConext
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
     }
 
-    public static async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
     {
         using var scope = _scopeFactory.CreateScope();
 
@@ -30,7 +33,7 @@ public class AuthenticatorTestConext
         return await mediator.Send(request);
     }
 
-    public static async Task SendAsync(IBaseRequest request)
+    public async Task SendAsync(IBaseRequest request)
     {
         using var scope = _scopeFactory.CreateScope();
 
@@ -39,12 +42,12 @@ public class AuthenticatorTestConext
         await mediator.Send(request);
     }
 
-    public static async Task ResetState()
+    public async Task ResetState()
     {
         await _database.ResetAsync();
     }
 
-    public static async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues)
+    public async Task<TEntity?> FindAsync<TEntity>(params object[] keyValues)
     where TEntity : class
     {
         using var scope = _scopeFactory.CreateScope();
@@ -54,16 +57,29 @@ public class AuthenticatorTestConext
         return await context.FindAsync<TEntity>(keyValues);
     }
 
-    public static async Task AddAsync<TEntity>(TEntity entity)
-        where TEntity : class
+    public async Task AddAsync(UserDto userDto, string password)
     {
         using var scope = _scopeFactory.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var user = ApplicationUser.Builder()
+            .WithUserName(userDto.UserName)
+            .WithEmail(userDto.Email)
+            .WithPhoneNumber(userDto.PhoneNumber)
+            .Build();
 
-        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var result = await userManager.CreateAsync(user, password);
 
-        context.Add(entity);
+        if (userDto.Roles.Any())    
+        {
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        await context.SaveChangesAsync();
+            foreach (var role in userDto.Roles)
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+
+            await userManager.AddToRolesAsync(user, userDto.Roles);
+        }
     }
 
     public async Task DisposeAsync()
