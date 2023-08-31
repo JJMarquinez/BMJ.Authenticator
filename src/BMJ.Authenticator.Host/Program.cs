@@ -41,3 +41,5 @@ app.MapHealthChecks("/healthz", new Microsoft.AspNetCore.Diagnostics.HealthCheck
 app.UseApiConfiguration();
 
 app.Run();
+
+public partial class Program { }
