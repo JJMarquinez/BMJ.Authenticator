@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
 
-public class AuthenticatorTestConext
+public class AuthenticatorTestConext : IDisposable
 {
     private static ITestDatabase _database = null!;
     private static AuthenticatorWebApplicationFactory _factory = null!;
@@ -82,7 +82,7 @@ public class AuthenticatorTestConext
         }
     }
 
-    public async Task DisposeAsync()
+    public async void Dispose()
     {
         await _database.DisposeAsync();
         await _factory.DisposeAsync();
