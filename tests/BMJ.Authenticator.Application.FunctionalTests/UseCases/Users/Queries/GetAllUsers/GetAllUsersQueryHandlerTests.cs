@@ -22,7 +22,7 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
     public Task InitializeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async Task ShouldReturnAllUsers()
+    public async ValueTask ShouldReturnAllUsers()
     {
         var user = new UserDto
         { 
@@ -31,7 +31,7 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
             PhoneNumber = "111-444-777",
             Roles = new[] { "Guest" }
         };
-        await _testContext.AddAsync(user, "M6#?m412kNSH");
+        await _testContext.AddAsync(user, "M6#?m412kNSH").ConfigureAwait(false);
 
         var query = new GetAllUsersQuery();
         var result = await _testContext.SendAsync(query);

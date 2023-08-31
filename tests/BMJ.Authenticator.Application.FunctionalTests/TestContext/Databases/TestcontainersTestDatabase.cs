@@ -18,10 +18,10 @@ public class TestcontainersTestDatabase : ITestDatabase
         _msSqlContainer = new MsSqlBuilder().WithAutoRemove(true).Build();
     }
 
-    public async Task DisposeAsync()
+    public async ValueTask DisposeAsync()
     {
-        await _dbConnection.DisposeAsync();
-        await _msSqlContainer.DisposeAsync();
+        await _dbConnection.DisposeAsync().ConfigureAwait(false);
+        await _msSqlContainer.DisposeAsync().ConfigureAwait(false);
     }
 
     public DbConnection GetDbConnection()
@@ -31,13 +31,13 @@ public class TestcontainersTestDatabase : ITestDatabase
 
     public async Task InitialiseAsync()
     {
-        await _msSqlContainer.StartAsync();
+        await _msSqlContainer.StartAsync().ConfigureAwait(false);
         string connectionString = _msSqlContainer.GetConnectionString();
-        _dbConnection = InitializeDatabaseAsync(connectionString);
+        _dbConnection = await InitializeDatabaseAsync(connectionString);
         await InitializeRespawnAsync(connectionString);
     }
 
-    private DbConnection InitializeDatabaseAsync(string connectionString)
+    private async ValueTask<DbConnection> InitializeDatabaseAsync(string connectionString)
     {
         var connection = new SqlConnection(connectionString);
 
@@ -47,21 +47,21 @@ public class TestcontainersTestDatabase : ITestDatabase
 
         var context = new ApplicationDbContext(options);
 
-        context.Database.Migrate();
+        await context.Database.MigrateAsync().ConfigureAwait(false);
 
         return connection;
     }
 
-    private async Task InitializeRespawnAsync(string connectionString)
+    private async ValueTask InitializeRespawnAsync(string connectionString)
     {
         _respawner = await Respawner.CreateAsync(connectionString, new RespawnerOptions
         {
             TablesToIgnore = new Respawn.Graph.Table[] { "__EFMigrationsHistory" }
-        });
+        }).ConfigureAwait(false);
     }
 
-    public async Task ResetAsync()
+    public async ValueTask ResetAsync()
     {
-        await _respawner.ResetAsync(_msSqlContainer.GetConnectionString());
+        await _respawner.ResetAsync(_msSqlContainer.GetConnectionString()).ConfigureAwait(false);
     }
 }

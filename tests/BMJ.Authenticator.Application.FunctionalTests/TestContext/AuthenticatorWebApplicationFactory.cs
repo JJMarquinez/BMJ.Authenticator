@@ -30,7 +30,7 @@ public class AuthenticatorWebApplicationFactory : WebApplicationFactory<Program>
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>()
-            .AddDbContext<ApplicationDbContext>((sp, options) =>
+            .AddDbContextPool<ApplicationDbContext>((sp, options) =>
             {
                 options.UseSqlServer(_connection);
             });

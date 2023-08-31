@@ -30,16 +30,7 @@ public class AuthenticatorTestConext : IDisposable
 
         var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
 
-        return await mediator.Send(request);
-    }
-
-    public async Task SendAsync(IBaseRequest request)
-    {
-        using var scope = _scopeFactory.CreateScope();
-
-        var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
-
-        await mediator.Send(request);
+        return await mediator.Send(request).ConfigureAwait(false);
     }
 
     public async Task ResetState()
@@ -57,7 +48,7 @@ public class AuthenticatorTestConext : IDisposable
         return await context.FindAsync<TEntity>(keyValues);
     }
 
-    public async Task AddAsync(UserDto userDto, string password)
+    public async ValueTask AddAsync(UserDto userDto, string password)
     {
         using var scope = _scopeFactory.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -67,7 +58,7 @@ public class AuthenticatorTestConext : IDisposable
             .WithPhoneNumber(userDto.PhoneNumber)
             .Build();
 
-        var result = await userManager.CreateAsync(user, password);
+        var result = await userManager.CreateAsync(user, password).ConfigureAwait(false);
 
         if (userDto.Roles.Any())    
         {
@@ -75,16 +66,16 @@ public class AuthenticatorTestConext : IDisposable
 
             foreach (var role in userDto.Roles)
             {
-                await roleManager.CreateAsync(new IdentityRole(role));
+                await roleManager.CreateAsync(new IdentityRole(role)).ConfigureAwait(false);
             }
 
-            await userManager.AddToRolesAsync(user, userDto.Roles);
+            await userManager.AddToRolesAsync(user, userDto.Roles).ConfigureAwait(false);
         }
     }
 
     public async void Dispose()
     {
         await _database.DisposeAsync();
-        await _factory.DisposeAsync();
+        await _factory.DisposeAsync().ConfigureAwait(false);
     }
 }
