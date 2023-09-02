@@ -1,7 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
 using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -54,10 +53,10 @@ public class AuthenticatorTestConext : IDisposable
 
         if (userResult.Succeeded)    
         {
-            user = await userManager.Users.FirstOrDefaultAsync(user => user.Email == userDto.Email).ConfigureAwait(false);
+            user = await userManager.Users.FirstOrDefaultAsync(user => user.UserName == userDto.UserName).ConfigureAwait(false);
             userId = user?.Id;
 
-            if (userDto.Roles.Any()) 
+            if (userDto.Roles.Any())
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 foreach (var role in userDto.Roles)

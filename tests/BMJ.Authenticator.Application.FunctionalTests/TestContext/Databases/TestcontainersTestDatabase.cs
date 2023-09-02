@@ -32,7 +32,7 @@ public class TestcontainersTestDatabase : ITestDatabase
     public async Task InitialiseAsync()
     {
         await _msSqlContainer.StartAsync().ConfigureAwait(false);
-        string connectionString = _msSqlContainer.GetConnectionString();
+        string connectionString = string.Format("{0};MultipleActiveResultSets=True", _msSqlContainer.GetConnectionString());
         _dbConnection = await InitializeDatabaseAsync(connectionString);
         await InitializeRespawnAsync(connectionString);
     }

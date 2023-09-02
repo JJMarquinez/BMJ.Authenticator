@@ -1,7 +1,5 @@
-﻿using BMJ.Authenticator.Adapter.Common;
-using BMJ.Authenticator.Application.Common.Models.Users;
+﻿using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.FunctionalTests.TestContext;
-using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.UseCases.Users.Queries.GetUserById;
@@ -23,7 +21,7 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     public Task InitializeAsync() => Task.CompletedTask;
 
     [Fact]
-    public async ValueTask ShouldGetAnUser()
+    public async Task ShouldGetAnUser()
     {
         var userDto = new UserDto
         {
@@ -47,9 +45,9 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async ValueTask ShouldNotGetAnyUser()
+    public async Task ShouldNotGetAnyUser()
     {
         var query = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
-        await Assert.ThrowsAsync<NullReferenceException>(() => _testContext.SendAsync(query));        
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
     }
 }
