@@ -45,9 +45,16 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ShouldNotGetAnyUser()
+    public async Task ShouldThrowArgumentNullExceptionGivenNonExistingUserId()
     {
         var query = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentNullExceptionGivenNullUserId()
+    {
+        var query = new GetUserByIdQuery();
         await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
     }
 }

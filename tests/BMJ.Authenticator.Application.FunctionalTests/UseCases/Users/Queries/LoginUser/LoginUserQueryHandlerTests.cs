@@ -46,7 +46,7 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ShouldNotGetToken()
+    public async Task ShouldNotGetTokenGivenInvalidCredetials()
     {
         var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         var query = new LoginUserQuery
@@ -62,5 +62,34 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
         Assert.Equal(error.Detail, result.Error.Detail);
         Assert.Equal(error.Code, result.Error.Code);
         Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+    }
+
+    [Fact]
+    public async Task ShouldNotGetTokenGivenNoPassword()
+    {
+        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
+        var query = new LoginUserQuery
+        {
+            UserName = "Megan"
+        };
+        var result = await _testContext.SendAsync(query);
+
+        Assert.NotNull(result);
+        Assert.False(result.Success);
+        Assert.Equal(error.Title, result.Error.Title);
+        Assert.Equal(error.Detail, result.Error.Detail);
+        Assert.Equal(error.Code, result.Error.Code);
+        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+    }
+
+    [Fact]
+    public async Task ShouldThrowArgumentNullExceptionGivenNoUserName()
+    {
+        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
+        var query = new LoginUserQuery
+        {
+            Password = ">+$93p]!5£Ki"
+        };
+        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
     }
 }
