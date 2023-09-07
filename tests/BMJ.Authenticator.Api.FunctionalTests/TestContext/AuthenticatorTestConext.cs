@@ -1,6 +1,8 @@
-﻿using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
+﻿using BMJ.Authenticator.Api.FunctionalTests.Controllers;
+using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
 using BMJ.Authenticator.Api.FunctionalTests.TestContext.Databases;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using BMJ.Authenticator.Infrastructure.Identity;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -35,14 +37,54 @@ public class AuthenticatorTestConext : IDisposable
     public async Task<HttpResponseMessage> GetAsync(string? requestUri, IBaseRequest? request)
     {
         var client = _factory.CreateClient();
-        var content = request is not null ? JsonSerializer.Serialize(request, request.GetType()) : null;
+        HttpRequestMessage httpRequest = GetHttpRequest(requestUri, request);
+
+        return await client.SendAsync(httpRequest).ConfigureAwait(false);
+    }
+    
+    public async Task<HttpResponseMessage> GetAsync(string? requestUri, IBaseRequest? request, string token)
+    {
+        var client = _factory.CreateClient();
+        HttpRequestMessage httpRequest = GetHttpRequest(requestUri, request, token);
+
+        return await client.SendAsync(httpRequest).ConfigureAwait(false);
+    }
+
+    private HttpRequestMessage GetHttpRequest(string? requestUri, IBaseRequest? request, string? token = null)
+    {
         var httpRequest = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        var content = request is not null ? JsonSerializer.Serialize(request, request.GetType()) : null;
+        
         if (content is not null)
         {
             httpRequest.Content = new StringContent(content, Encoding.UTF8);
             httpRequest.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         }
-        return await client.SendAsync(httpRequest);
+
+        if(token is not null) 
+            httpRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        return httpRequest;
+    }
+
+    public async ValueTask<string> GetTokenAsync()
+    {
+        var userDto = new UserDto
+        {
+            UserName = "Megan",
+            Email = "megan@authenticator.com",
+            PhoneNumber = "111-444-777",
+            Roles = new[] { "Guest" }
+        };
+        await AddAsync(userDto, "A@9&53ro1XG-");
+        var request = new LoginUserQuery
+        {
+            UserName = "Megan",
+            Password = "A@9&53ro1XG-"
+        };
+
+        var response = await GetAsync(AuthenticatorApi.GetTokenAsync(), request).ConfigureAwait(false);
+        return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
     }
 
     public async Task ResetState()

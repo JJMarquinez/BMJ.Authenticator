@@ -1,6 +1,7 @@
 ﻿using BMJ.Authenticator.Adapter.Common;
 using BMJ.Authenticator.Api.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -134,5 +135,32 @@ public class MemberControllerTests : IAsyncLifetime
         Assert.NotNull(problemDetail);
         Assert.Equal(400, problemDetail.Status);
         Assert.Equal("One or more validation errors occurred.", problemDetail.Title);
+    }
+
+    [Fact]
+    public async Task ShouldNotGetUsersGivenAnonymousRequest()
+    {
+        var request = new GetAllUsersQuery();
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetAllAsync(), request);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ShouldGetAllUsers()
+    {
+        var request = new GetAllUsersQuery();
+        var token = await _testContext.GetTokenAsync();
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetAllAsync(), request, token);
+        var result = await response.Content.ReadAsStringAsync();
+        var userDtoList = JsonSerializer.Deserialize<List<UserDto>?>(result);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(userDtoList);
+        Assert.True(userDtoList.Any());
     }
 }
