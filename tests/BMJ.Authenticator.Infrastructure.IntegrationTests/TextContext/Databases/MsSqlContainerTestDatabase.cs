@@ -5,15 +5,15 @@ using Respawn;
 using System.Data.Common;
 using Testcontainers.MsSql;
 
-namespace BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
+namespace BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext.Databases;
 
-public class TestcontainersTestDatabase : ITestDatabase
+public class MsSqlContainerTestDatabase : ITestDatabase
 {
     private readonly MsSqlContainer _msSqlContainer;
     private DbConnection _dbConnection = null!;
     private Respawner _respawner = null!;
 
-    public TestcontainersTestDatabase()
+    public MsSqlContainerTestDatabase()
     {
         _msSqlContainer = new MsSqlBuilder().WithAutoRemove(true).Build();
     }

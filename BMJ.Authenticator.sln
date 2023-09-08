@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Api.Funct
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Application.IntegrationTests", "tests\BMJ.Authenticator.Application.IntegrationTests\BMJ.Authenticator.Application.IntegrationTests.csproj", "{6307E000-96CA-4236-BC16-611BE3EDFE17}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Infrastructure.IntegrationTests", "tests\BMJ.Authenticator.Infrastructure.IntegrationTests\BMJ.Authenticator.Infrastructure.IntegrationTests.csproj", "{5966FCD6-E4E5-4139-8617-AC5A942A7036}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -114,6 +116,10 @@ Global
 		{6307E000-96CA-4236-BC16-611BE3EDFE17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6307E000-96CA-4236-BC16-611BE3EDFE17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6307E000-96CA-4236-BC16-611BE3EDFE17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5966FCD6-E4E5-4139-8617-AC5A942A7036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5966FCD6-E4E5-4139-8617-AC5A942A7036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5966FCD6-E4E5-4139-8617-AC5A942A7036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5966FCD6-E4E5-4139-8617-AC5A942A7036}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +145,7 @@ Global
 		{599C15A1-66F5-4286-8FA5-CE105C3E7ED1} = {C430C049-9A23-4E12-A4E7-335CCC58605E}
 		{F1942250-1F93-42AC-9B6F-FA4037FAC946} = {6CC213C8-93CE-40DD-A906-716283F420AB}
 		{6307E000-96CA-4236-BC16-611BE3EDFE17} = {C430C049-9A23-4E12-A4E7-335CCC58605E}
+		{5966FCD6-E4E5-4139-8617-AC5A942A7036} = {8BC110B9-E313-425F-AAF3-1A2A76E7F118}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}

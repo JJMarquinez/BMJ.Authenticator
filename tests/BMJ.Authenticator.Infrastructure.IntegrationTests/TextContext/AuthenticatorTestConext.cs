@@ -1,17 +1,18 @@
-﻿using BMJ.Authenticator.Application.Common.Models.Users;
-using BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
+﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Infrastructure.Identity;
-using MediatR;
+using BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext.Databases;
+using BMJ.Authenticator.Infrastructure.Loggers;
+using BMJ.Authenticator.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
+namespace BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
     private static ITestDatabase _database = null!;
-    private static AuthenticatorWebApplicationFactory _factory = null!;
     private static IServiceScopeFactory _scopeFactory = null!;
 
     public AuthenticatorTestConext()
@@ -19,19 +20,28 @@ public class AuthenticatorTestConext : IDisposable
         _database = new MsSqlContainerTestDatabase();
         _database.InitialiseAsync().Wait();
 
-        _factory = new AuthenticatorWebApplicationFactory(_database.GetDbConnection());
-
-        _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
+        _scopeFactory = ConfigureTestServices().BuildServiceProvider().GetRequiredService<IServiceScopeFactory>();
     }
 
-    public async Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> request)
+    private IServiceCollection ConfigureTestServices()
     {
-        using var scope = _scopeFactory.CreateScope();
+        IServiceCollection services = new ServiceCollection();
 
-        var mediator = scope.ServiceProvider.GetRequiredService<ISender>();
+        services
+            .AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(_database.GetDbConnection()))
+            .AddIdentityCore<ApplicationUser>()
+            .AddRoles<IdentityRole>()
+            .AddEntityFrameworkStores<ApplicationDbContext>();
 
-        return await mediator.Send(request).ConfigureAwait(false);
+        services
+            .AddTransient<IIdentityService, IdentityService>()
+            .AddTransient<IAuthLogger, AuthLogger>();
+
+        return services;
     }
+
+    public IIdentityService GetIdentityService() 
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IIdentityService>();
 
     public async Task ResetState()
     {
@@ -51,7 +61,7 @@ public class AuthenticatorTestConext : IDisposable
 
         var userResult = await userManager.CreateAsync(user, password).ConfigureAwait(false);
 
-        if (userResult.Succeeded)    
+        if (userResult.Succeeded)
         {
             user = await userManager.Users.FirstOrDefaultAsync(user => user.UserName == userDto.UserName).ConfigureAwait(false);
             userId = user?.Id;
@@ -74,6 +84,5 @@ public class AuthenticatorTestConext : IDisposable
     public async void Dispose()
     {
         await _database.DisposeAsync();
-        await _factory.DisposeAsync().ConfigureAwait(false);
     }
 }
