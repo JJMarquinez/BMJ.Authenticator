@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Api.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
@@ -86,10 +87,7 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetTokenMisingPassword()
     {
-        var request = new LoginUserQuery
-        {
-            UserName = "Megan"
-        };
+        var request = new LoginUserQuery { UserName = "Megan" };
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetTokenAsync(), request);
         var result = await response.Content.ReadAsStringAsync();
@@ -105,10 +103,7 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetTokenMisingUsername()
     {
-        var request = new LoginUserQuery
-        {
-            Password = "A@9&53ro1X"
-        };
+        var request = new LoginUserQuery { Password = "A@9&53ro1X" };
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetTokenAsync(), request);
         var result = await response.Content.ReadAsStringAsync();
@@ -138,7 +133,7 @@ public class MemberControllerTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task ShouldNotGetUsersGivenAnonymousRequest()
+    public async Task ShouldNotGetAnyUsersGivenAnonymousRequest()
     {
         var request = new GetAllUsersQuery();
 
@@ -162,5 +157,73 @@ public class MemberControllerTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(userDtoList);
         Assert.True(userDtoList.Any());
+    }
+
+    [Fact]
+    public async Task ShouldNotGetUserByIdGivenAnonymousRequest()
+    {
+        var request = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task ShouldGetUserById()
+    {
+        var userDto = new UserDto
+        {
+            UserName = "Megan",
+            Email = "megan@authenticator.com",
+            PhoneNumber = "111-444-777",
+            Roles = new[] { "Guest" }
+        };
+        var userId = await _testContext.AddAsync(userDto, "A@9&53ro1XG-");
+        var token = await _testContext.GetTokenAsync();
+        var request = new GetUserByIdQuery { Id = userId };
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);
+        var result = await response.Content.ReadAsStringAsync();
+        var userDtoResult = JsonSerializer.Deserialize<UserDto?>(result);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(userDtoResult);
+    }
+
+    [Fact]
+    public async Task ShouldNotGetUserByIdGivenEmptyUserId()
+    {
+        var request = new GetUserByIdQuery();
+        var token = await _testContext.GetTokenAsync();
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);
+        var result = await response.Content.ReadAsStringAsync();
+        var problemDetail = JsonSerializer.Deserialize<ProblemDetails>(result);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(problemDetail);
+        Assert.Equal(400, problemDetail.Status);
+        Assert.Equal("One or more validation errors occurred.", problemDetail.Title);
+    }
+
+    [Fact]
+    public async Task ShouldNotGetUserByIdGivenNonExistingUserId()
+    {
+        var request = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+        var token = await _testContext.GetTokenAsync();
+
+        var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);
+        var result = await response.Content.ReadAsStringAsync();
+        var problemDetail = JsonSerializer.Deserialize<ProblemDetails>(result);
+
+        Assert.NotNull(response);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.NotNull(problemDetail);
+        Assert.Equal(400, problemDetail.Status);
+        Assert.Equal("One or more validation errors occurred.", problemDetail.Title);
     }
 }
