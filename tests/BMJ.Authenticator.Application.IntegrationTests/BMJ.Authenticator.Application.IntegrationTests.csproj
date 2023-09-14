@@ -38,6 +38,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BMJ.Authenticator.Host\BMJ.Authenticator.Host.csproj" />
+    <ProjectReference Include="..\BMJ.Authenticator.Tool.Identity\BMJ.Authenticator.Tool.Identity.csproj" />
   </ItemGroup>
 
 </Project>

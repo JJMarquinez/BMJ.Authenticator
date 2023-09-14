@@ -1,6 +1,9 @@
-﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+﻿using BMJ.Authenticator.Adapter.Authentication;
+using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Adapter.Identity;
+using BMJ.Authenticator.Adapter.IntegrationTests.TextContext.Databases;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext.Databases;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using BMJ.Authenticator.Tool.Identity.UserOperators;
@@ -8,7 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext;
+namespace BMJ.Authenticator.Adapter.IntegrationTests.TextContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
@@ -41,6 +44,8 @@ public class AuthenticatorTestConext : IDisposable
         services
             .AddTransient<IIdentityService, IdentityService>()
             .AddTransient<IAuthLogger, AuthLogger>()
+            .AddTransient<IIdentityAdapter, IdentityAdapter>()
+            .AddTransient<IJwtProvider, JwtProvider>()
             .AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(_database.GetDbConnection()))
             .AddIdentityCore<ApplicationUser>()
             .AddRoles<IdentityRole>()
@@ -48,8 +53,8 @@ public class AuthenticatorTestConext : IDisposable
         return services;
     }
 
-    public IIdentityService GetIdentityService() 
-        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IIdentityService>();
+    public IIdentityAdapter GetIdentityAdapter()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IIdentityAdapter>();
 
     public async Task ResetState()
     {

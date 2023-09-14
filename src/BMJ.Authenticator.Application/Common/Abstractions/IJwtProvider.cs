@@ -4,6 +4,6 @@ namespace BMJ.Authenticator.Application.Common.Abstractions
 {
     public interface IJwtProvider
     {
-        string Generate(UserDto user);
+        ValueTask<string> GenerateAsync(UserDto user);
     }
 }

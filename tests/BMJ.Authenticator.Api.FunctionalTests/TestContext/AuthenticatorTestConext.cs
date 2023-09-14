@@ -1,12 +1,11 @@
-﻿using BMJ.Authenticator.Api.FunctionalTests.Controllers;
-using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
+﻿using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
 using BMJ.Authenticator.Api.FunctionalTests.TestContext.Databases;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Users;
-using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Tool.Identity.UserOperators;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,8 +19,14 @@ public class AuthenticatorTestConext : IDisposable
     private static ITestCache _cache = null!;
     private static AuthenticatorWebApplicationFactory _factory = null!;
     private static IServiceScopeFactory _scopeFactory = null!;
+    private static IUserOperator _userOperator = null!;
 
     public AuthenticatorTestConext()
+    {
+        Initialize();
+    }
+
+    private void Initialize()
     {
         _database = new MsSqlContainerTestDatabase();
         _database.InitialiseAsync().Wait();
@@ -32,6 +37,11 @@ public class AuthenticatorTestConext : IDisposable
         _factory = new AuthenticatorWebApplicationFactory(_database.GetDbConnection(), _cache.GetConnectionString());
 
         _scopeFactory = _factory.Services.GetRequiredService<IServiceScopeFactory>();
+
+        var scope = _scopeFactory.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        _userOperator = new UserOperator(userManager, roleManager);
     }
 
     public async Task<HttpResponseMessage> GetAsync(string? requestUri, IBaseRequest? request)
@@ -69,22 +79,16 @@ public class AuthenticatorTestConext : IDisposable
 
     public async ValueTask<string> GetTokenAsync()
     {
-        var userDto = new UserDto
+        var user = new UserDto
         {
-            UserName = "Megan",
-            Email = "megan@authenticator.com",
+            Id = Guid.NewGuid().ToString(),
+            UserName = "Joe",
+            Email = "joe@authenticator.com",
             PhoneNumber = "111-444-777",
             Roles = new[] { "Guest" }
         };
-        await AddAsync(userDto, "A@9&53ro1XG-");
-        var request = new LoginUserQuery
-        {
-            UserName = "Megan",
-            Password = "A@9&53ro1XG-"
-        };
-
-        var response = await GetAsync(AuthenticatorApi.GetTokenAsync(), request).ConfigureAwait(false);
-        return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var jwtProvider = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IJwtProvider>();
+        return await jwtProvider.GenerateAsync(user);
     }
 
     public async Task ResetState()
@@ -92,43 +96,17 @@ public class AuthenticatorTestConext : IDisposable
         await _database.ResetAsync();
     }
 
-    public async ValueTask<string?> AddAsync(UserDto userDto, string password)
-    {
-        string? userId = null!;
-        using var scope = _scopeFactory.CreateScope();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-        var user = ApplicationUser.Builder()
-            .WithUserName(userDto.UserName)
-            .WithEmail(userDto.Email)
-            .WithPhoneNumber(userDto.PhoneNumber)
-            .Build();
+    public async ValueTask<string?> AddAsync(ApplicationUser applicationUser, string password, string[] roles)
+        => await _userOperator.AddAsync(applicationUser, password, roles);
 
-        var userResult = await userManager.CreateAsync(user, password).ConfigureAwait(false);
-
-        if (userResult.Succeeded)
-        {
-            user = await userManager.Users.FirstOrDefaultAsync(user => user.UserName == userDto.UserName).ConfigureAwait(false);
-            userId = user?.Id;
-
-            if (userDto.Roles.Any())
-            {
-                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                foreach (var role in userDto.Roles)
-                {
-                    var roleResult = await roleManager.CreateAsync(new IdentityRole(role)).ConfigureAwait(false);
-                    if (roleResult.Succeeded)
-                        await userManager.AddToRolesAsync(user!, userDto.Roles).ConfigureAwait(false);
-                }
-            }
-        }
-
-        return userId;
-    }
+    public async ValueTask<ApplicationUser?> FindAsync(string applicationUserId)
+        => await _userOperator.FindAsync(applicationUserId);
 
     public async void Dispose()
     {
         await _database.DisposeAsync();
         await _cache.DisposeAsync();
         await _factory.DisposeAsync().ConfigureAwait(false);
+        _userOperator.Dispose();
     }
 }

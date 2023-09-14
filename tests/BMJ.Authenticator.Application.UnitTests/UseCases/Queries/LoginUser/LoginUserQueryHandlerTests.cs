@@ -34,7 +34,7 @@ public class LoginUserQueryHandlerTests
             It.IsAny<string>(),
             It.IsAny<string>()
             )).ReturnsAsync(ResultDto<UserDto?>.NewSuccess<UserDto?>(user));
-        _jwtProvider.Setup(x => x.Generate(It.IsAny<UserDto>())).Returns(jwtToken);
+        _jwtProvider.Setup(x => x.GenerateAsync(It.IsAny<UserDto>())).ReturnsAsync(jwtToken);
         IRequestHandler<LoginUserQuery, ResultDto<string?>> handler = new LoginUserQueryHandler(_identityAdapter.Object, _jwtProvider.Object);
 
         var resultDto = await handler.Handle(_query, token);

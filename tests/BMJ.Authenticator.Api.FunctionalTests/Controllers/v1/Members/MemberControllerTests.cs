@@ -4,6 +4,7 @@ using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
+using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
@@ -29,14 +30,14 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetToken()
     {
-        var userDto = new UserDto
-        {
-            UserName = "Megan",
-            Email = "megan@authenticator.com",
-            PhoneNumber = "111-444-777",
-            Roles = new[] { "Guest" }
-        };
-        await _testContext.AddAsync(userDto, "A@9&53ro1XG-");
+        var applicationUser = ApplicationUser.Builder()
+            .WithUserName("Megan")
+            .WithEmail("megan@authenticator.com")
+            .WithPhoneNumber("111-444-777")
+            .Build();
+        var roles = new[] { "Guest" };
+        await _testContext.AddAsync(applicationUser, "A@9&53ro1XG-", roles);
+
         var request = new LoginUserQuery
         {
             UserName = "Megan",
@@ -55,14 +56,14 @@ public class MemberControllerTests : IAsyncLifetime
     public async Task ShouldNotGetTokenGivenInvalidCredentials()
     {
         var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
-        var userDto = new UserDto
-        {
-            UserName = "Megan",
-            Email = "megan@authenticator.com",
-            PhoneNumber = "111-444-777",
-            Roles = new[] { "Guest" }
-        };
-        await _testContext.AddAsync(userDto, "A@9&53ro1XG-");
+        var applicationUser = ApplicationUser.Builder()
+            .WithUserName("Megan")
+            .WithEmail("megan@authenticator.com")
+            .WithPhoneNumber("111-444-777")
+            .Build();
+        var roles = new[] { "Guest" };
+        await _testContext.AddAsync(applicationUser, "A@9&53ro1XG-", roles);
+
         var request = new LoginUserQuery
         {
             UserName = "Megan",
@@ -146,8 +147,15 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetAllUsers()
     {
-        var request = new GetAllUsersQuery();
         var token = await _testContext.GetTokenAsync();
+        var applicationUser = ApplicationUser.Builder()
+            .WithUserName("Megan")
+            .WithEmail("megan@authenticator.com")
+            .WithPhoneNumber("111-444-777")
+            .Build();
+        var roles = new[] { "Guest" };
+        await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
+        var request = new GetAllUsersQuery();
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetAllAsync(), request, token);
         var result = await response.Content.ReadAsStringAsync();
@@ -173,14 +181,14 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetUserById()
     {
-        var userDto = new UserDto
-        {
-            UserName = "Megan",
-            Email = "megan@authenticator.com",
-            PhoneNumber = "111-444-777",
-            Roles = new[] { "Guest" }
-        };
-        var userId = await _testContext.AddAsync(userDto, "A@9&53ro1XG-");
+        var applicationUser = ApplicationUser.Builder()
+            .WithUserName("Megan")
+            .WithEmail("megan@authenticator.com")
+            .WithPhoneNumber("111-444-777")
+            .Build();
+        var roles = new[] { "Guest" };
+        string? userId = await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
+
         var token = await _testContext.GetTokenAsync();
         var request = new GetUserByIdQuery { Id = userId };
 

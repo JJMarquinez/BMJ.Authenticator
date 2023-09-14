@@ -22,7 +22,7 @@ public class LoginUserQueryHandler
 
         if (userResultDto.Success)
         {
-            response = ResultDto<string?>.NewSuccess<string?>(_jwtProvider.Generate(userResultDto.Value!));
+            response = ResultDto<string?>.NewSuccess<string?>(await _jwtProvider.GenerateAsync(userResultDto.Value!));
         }
         else
             response = ResultDto<string?>.NewFailure<string?>(userResultDto.Error);

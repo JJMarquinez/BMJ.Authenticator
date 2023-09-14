@@ -1,6 +1,6 @@
-﻿using BMJ.Authenticator.Application.Common.Models.Users;
-using BMJ.Authenticator.Application.FunctionalTests.TestContext;
+﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
+using BMJ.Authenticator.Infrastructure.Identity;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.UseCases.Users.Queries.GetUserById;
 
@@ -23,14 +23,13 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetAnUser()
     {
-        var userDto = new UserDto
-        {
-            UserName = "Joe",
-            Email = "joe@authenticator.com",
-            PhoneNumber = "111-444-777",
-            Roles = new[] { "Guest" }
-        };
-        string? userId = await _testContext.AddAsync(userDto, "M6#?m412kNSH");
+        var applicationUser = ApplicationUser.Builder()
+            .WithUserName("Joe")
+            .WithEmail("joe@authenticator.com")
+            .WithPhoneNumber("111-444-777")
+            .Build();
+        var roles = new[] { "Guest" };
+        string? userId =  await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
 
         var query = new GetUserByIdQuery { Id = userId };
         var result = await _testContext.SendAsync(query);
@@ -38,10 +37,10 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
         Assert.NotNull(result);
         Assert.True(result.Success);
         Assert.Equal(userId, result.Value!.Id);
-        Assert.Equal(userDto.UserName, result.Value.UserName);
-        Assert.Equal(userDto.Email, result.Value.Email);
-        Assert.Equal(userDto.PhoneNumber, result.Value.PhoneNumber);
-        Assert.Equal(userDto.Roles[0], result.Value.Roles[0]);
+        Assert.Equal(applicationUser.UserName, result.Value.UserName);
+        Assert.Equal(applicationUser.Email, result.Value.Email);
+        Assert.Equal(applicationUser.PhoneNumber, result.Value.PhoneNumber);
+        Assert.Equal(roles[0], result.Value.Roles[0]);
     }
 
     [Fact]

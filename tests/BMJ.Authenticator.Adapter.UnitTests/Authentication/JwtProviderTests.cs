@@ -11,7 +11,7 @@ namespace BMJ.Authenticator.Adapter.UnitTests.Authentication;
 public class JwtProviderTests
 {
     [Fact]
-    public void ShouldGenerateToken()
+    public async Task ShouldGenerateToken()
     {
         JwtOptions jwtOptions = JwtOptions.Builder()
             .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
@@ -29,7 +29,7 @@ public class JwtProviderTests
             PhoneNumber = Phone.New("111-222-3333"),
         };
 
-        string token = jwtProvider.Generate(user);
+        string token = await jwtProvider.GenerateAsync(user);
 
         Assert.NotNull(token);
         Assert.NotEmpty(token);
@@ -54,7 +54,7 @@ public class JwtProviderTests
             PhoneNumber = Phone.New("111-222-3333"),
         };
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => jwtProvider.Generate(user));
+        Assert.Throws<ArgumentOutOfRangeException>(() => jwtProvider.GenerateAsync(user));
     }
 
     [Fact]
@@ -76,11 +76,11 @@ public class JwtProviderTests
             PhoneNumber = Phone.New("111-222-3333"),
         };
 
-        Assert.Throws<ArgumentNullException>(() => jwtProvider.Generate(user));
+        Assert.Throws<ArgumentNullException>(() => jwtProvider.GenerateAsync(user));
     }
 
     [Fact]
-    public void ShouldGenarateTokenWithTheUserData()
+    public async Task ShouldGenarateTokenWithTheUserData()
     {
         JwtOptions jwtOptions = JwtOptions.Builder()
             .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
@@ -98,7 +98,7 @@ public class JwtProviderTests
             PhoneNumber = Phone.New("111-222-3333"),
         };
 
-        string token = jwtProvider.Generate(user);
+        string token = await jwtProvider.GenerateAsync(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
 
         Assert.Equal(user.Id, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
@@ -108,7 +108,7 @@ public class JwtProviderTests
     }
 
     [Fact]
-    public void ShouldGenarateTokenWithTheUserDataExceptFromRoles()
+    public async Task ShouldGenarateTokenWithTheUserDataExceptFromRoles()
     {
         JwtOptions jwtOptions = JwtOptions.Builder()
             .WithSecretKey("03gno14wOJ#jSmZ4@VZmou!^5tMX$UyieyMZSuRA")
@@ -126,7 +126,7 @@ public class JwtProviderTests
             PhoneNumber = Phone.New("111-222-3333"),
         };
 
-        string token = jwtProvider.Generate(user);
+        string token = await jwtProvider.GenerateAsync(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
 
         Assert.Equal(user.Id, jwtSecurityToken.Claims.First(claim => string.Equals(claim.Type, JwtRegisteredClaimNames.Sub, StringComparison.Ordinal)).Value);
