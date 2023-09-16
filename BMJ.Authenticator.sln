@@ -64,13 +64,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.Infrastru
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Adapter.IntegrationTests", "tests\BMJ.Authenticator.Adapter.IntegrationTests\BMJ.Authenticator.Adapter.IntegrationTests.csproj", "{F2FA2156-3CFE-45E8-B900-9D0CFC38454B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{0B170489-D93A-4AD0-AF19-128086910812}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ToolKit", "ToolKit", "{0B170489-D93A-4AD0-AF19-128086910812}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Databases", "Databases", "{9D69E2B7-3AD3-4A5C-9F37-1217855BDB69}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{DA85255E-37FB-46C2-A0FC-37289AC90B56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.Tool.Identity", "tests\BMJ.Authenticator.Tool.Identity\BMJ.Authenticator.Tool.Identity.csproj", "{44A9FD6A-9B65-4C6F-BB61-D224A7453B27}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BMJ.Authenticator.ToolKit.Identity", "tests\BMJ.Authenticator.ToolKit.Identity\BMJ.Authenticator.ToolKit.Identity.csproj", "{32725C53-DCB3-4394-BABD-0905D90D8221}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BMJ.Authenticator.ToolKit.Database", "tests\BMJ.Authenticator.ToolKit.Database\BMJ.Authenticator.ToolKit.Database.csproj", "{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -134,10 +136,14 @@ Global
 		{F2FA2156-3CFE-45E8-B900-9D0CFC38454B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2FA2156-3CFE-45E8-B900-9D0CFC38454B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2FA2156-3CFE-45E8-B900-9D0CFC38454B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44A9FD6A-9B65-4C6F-BB61-D224A7453B27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44A9FD6A-9B65-4C6F-BB61-D224A7453B27}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44A9FD6A-9B65-4C6F-BB61-D224A7453B27}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44A9FD6A-9B65-4C6F-BB61-D224A7453B27}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32725C53-DCB3-4394-BABD-0905D90D8221}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32725C53-DCB3-4394-BABD-0905D90D8221}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32725C53-DCB3-4394-BABD-0905D90D8221}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32725C53-DCB3-4394-BABD-0905D90D8221}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -168,7 +174,8 @@ Global
 		{0B170489-D93A-4AD0-AF19-128086910812} = {B52B1953-212E-40B9-B8D4-135FFD03BB24}
 		{9D69E2B7-3AD3-4A5C-9F37-1217855BDB69} = {0B170489-D93A-4AD0-AF19-128086910812}
 		{DA85255E-37FB-46C2-A0FC-37289AC90B56} = {0B170489-D93A-4AD0-AF19-128086910812}
-		{44A9FD6A-9B65-4C6F-BB61-D224A7453B27} = {DA85255E-37FB-46C2-A0FC-37289AC90B56}
+		{32725C53-DCB3-4394-BABD-0905D90D8221} = {DA85255E-37FB-46C2-A0FC-37289AC90B56}
+		{1A349EAD-89E0-48F4-A9CE-65FFC4F28F81} = {9D69E2B7-3AD3-4A5C-9F37-1217855BDB69}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6B40C838-83BD-4B12-A8CF-D3937E2FA033}

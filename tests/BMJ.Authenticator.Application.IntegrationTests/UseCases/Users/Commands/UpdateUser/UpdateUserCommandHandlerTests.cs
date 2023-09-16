@@ -46,9 +46,9 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
         Assert.NotNull(result);
         Assert.True(result.Success);
         Assert.NotNull(user);
-        Assert.Equal(applicationUser.UserName, user.UserName);
-        Assert.Equal(applicationUser.Email, user.Email);
-        Assert.Equal(applicationUser.PhoneNumber, user.PhoneNumber);
+        Assert.Equal(command.UserName, user.UserName);
+        Assert.Equal(command.Email, user.Email);
+        Assert.Equal(command.PhoneNumber, user.PhoneNumber);
     }
 
     [Fact]

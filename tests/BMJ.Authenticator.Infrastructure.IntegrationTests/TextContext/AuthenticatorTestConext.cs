@@ -1,9 +1,10 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext.Databases;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
-using BMJ.Authenticator.Tool.Identity.UserOperators;
+using BMJ.Authenticator.ToolKit.Database.Abstractions;
+using BMJ.Authenticator.ToolKit.Database.Testcontainters;
+using BMJ.Authenticator.ToolKit.Identity.UserOperators;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,7 +61,10 @@ public class AuthenticatorTestConext : IDisposable
         => await _userOperator.AddAsync(applicationUser, password, roles);
 
     public async ValueTask<ApplicationUser?> FindAsync(string applicationUserId)
-        => await _userOperator.FindAsync(applicationUserId);
+    {
+        var userManager = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        return await userManager.Users.FirstOrDefaultAsync(user => user.Id == applicationUserId);
+    }
 
     public async void Dispose()
     {

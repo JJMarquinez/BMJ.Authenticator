@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
 
-namespace BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
+namespace BMJ.Authenticator.ToolKit.Database.Abstractions;
 
 public interface ITestDatabase
 {

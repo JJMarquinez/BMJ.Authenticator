@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -10,8 +10,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
-    <PackageReference Include="Respawn" Version="6.1.0" />
-    <PackageReference Include="Testcontainers.MsSql" Version="3.5.0" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,7 +23,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\BMJ.Authenticator.Infrastructure\BMJ.Authenticator.Infrastructure.csproj" />
-    <ProjectReference Include="..\BMJ.Authenticator.Tool.Identity\BMJ.Authenticator.Tool.Identity.csproj" />
+    <ProjectReference Include="..\BMJ.Authenticator.ToolKit.Database\BMJ.Authenticator.ToolKit.Database.csproj" />
+    <ProjectReference Include="..\BMJ.Authenticator.ToolKit.Identity\BMJ.Authenticator.ToolKit.Identity.csproj" />
   </ItemGroup>
 
 </Project>

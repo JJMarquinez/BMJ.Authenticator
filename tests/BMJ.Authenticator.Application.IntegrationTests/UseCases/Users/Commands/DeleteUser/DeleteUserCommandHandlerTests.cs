@@ -34,11 +34,11 @@ public class DeleteUserCommandHandlerTests : IAsyncLifetime
         var command = new DeleteUserCommand { Id = userId };
 
         var result = await _testContext.SendAsync(command);
-        //var user = await _testContext.FindAsync(userId!);
+        var user = await _testContext.FindAsync(userId!);
 
         Assert.NotNull(result);
         Assert.True(result.Success);
-        //Assert.Null(user);
+        Assert.Null(user);
     }
 
     [Fact]

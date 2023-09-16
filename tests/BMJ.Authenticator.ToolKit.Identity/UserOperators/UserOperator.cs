@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace BMJ.Authenticator.Tool.Identity.UserOperators;
+namespace BMJ.Authenticator.ToolKit.Identity.UserOperators;
 
 public class UserOperator : IUserOperator
 {
@@ -45,7 +45,4 @@ public class UserOperator : IUserOperator
         _userManager.Dispose();
         _roleManager.Dispose();
     }
-
-    public async ValueTask<ApplicationUser?> FindAsync(string applicationUserId) 
-        => await _userManager.FindByIdAsync(applicationUserId).ConfigureAwait(false);
 }

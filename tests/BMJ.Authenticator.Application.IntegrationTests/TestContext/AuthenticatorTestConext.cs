@@ -1,8 +1,10 @@
-﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext.Databases;
-using BMJ.Authenticator.Infrastructure.Identity;
-using BMJ.Authenticator.Tool.Identity.UserOperators;
+﻿using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.ToolKit.Database.Abstractions;
+using BMJ.Authenticator.ToolKit.Database.Testcontainters;
+using BMJ.Authenticator.ToolKit.Identity.UserOperators;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
@@ -52,7 +54,10 @@ public class AuthenticatorTestConext : IDisposable
         => await _userOperator.AddAsync(applicationUser, password, roles);
 
     public async ValueTask<ApplicationUser?> FindAsync(string applicationUserId)
-        => await _userOperator.FindAsync(applicationUserId);
+    {
+        var userManager = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        return await userManager.Users.FirstOrDefaultAsync(user => user.Id == applicationUserId);
+    }
 
     public async void Dispose()
     {

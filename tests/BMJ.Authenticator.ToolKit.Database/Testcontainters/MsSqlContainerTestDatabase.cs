@@ -1,11 +1,12 @@
 ﻿using BMJ.Authenticator.Infrastructure.Persistence;
+using BMJ.Authenticator.ToolKit.Database.Abstractions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Respawn;
 using System.Data.Common;
 using Testcontainers.MsSql;
 
-namespace BMJ.Authenticator.Api.FunctionalTests.TestContext.Databases;
+namespace BMJ.Authenticator.ToolKit.Database.Testcontainters;
 
 public class MsSqlContainerTestDatabase : ITestDatabase
 {
