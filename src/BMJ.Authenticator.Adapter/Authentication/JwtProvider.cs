@@ -17,7 +17,7 @@ namespace BMJ.Authenticator.Adapter.Authentication
             _options = options.Value;
         }
 
-        public string Generate(UserDto user)
+        public ValueTask<string> GenerateAsync(UserDto user)
         {
             var claims = new List<Claim> {
                 new (JwtRegisteredClaimNames.Sub, user.Id),
@@ -44,7 +44,7 @@ namespace BMJ.Authenticator.Adapter.Authentication
                 DateTime.UtcNow.AddMinutes(15),
                 signingCredentials
             );
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return new ValueTask<string>(new JwtSecurityTokenHandler().WriteToken(token));
         }
     }
 }

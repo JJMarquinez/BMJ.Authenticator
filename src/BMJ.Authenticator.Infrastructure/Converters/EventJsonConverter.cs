@@ -12,8 +12,7 @@ public class EventJsonConverter : JsonConverter<BaseEvent>
     }
     public override BaseEvent? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
-        if (!JsonDocument.TryParseValue(ref reader, out var doc))
-            throw new JsonException($"Failed to parse {nameof(JsonDocument)}");
+        var doc = JsonDocument.ParseValue(ref reader);
 
         if (!doc.RootElement.TryGetProperty("Type", out var type))
             throw new JsonException("Could not detect the Type discriminator property!");

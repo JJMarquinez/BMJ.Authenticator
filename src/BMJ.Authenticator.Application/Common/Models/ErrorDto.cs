@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using BMJ.Authenticator.Application.Common.Mappings;
+﻿using BMJ.Authenticator.Application.Common.Mappings;
 using BMJ.Authenticator.Domain.Common.Errors;
 
 namespace BMJ.Authenticator.Application.Common.Models;

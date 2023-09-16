@@ -24,7 +24,7 @@ public static class DependencyInjection
             })
             .AddProblemDetails()
             .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
-            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration.GetValue<string>("Redis:Configuration")))
+            .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration.GetValue<string>("Redis:Configuration")!))
             .AddRedisOutputCache(options =>
             {
                 options
@@ -37,6 +37,10 @@ public static class DependencyInjection
                 options.Filters.Add<ApiLogFilterAttribute>();
                 options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<AuthenticatorResultFilterAttribute>();
+            })
+            .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.PropertyNamingPolicy = null;
             })
             .AddApiExplorer()
             .AddApplicationPart(typeof(DependencyInjection).Assembly);

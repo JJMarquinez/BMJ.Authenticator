@@ -1,7 +1,4 @@
-﻿using BMJ.Authenticator.Domain.Entities.Users;
-using BMJ.Authenticator.Domain.ValueObjects;
-
-namespace BMJ.Authenticator.Infrastructure.Identity
+﻿namespace BMJ.Authenticator.Infrastructure.Identity
 {
     public static class ApplicationUserExtensions
     {

@@ -5,16 +5,17 @@ using Microsoft.AspNetCore.Identity;
 using MockQueryable.Moq;
 using Moq;
 using System.Text.Json;
+using System.Collections.Generic;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
 public class IdentityServiceTests
 {
-    Mock<IAuthLogger> _authLogger;
-    Mock<UserManager<ApplicationUser>> _userManager;
-    List<ApplicationUser> _users;
-    List<string> _roles;
-    string _userId;
+    private readonly Mock<IAuthLogger> _authLogger;
+    private readonly Mock<UserManager<ApplicationUser>> _userManager;
+    private readonly List<ApplicationUser> _users;
+    private readonly List<string> _roles;
+    private readonly string _userId;
 
     public IdentityServiceTests()
     {

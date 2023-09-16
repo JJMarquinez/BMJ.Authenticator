@@ -12,17 +12,20 @@ public class TokenCachePolicy : AuthenticatorBaseCachePolicy
         context.Request.EnableBuffering();
         using (var reader = new StreamReader(context.Request.Body, leaveOpen: true))
         {
-            string? userName = JsonSerializer.Deserialize<RequestByName>(await reader.ReadToEndAsync())?.userName?.ToString();
+            var tokeRequest = JsonSerializer.Deserialize<TokenRequest>(await reader.ReadToEndAsync());
+            string? userName = tokeRequest!.userName;
+            string? password = tokeRequest!.password;
             context.Request.Body.Position = 0;
-            varyBy = new KeyValuePair<string, string>(nameof(userName), userName);
+            varyBy = new KeyValuePair<string, string>(nameof(TokenRequest), string.Concat(userName, password));
         }
         return varyBy;
     }
 }
 
-internal class RequestByName
+internal class TokenRequest
 { 
     public string? userName { get; set; }
+    public string? password { get; set; }
 }
 
 public static partial class OutputCacheOptionsExtensions

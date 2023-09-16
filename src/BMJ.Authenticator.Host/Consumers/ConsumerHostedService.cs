@@ -6,19 +6,19 @@ namespace BMJ.Authenticator.Host.Consumers;
 public class ConsumerHostedService : IHostedService
 {
     private readonly IAuthLogger _logger;
-    private readonly IServiceProvider _serviceProvider;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ConsumerHostedService(IAuthLogger logger, IServiceProvider serviceProvider)
+    public ConsumerHostedService(IAuthLogger logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
-        _serviceProvider = serviceProvider;
+        _serviceScopeFactory = serviceScopeFactory;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.Information("Event consumer service running.");
 
-        using (IServiceScope scope = _serviceProvider.CreateScope())
+        using (IServiceScope scope = _serviceScopeFactory.CreateScope())
         {
             var eventConsumer = scope.ServiceProvider.GetRequiredService<IEventConsumer>();
             var topic = Environment.GetEnvironmentVariable("KAFKA_TOPIC");

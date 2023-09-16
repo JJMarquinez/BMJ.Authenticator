@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.ObjectPool;
-using Microsoft.Extensions.Options;
 
 namespace BMJ.Authenticator.Api.Caching;
 
