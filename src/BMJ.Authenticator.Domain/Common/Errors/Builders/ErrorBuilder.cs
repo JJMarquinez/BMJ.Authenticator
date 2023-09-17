@@ -1,4 +1,4 @@
-﻿namespace BMJ.Authenticator.Domain.Common.Errors;
+﻿namespace BMJ.Authenticator.Domain.Common.Errors.Builders;
 
 public class ErrorBuilder : IErrorBuilder, IErrorWithTitleBuilder, IErrorWithDetailBuilder, IErrorWithHttpStatusCodeBuilder, IErrorBuildBuilder
 {
@@ -6,10 +6,6 @@ public class ErrorBuilder : IErrorBuilder, IErrorWithTitleBuilder, IErrorWithDet
     private string _title = null!;
     private string _detail = null!;
     private int _httpStatusCode = 0;
-
-    private ErrorBuilder() { }
-
-    internal static ErrorBuilder NewInstance() => new();
 
     public Error Build() => Error.NewInstance(_code, _title, _detail, _httpStatusCode);
 
