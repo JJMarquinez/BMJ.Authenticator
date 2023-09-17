@@ -64,7 +64,7 @@ namespace BMJ.Authenticator.Infrastructure.Persistence
             }
 
             // Default users
-            var administrator = new ApplicationUser { UserName = "admin", Email = "administrator@localhost.com" };
+            var administrator = ApplicationUser.Builder().WithUserName("admin").WithEmail("administrator@localhost.com").Build();
 
             if (_userManager.Users.All(u => u.UserName != administrator.UserName))
             {

@@ -5,6 +5,7 @@
 	<LangVersion>$(LangVersion)</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\BMJ.Authenticator.Adapter\BMJ.Authenticator.Adapter.csproj" />
     <ProjectReference Include="..\BMJ.Authenticator.Application\BMJ.Authenticator.Application.csproj" />
   </ItemGroup>
 
