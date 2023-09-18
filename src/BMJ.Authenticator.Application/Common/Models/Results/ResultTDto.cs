@@ -10,9 +10,9 @@ public class ResultDto<TValue> : IMapFrom<Result<TValue>>
     public ErrorDto Error { get; set; }
     public TValue Value { get; set; }
 
-    public static ResultDto<TValue> NewSuccess<TValue>(TValue value) => new ResultDto<TValue> { Value = value, Success = true, Error = ErrorDto.None };
+    internal static ResultDto<TValue> MakeSuccess<TValue>(TValue value) => new ResultDto<TValue> { Value = value, Success = true, Error = ErrorDto.None };
 
-    public static ResultDto<TValue> NewFailure<TValue>(ErrorDto error) => new ResultDto<TValue> { Value = default, Success = false, Error = error };
+    internal static ResultDto<TValue> MakeFailure<TValue>(ErrorDto error) => new ResultDto<TValue> { Value = default, Success = false, Error = error };
 
     public void Mapping(Profile profile)
     {

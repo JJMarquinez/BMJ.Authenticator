@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using MediatR;
@@ -11,10 +12,13 @@ public class GetAllUsersQueryHandlerTests
 {
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly UserDto _jame, _penelope;
+    private readonly IResultDtoCreator _resultDtoCreator;
 
     public GetAllUsersQueryHandlerTests()
     {
         _identityAdapter = new();
+        _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+
         _jame = new UserDto
         {
             Id = Guid.NewGuid().ToString(),
@@ -43,7 +47,7 @@ public class GetAllUsersQueryHandlerTests
             new UserDto() { Id = _penelope.Id, UserName = _penelope.UserName, Email = _penelope.Email, PhoneNumber = _penelope.PhoneNumber, Roles = _penelope.Roles },
             new UserDto() { Id = _jame.Id, UserName = _jame.UserName, Email = _jame.Email, PhoneNumber = _jame.PhoneNumber, Roles = _jame.Roles },
         };
-        _identityAdapter.Setup(x => x.GetAllUserAsync()).ReturnsAsync(ResultDto<List<UserDto>?>.NewSuccess<List<UserDto>?>(userDtoList));
+        _identityAdapter.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoCreator.CreateSuccessResult<List<UserDto>?>(userDtoList));
         IRequestHandler<GetAllUsersQuery, ResultDto<List<UserDto>?>> handler = new GetAllUsersQueryHandler(_identityAdapter.Object);
         var resultDto = await handler.Handle(query, token);
 

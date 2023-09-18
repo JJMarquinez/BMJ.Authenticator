@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -11,13 +12,16 @@ namespace BMJ.Authenticator.Infrastructure.Identity
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthLogger _authLogger;
+        private readonly IResultDtoCreator _resultDtoCreator;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IAuthLogger authLogger)
+            IAuthLogger authLogger,
+            IResultDtoCreator resultDtoCreator)
         {
             _userManager = userManager;
             _authLogger = authLogger;
+            _resultDtoCreator = resultDtoCreator;
         }
 
         public async Task<ResultDto<string?>> GetAllUserAsync()
@@ -34,8 +38,8 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 _authLogger.Warning("It doesn't exist any user.");
 
             return userList.Count() > 0
-                ? ResultDto<string?>.NewSuccess<string?>(JsonSerializer.Serialize(userList))
-                : ResultDto<string?>.NewFailure<string?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
+                ? _resultDtoCreator.CreateSuccessResult<string?>(JsonSerializer.Serialize(userList))
+                : _resultDtoCreator.CreateFailureResult<string?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
         }
 
         public async Task<ResultDto<string?>> GetUserByIdAsync(string userId)
@@ -44,12 +48,12 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             var roles = await _userManager.GetRolesAsync(applicationUser!);
             UserIdentification user = applicationUser!.ToUserIdentification(roles?.ToArray());
 
-            return ResultDto<string?>.NewSuccess<string?>(JsonSerializer.Serialize(user));
+            return _resultDtoCreator.CreateSuccessResult<string?>(JsonSerializer.Serialize(user));
         }
 
         public async Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
-            ResultDto result = ResultDto.NewFailure(InfrastructureError.Identity.UserWasNotCreated); 
+            ResultDto result = _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotCreated); 
             ApplicationUser user = ApplicationUser.Builder()
                 .WithUserName(userName)
                 .WithEmail(email)
@@ -58,7 +62,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
             IdentityResult identityResult = await _userManager.CreateAsync(user, password);
             if (identityResult.Succeeded)
-                result = ResultDto.NewSuccess();
+                result = _resultDtoCreator.CreateSuccessResult();
             else
                 _authLogger.Error("The following errors {@Errors} don't allow delete the user {@user}",
                     identityResult.Errors,
@@ -69,7 +73,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<ResultDto> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber)
         {
-            ResultDto result = ResultDto.NewFailure(InfrastructureError.Identity.UserWasNotUpdated);
+            ResultDto result = _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotUpdated);
 
             ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
@@ -80,7 +84,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             IdentityResult identityResult = await _userManager.UpdateAsync(applicationUser);
 
             if (identityResult.Succeeded)
-                result = ResultDto.NewSuccess();
+                result = _resultDtoCreator.CreateSuccessResult();
             else
             {
                 _authLogger.Error("The following errors {@Errors} don't allow delete the user {@applicationUser}",
@@ -102,13 +106,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                     user!);
 
             return identityResult.Succeeded
-                ? ResultDto.NewSuccess()
-                : ResultDto.NewFailure(InfrastructureError.Identity.UserWasNotDeleted);
+                ? _resultDtoCreator.CreateSuccessResult()
+                : _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotDeleted);
         }
 
         public async Task<ResultDto<string?>> AuthenticateMemberAsync(string userName, string password)
         {
-            ResultDto<string?> result = ResultDto<string?>.NewFailure<string?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
+            ResultDto<string?> result = _resultDtoCreator.CreateFailureResult<string?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
             ApplicationUser? applicationUser = await _userManager.FindByNameAsync(userName);
 
             if (applicationUser == default || !await _userManager.CheckPasswordAsync(applicationUser, password))
@@ -116,7 +120,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             else
             {
                 var roles = await _userManager.GetRolesAsync(applicationUser);
-                result = ResultDto<string?>.NewSuccess<string?>(JsonSerializer.Serialize(applicationUser.ToUserIdentification(roles?.ToArray())));
+                result = _resultDtoCreator.CreateSuccessResult<string?>(JsonSerializer.Serialize(applicationUser.ToUserIdentification(roles?.ToArray())));
             }
 
             return result;

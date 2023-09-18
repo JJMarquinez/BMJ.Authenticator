@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using MediatR;
 
 namespace BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
@@ -9,10 +10,12 @@ public class LoginUserQueryHandler
 {
     private readonly IIdentityAdapter _identityAdapter;
     private readonly IJwtProvider _jwtProvider;
-    public LoginUserQueryHandler(IIdentityAdapter identityAdapter, IJwtProvider jwtProvider)
+    private readonly IResultDtoCreator _resultDtoCreator;
+    public LoginUserQueryHandler(IIdentityAdapter identityAdapter, IJwtProvider jwtProvider, IResultDtoCreator resultDtoCreator)
     {
         _identityAdapter = identityAdapter;
         _jwtProvider = jwtProvider;
+        _resultDtoCreator = resultDtoCreator;
     }
 
     public async Task<ResultDto<string?>> Handle(LoginUserQuery request, CancellationToken cancellationToken)
@@ -22,10 +25,10 @@ public class LoginUserQueryHandler
 
         if (userResultDto.Success)
         {
-            response = ResultDto<string?>.NewSuccess<string?>(await _jwtProvider.GenerateAsync(userResultDto.Value!));
+            response = _resultDtoCreator.CreateSuccessResult<string?>(await _jwtProvider.GenerateAsync(userResultDto.Value!));
         }
         else
-            response = ResultDto<string?>.NewFailure<string?>(userResultDto.Error);
+            response = _resultDtoCreator.CreateFailureResult<string?>(userResultDto.Error);
 
         return response;
     }

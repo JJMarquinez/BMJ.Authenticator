@@ -10,9 +10,9 @@ public class ResultDto : IMapFrom<Result>
     public bool Success { get; set; }
     public ErrorDto Error { get; set; }
 
-    public static ResultDto NewSuccess() => new ResultDto { Success = true, Error = ErrorDto.None };
+    internal static ResultDto MakeSuccess() => new ResultDto { Success = true, Error = ErrorDto.None };
 
-    public static ResultDto NewFailure(ErrorDto error) => new ResultDto { Success = false, Error = error };
+    internal static ResultDto MakeFailure(ErrorDto error) => new ResultDto { Success = false, Error = error };
 
     public void Mapping(Profile profile)
     {

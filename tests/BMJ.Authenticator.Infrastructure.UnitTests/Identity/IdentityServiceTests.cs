@@ -6,6 +6,7 @@ using MockQueryable.Moq;
 using Moq;
 using System.Text.Json;
 using System.Collections.Generic;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
@@ -16,6 +17,7 @@ public class IdentityServiceTests
     private readonly List<ApplicationUser> _users;
     private readonly List<string> _roles;
     private readonly string _userId;
+    private readonly IResultDtoCreator _resultDtoCreator;
 
     public IdentityServiceTests()
     {
@@ -32,6 +34,7 @@ public class IdentityServiceTests
         };
         _roles = new List<string>() { "Administrator", "Standard" };
         _authLogger = new();
+        _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
         _userManager = MockUserManager<ApplicationUser>();
     }
 
@@ -49,7 +52,7 @@ public class IdentityServiceTests
     public async void ShouldGetAllUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.GetAllUserAsync();
         var resultValue = JsonSerializer.Deserialize<List<UserIdentification>?>(result.Value!);
@@ -72,7 +75,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.GetAllUserAsync();
         var resultValue = JsonSerializer.Deserialize<List<UserIdentification>?>(result.Value!);
@@ -94,7 +97,7 @@ public class IdentityServiceTests
     public async void ShouldNotGetAnyUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(new List<ApplicationUser>().AsQueryable());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.GetAllUserAsync();
 
@@ -108,7 +111,7 @@ public class IdentityServiceTests
     public async void ShouldGetUserById()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.GetUserByIdAsync(_userId);
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -127,7 +130,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.GetUserByIdAsync(_userId);
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -146,7 +149,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.GetUserByIdAsync(Guid.NewGuid().ToString()));
     }
@@ -155,7 +158,7 @@ public class IdentityServiceTests
     public async void ShouldCreateUser()
     {
         _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.CreateUserAsync("Jhon", "Jhon1234!", "jhon@auth.com", "67543218");
 
@@ -166,7 +169,7 @@ public class IdentityServiceTests
     public async void ShouldNotCreateUser()
     {
         _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.CreateUserAsync("Jhon", "1234", "jhonauth.com", "67543218");
 
@@ -180,7 +183,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
 
@@ -192,7 +195,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
 
@@ -204,7 +207,7 @@ public class IdentityServiceTests
     public void ShouldThrowNullReferenceExceptionWhenUpdateUserAsyncIsCalledGivenNonexistentUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.UpdateUserAsync(Guid.NewGuid().ToString(), "Jhon", "jhon@auth.com", "67543218"));
     }
@@ -214,7 +217,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.DeleteUserAsync(_userId);
 
@@ -226,7 +229,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.DeleteUserAsync(_userId);
 
@@ -241,7 +244,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(true);
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
 
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -260,7 +263,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(_users.FirstOrDefault());
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(true);
 
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -276,7 +279,7 @@ public class IdentityServiceTests
     [Fact]
     public async void ShouldNotAuthenticateUserGivenWrongUsername()
     {
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
@@ -290,7 +293,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(_users.FirstOrDefault());
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(false);
 
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
@@ -302,7 +305,7 @@ public class IdentityServiceTests
     public void ShouldNotFindUserByUsername()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         bool result = _identityService.DoesUserNameNotExist("Ven");
 
@@ -313,7 +316,7 @@ public class IdentityServiceTests
     public void ShouldFindUserByUsername()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         bool result = _identityService.DoesUserNameNotExist("Maberic");
 
@@ -324,7 +327,7 @@ public class IdentityServiceTests
     public void ShouldFindUserId()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         bool result = _identityService.IsUserIdAssigned(_userId);
 
@@ -335,7 +338,7 @@ public class IdentityServiceTests
     public void ShouldNotFindUserId()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object, _resultDtoCreator);
 
         bool result = _identityService.IsUserIdAssigned(Guid.NewGuid().ToString());
 

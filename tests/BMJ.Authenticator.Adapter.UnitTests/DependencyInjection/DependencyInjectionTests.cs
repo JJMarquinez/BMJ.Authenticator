@@ -3,6 +3,7 @@ using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Adapter.Identity;
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -14,6 +15,9 @@ public class DependencyInjectionTests
     public DependencyInjectionTests()
     {
         _serviceCollection = new ServiceCollection();
+        _serviceCollection.AddTransient<IResultDtoFactory, ResultDtoFactory>();
+        _serviceCollection.AddTransient<IResultDtoGenericFactory, ResultDtoGenericFactory>();
+        _serviceCollection.AddTransient<IResultDtoCreator, ResultDtoCreator>();
         _serviceCollection.AddTransient<IIdentityService, IdentityServiceTest>();
         _serviceCollection.AddTransient<IAuthLogger, AuthLoggerTest>();
         _serviceCollection.Configure<JwtOptions>(new ConfigurationManager().GetSection(nameof(JwtOptions)));

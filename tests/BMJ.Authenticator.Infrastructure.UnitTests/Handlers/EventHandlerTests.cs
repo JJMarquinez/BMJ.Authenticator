@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Infrastructure.Events;
 using BMJ.Authenticator.Infrastructure.Handlers;
 using MediatR;
@@ -19,7 +20,7 @@ public class EventHandlerTests
         _sender.Setup(x => x.Send(
             It.IsAny<IRequest<ResultDto>>(), 
             It.IsAny<CancellationToken>()
-            )).ReturnsAsync(ResultDto.NewSuccess);
+            )).ReturnsAsync(new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory()).CreateSuccessResult());
 
         _cache = new();
         _cache.Setup(x => x.EvictByTagAsync(
