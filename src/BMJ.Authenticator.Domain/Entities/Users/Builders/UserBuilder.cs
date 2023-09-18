@@ -10,10 +10,6 @@ public class UserBuilder : IUserBuilder, IUserNameBuilder, IUserEmailBuilder, IU
     private Phone? _phone = null!;
     private string[]? _roles;
 
-    private UserBuilder() { }
-
-    internal static UserBuilder NewInstance() => new();
-
     public User Build() => User.NewInstance(_id, _userName, _email, _roles, _phone);
 
     public IUserRolesPhonePasswordBuilder WithEmail(Email email)

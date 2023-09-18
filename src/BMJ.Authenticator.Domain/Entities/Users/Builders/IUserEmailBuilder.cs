@@ -2,7 +2,7 @@
 
 namespace BMJ.Authenticator.Domain.Entities.Users.Builders;
 
-public interface IUserBuilder
+public interface IUserEmailBuilder
 {
-    IUserNameBuilder WithId(string id);
+    IUserRolesPhonePasswordBuilder WithEmail(Email email);
 }

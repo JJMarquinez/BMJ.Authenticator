@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results.FactoryMethods;
+using BMJ.Authenticator.Domain.Entities.Users.Builders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BMJ.Authenticator.Domain;
@@ -12,7 +13,5 @@ public static class DependencyInjection
         .AddTransient<IResultFactory, ResultFactory>()
         .AddTransient<IResultGenericFactory, ResultGenericFactory>()
         .AddTransient<IResultCreator, ResultCreator>()
-        //.AddTransient(typeof(IResultBuilder<>), typeof(ResultBuilder<>))
-        //.AddTransient<IProviderBuilder, ProviderBuilder>()
-        ;
+        .AddTransient<IUserBuilder, UserBuilder>();
 }
