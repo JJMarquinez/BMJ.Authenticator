@@ -2,7 +2,9 @@
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
+using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
 using Moq;
 using System.Xml.Linq;
@@ -13,11 +15,13 @@ public class GetUserByIdQueryHandlerTests
 {
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IUserDtoBuilder _userDtoBuilder;
 
     public GetUserByIdQueryHandlerTests()
     {
         _identityAdapter = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _userDtoBuilder = new UserDtoBuilder();
     }
 
     [Fact]
@@ -28,13 +32,12 @@ public class GetUserByIdQueryHandlerTests
             Id = Guid.NewGuid().ToString(),
         };
         var token = new CancellationTokenSource().Token;
-        var user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Paola",
-            Email = "paola@auth.com",
-            PhoneNumber = "222-555-888"
-        };
+        var user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Paola")
+            .WithEmail("paola@auth.com")
+            .WithPhone("222-555-888")
+            .Build();
         _identityAdapter.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoCreator.CreateSuccessResult<UserDto?>(user));

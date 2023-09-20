@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
 using MediatR;
 using Moq;
@@ -13,28 +14,28 @@ public class GetAllUsersQueryHandlerTests
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly UserDto _jame, _penelope;
     private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IUserDtoBuilder _userDtoBuilder;
 
     public GetAllUsersQueryHandlerTests()
     {
         _identityAdapter = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _userDtoBuilder = new UserDtoBuilder();
+        _jame = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jame")
+            .WithEmail("jame@auth.com")
+            .WithPhone("111-222-3333")
+            .WithRoles(new[] { "Standard" })
+            .Build();
 
-        _jame = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jame",
-            Email = "jame@auth.com",
-            PhoneNumber = "111-222-3333",
-            Roles = new[] { "Standard" }
-        };
-        _penelope = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Penelope",
-            Email = "penelope@auth.com",
-            PhoneNumber = "444-222-3333",
-            Roles = new[] { "Administrator" }
-        };
+        _penelope = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Penelope")
+            .WithEmail("penelope@auth.com")
+            .WithPhone("444 - 222 - 3333")
+            .WithRoles(new[] { "Administrator" })
+            .Build();
     }
 
     [Fact]
@@ -42,11 +43,7 @@ public class GetAllUsersQueryHandlerTests
     {
         var query = new GetAllUsersQuery();
         var token = new CancellationTokenSource().Token;
-        var userDtoList = new List<UserDto>
-        {
-            new UserDto() { Id = _penelope.Id, UserName = _penelope.UserName, Email = _penelope.Email, PhoneNumber = _penelope.PhoneNumber, Roles = _penelope.Roles },
-            new UserDto() { Id = _jame.Id, UserName = _jame.UserName, Email = _jame.Email, PhoneNumber = _jame.PhoneNumber, Roles = _jame.Roles },
-        };
+        var userDtoList = new List<UserDto> { _penelope, _jame };
         _identityAdapter.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoCreator.CreateSuccessResult<List<UserDto>?>(userDtoList));
         IRequestHandler<GetAllUsersQuery, ResultDto<List<UserDto>?>> handler = new GetAllUsersQueryHandler(_identityAdapter.Object);
         var resultDto = await handler.Handle(query, token);

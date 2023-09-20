@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,6 +15,7 @@ namespace BMJ.Authenticator.Application
                 .AddTransient<IResultDtoFactory, ResultDtoFactory>()
                 .AddTransient<IResultDtoGenericFactory, ResultDtoGenericFactory>()
                 .AddTransient<IResultDtoCreator, ResultDtoCreator>()
+                .AddTransient<IUserDtoBuilder, UserDtoBuilder>()
                 .AddAutoMapper(Assembly.GetExecutingAssembly())
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
                 .AddMediatR(Assembly.GetExecutingAssembly());

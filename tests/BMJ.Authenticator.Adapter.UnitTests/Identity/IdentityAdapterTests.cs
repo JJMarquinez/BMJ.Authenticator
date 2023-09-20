@@ -5,6 +5,7 @@ using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using Moq;
 using System.Text.Json;
 
@@ -16,12 +17,14 @@ public class IdentityAdapterTests
     private readonly Mock<IAuthLogger> _logger;
     private readonly UserIdentification _jame, _penelope;
     private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IUserDtoBuilder _userDtoBuilder;
 
     public IdentityAdapterTests()
     {
         _identityService = new();
         _logger = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _userDtoBuilder = new UserDtoBuilder();
         _jame = new UserIdentification
         {
             Id = Guid.NewGuid().ToString(),
@@ -189,8 +192,20 @@ public class IdentityAdapterTests
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
         var userDtoList = new List<UserDto>
         {
-            new UserDto() { Id = _penelope.Id, UserName = _penelope.UserName, Email = _penelope.Email, PhoneNumber = _penelope.PhoneNumber, Roles = _penelope.Roles },
-            new UserDto() { Id = _jame.Id, UserName = _jame.UserName, Email = _jame.Email, PhoneNumber = _jame.PhoneNumber, Roles = _jame.Roles },
+            _userDtoBuilder
+            .WithId(_penelope.Id)
+            .WithName(_penelope.UserName)
+            .WithEmail(_penelope.Email)
+            .WithPhone(_penelope.PhoneNumber)
+            .WithRoles(_penelope.Roles)
+            .Build(),
+            _userDtoBuilder
+            .WithId(_jame.Id)
+            .WithName(_jame.UserName)
+            .WithEmail(_jame.Email)
+            .WithPhone(_jame.PhoneNumber)
+            .WithRoles(_jame.Roles)
+            .Build()
         };
 
         var resultDto = await identityAdapter.GetAllUserAsync();

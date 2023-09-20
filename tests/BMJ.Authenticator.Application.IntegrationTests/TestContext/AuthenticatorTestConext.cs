@@ -11,10 +11,10 @@ namespace BMJ.Authenticator.Application.FunctionalTests.TestContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
-    private static ITestDatabase _database = null!;
-    private static AuthenticatorWebApplicationFactory _factory = null!;
-    private static IServiceScopeFactory _scopeFactory = null!;
-    private static IUserOperator _userOperator = null!;
+    private ITestDatabase _database = null!;
+    private AuthenticatorWebApplicationFactory _factory = null!;
+    private IServiceScopeFactory _scopeFactory = null!;
+    private IUserOperator _userOperator = null!;
 
     public AuthenticatorTestConext()
     {

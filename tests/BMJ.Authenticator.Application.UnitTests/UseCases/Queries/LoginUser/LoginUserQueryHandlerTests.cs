@@ -3,7 +3,9 @@ using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
+using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
 using Moq;
 
@@ -14,6 +16,7 @@ public class LoginUserQueryHandlerTests
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly Mock<IJwtProvider> _jwtProvider;
     private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IUserDtoBuilder _userDtoBuilder;
     private readonly LoginUserQuery _query;
 
     public LoginUserQueryHandlerTests()
@@ -21,6 +24,7 @@ public class LoginUserQueryHandlerTests
         _identityAdapter = new();
         _jwtProvider = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _userDtoBuilder = new UserDtoBuilder();
         _query = new LoginUserQuery
         {
             UserName = "Dan",
@@ -33,7 +37,12 @@ public class LoginUserQueryHandlerTests
     {
         var token = new CancellationTokenSource().Token;
         var jwtToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiNThhMDRjZS1hZmI1LTRjYzktOGI1Ni1kOWEzMWI1MWZjMGIiLCJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluaXN0cmF0b3JAbG9jYWxob3N0LmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6IkFkbWluaXN0cmF0b3IiLCJleHAiOjE2OTI3ODgxMTIsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3QifQ.Ih0cs_yQDVLy90pHpFSZY5z1_16Or2x82pySKnejfgg";
-        var user = new UserDto() { Id = Guid.NewGuid().ToString(), UserName = "Dan", Email = "dan@auth.com", PhoneNumber = "666-555-444" };
+        var user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Dan")
+            .WithEmail("dan@auth.com")
+            .WithPhone("666-555-444")
+            .Build();
         _identityAdapter.Setup(x => x.AuthenticateMemberAsync(
             It.IsAny<string>(),
             It.IsAny<string>()

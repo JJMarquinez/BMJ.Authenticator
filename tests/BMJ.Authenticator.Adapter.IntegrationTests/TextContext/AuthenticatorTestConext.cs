@@ -17,9 +17,9 @@ namespace BMJ.Authenticator.Adapter.IntegrationTests.TextContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
-    private static ITestDatabase _database = null!;
-    private static IServiceScopeFactory _scopeFactory = null!;
-    private static IUserOperator _userOperator = null!;
+    private ITestDatabase _database = null!;
+    private IServiceScopeFactory _scopeFactory = null!;
+    private IUserOperator _userOperator = null!;
 
     public AuthenticatorTestConext()
     {

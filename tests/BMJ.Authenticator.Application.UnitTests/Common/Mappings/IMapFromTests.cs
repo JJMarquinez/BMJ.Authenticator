@@ -2,6 +2,7 @@
 using BMJ.Authenticator.Application.Common.Mappings;
 using BMJ.Authenticator.Application.Common.Models;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Entities.Users;
 
@@ -34,7 +35,7 @@ public class IMapFromTests
     [Fact]
     public void ShouldNotMapErrorToErrorDto()
     {
-        IMapFrom<User> mapFrom = new UserDto();
+        IMapFrom<User> mapFrom = new UserDtoBuilder().Build();
         mapFrom.Mapping(_profile);
         var configuration = new MapperConfiguration(cfg => cfg.AddProfile(_profile));
         configuration.AssertConfigurationIsValid();

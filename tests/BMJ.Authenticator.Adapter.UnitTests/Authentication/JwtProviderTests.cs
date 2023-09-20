@@ -1,6 +1,7 @@
 ﻿using BMJ.Authenticator.Adapter.Authentication;
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Domain.ValueObjects;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
@@ -10,6 +11,13 @@ namespace BMJ.Authenticator.Adapter.UnitTests.Authentication;
 
 public class JwtProviderTests
 {
+    private readonly IUserDtoBuilder _userDtoBuilder;
+
+    public JwtProviderTests()
+    {
+        _userDtoBuilder = new UserDtoBuilder();
+    }
+
     [Fact]
     public async Task ShouldGenerateToken()
     {
@@ -18,16 +26,16 @@ public class JwtProviderTests
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
             .Build();
-        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
-        UserDto user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jaden",
-            Email = Email.From("jaden@authenticator.com"),
-            Roles = new[] { "Standard" },
-            PhoneNumber = Phone.New("111-222-3333"),
-        };
+        UserDto user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jaden")
+            .WithEmail(Email.From("jaden@authenticator.com"))
+            .WithPhone(Phone.New("111-222-3333"))
+            .WithRoles(new[] { "Standard" })
+            .Build();
+
+        IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
         string token = await jwtProvider.GenerateAsync(user);
 
@@ -42,17 +50,16 @@ public class JwtProviderTests
             .WithSecretKey("nO7*!%xGX59!1nM")
             .WithAudience("http://localhost")
             .WithIssuer("http://localhost")
-            .Build(); ;
+            .Build(); 
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
-        UserDto user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jaden",
-            Email = Email.From("jaden@authenticator.com"),
-            Roles = new[] { "Standard" },
-            PhoneNumber = Phone.New("111-222-3333"),
-        };
+        UserDto user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jaden")
+            .WithEmail(Email.From("jaden@authenticator.com"))
+            .WithPhone(Phone.New("111-222-3333"))
+            .WithRoles(new[] { "Standard" })
+            .Build();
 
         Assert.Throws<ArgumentOutOfRangeException>(() => jwtProvider.GenerateAsync(user));
     }
@@ -67,14 +74,13 @@ public class JwtProviderTests
 
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
-        UserDto user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jaden",
-            Email = Email.From("jaden@authenticator.com"),
-            Roles = new[] { "Standard" },
-            PhoneNumber = Phone.New("111-222-3333"),
-        };
+        UserDto user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jaden")
+            .WithEmail(Email.From("jaden@authenticator.com"))
+            .WithPhone(Phone.New("111-222-3333"))
+            .WithRoles(new[] { "Standard" })
+            .Build();
 
         Assert.Throws<ArgumentNullException>(() => jwtProvider.GenerateAsync(user));
     }
@@ -89,14 +95,13 @@ public class JwtProviderTests
             .Build(); ;
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
-        UserDto user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jaden",
-            Email = Email.From("jaden@authenticator.com"),
-            Roles = new[] { "Standard" },
-            PhoneNumber = Phone.New("111-222-3333"),
-        };
+        UserDto user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jaden")
+            .WithEmail(Email.From("jaden@authenticator.com"))
+            .WithPhone(Phone.New("111-222-3333"))
+            .WithRoles(new[] { "Standard" })
+            .Build();
 
         string token = await jwtProvider.GenerateAsync(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
@@ -118,13 +123,12 @@ public class JwtProviderTests
 
         IJwtProvider jwtProvider = new JwtProvider(Options.Create(jwtOptions));
 
-        UserDto user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Jaden",
-            Email = Email.From("jaden@authenticator.com"),
-            PhoneNumber = Phone.New("111-222-3333"),
-        };
+        UserDto user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Jaden")
+            .WithEmail(Email.From("jaden@authenticator.com"))
+            .WithPhone(Phone.New("111-222-3333"))
+            .Build();
 
         string token = await jwtProvider.GenerateAsync(user);
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(jwtEncodedString: token);
