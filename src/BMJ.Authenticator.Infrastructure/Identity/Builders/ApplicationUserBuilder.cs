@@ -2,40 +2,48 @@
 
 public class ApplicationUserBuilder : IApplicationUserBuilder
 {
-    private ApplicationUser _applicationUser = new ApplicationUser();
-    private ApplicationUserBuilder() { }
+    private string _id = null!;
+    private string _username = null!;
+    private string _email = null!;
+    private string _passwordHash = null!;
+    private string _phoneNumber = null!;
 
-    internal static ApplicationUserBuilder New() => new ApplicationUserBuilder();
-
-    public ApplicationUser Build() => _applicationUser;
+    public ApplicationUser Build() => new()
+    { 
+        Id = _id ?? Guid.NewGuid().ToString(),
+        UserName = _username,
+        Email = _email,
+        PasswordHash = _passwordHash,
+        PhoneNumber = _phoneNumber
+    };
 
     public IApplicationUserBuilder WithEmail(string email)
     {
-        _applicationUser.Email = email;
+        _email = email;
         return this;
     }
 
     public IApplicationUserBuilder WithId(string id)
     {
-        _applicationUser.Id = id;
+        _id = id;
         return this;
     }
 
     public IApplicationUserBuilder WithPasswordHash(string passwordHash)
     {
-        _applicationUser.PasswordHash = passwordHash;
+        _passwordHash = passwordHash;
         return this;
     }
 
     public IApplicationUserBuilder WithPhoneNumber(string? phoneNumber)
     {
-        _applicationUser.PhoneNumber = phoneNumber;
+        _phoneNumber = phoneNumber;
         return this;
     }
 
     public IApplicationUserBuilder WithUserName(string userName)
     {
-        _applicationUser.UserName = userName;
+        _username = userName;
         return this;
     }
 }

@@ -4,6 +4,7 @@ using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Infrastructure.Consumers;
 using BMJ.Authenticator.Infrastructure.Handlers;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using Confluent.Kafka;
@@ -41,6 +42,7 @@ public class DependencyInjectionTests
     {
         var serviceProvider = _serviceCollection.BuildServiceProvider();
 
+        Assert.IsType<ApplicationUserBuilder>(serviceProvider.GetService<IApplicationUserBuilder>());
         Assert.IsType<IdentityService>(serviceProvider.GetService<IIdentityService>());
         Assert.IsType<AuthLogger>(serviceProvider.GetService<IAuthLogger>());
         Assert.IsType<Infrastructure.Handlers.EventHandler>(serviceProvider.GetService<IEventHandler>());

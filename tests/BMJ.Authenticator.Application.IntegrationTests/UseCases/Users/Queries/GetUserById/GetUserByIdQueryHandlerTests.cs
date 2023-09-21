@@ -23,7 +23,7 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetAnUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")

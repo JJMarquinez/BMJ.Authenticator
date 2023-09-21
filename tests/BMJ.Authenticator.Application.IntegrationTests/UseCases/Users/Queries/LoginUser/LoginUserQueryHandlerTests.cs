@@ -23,7 +23,7 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetToken()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")

@@ -7,6 +7,7 @@ using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Infrastructure.Properties;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -16,17 +17,20 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         private readonly IAuthLogger _authLogger;
         private readonly IResultDtoCreator _resultDtoCreator;
         private readonly IErrorDtoBuilder _errorDtoBuilder;
+        private readonly IApplicationUserBuilder _applicationUserBuilder;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             IAuthLogger authLogger,
             IResultDtoCreator resultDtoCreator,
-            IErrorDtoBuilder errorDtoBuilder)
+            IErrorDtoBuilder errorDtoBuilder,
+            IApplicationUserBuilder applicationUserBuilder)
         {
             _userManager = userManager;
             _authLogger = authLogger;
             _resultDtoCreator = resultDtoCreator;
             _errorDtoBuilder = errorDtoBuilder;
+            _applicationUserBuilder = applicationUserBuilder;
         }
 
         public async Task<ResultDto<string?>> GetAllUserAsync()
@@ -72,7 +76,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorCreateUserHttpStatusCode))
                 .Build();
             ResultDto result = _resultDtoCreator.CreateFailureResult(error); 
-            ApplicationUser user = ApplicationUser.Builder()
+            ApplicationUser user =_applicationUserBuilder
                 .WithUserName(userName)
                 .WithEmail(email)
                 .WithPhoneNumber(phoneNumber)

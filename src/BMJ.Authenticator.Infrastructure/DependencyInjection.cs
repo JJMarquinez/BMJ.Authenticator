@@ -9,6 +9,7 @@ using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Handlers;
 using BMJ.Authenticator.Infrastructure.Consumers;
 using Confluent.Kafka;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -28,6 +29,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IAuthLogger, AuthLogger>();
             services.AddTransient<IEventHandler, Handlers.EventHandler>();

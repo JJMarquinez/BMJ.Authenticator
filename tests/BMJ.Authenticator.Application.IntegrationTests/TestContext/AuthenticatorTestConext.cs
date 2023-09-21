@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
 using BMJ.Authenticator.ToolKit.Database.Testcontainters;
 using BMJ.Authenticator.ToolKit.Identity.UserOperators;
@@ -58,6 +59,9 @@ public class AuthenticatorTestConext : IDisposable
         var userManager = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         return await userManager.Users.FirstOrDefaultAsync(user => user.Id == applicationUserId);
     }
+
+    public IApplicationUserBuilder GetApplicationUserBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
 
     public async void Dispose()
     {

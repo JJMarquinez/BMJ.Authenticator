@@ -3,6 +3,7 @@ using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
@@ -48,6 +49,7 @@ public class AuthenticatorTestConext : IDisposable
             .AddTransient<IResultDtoCreator, ResultDtoCreator>()
             .AddTransient<IUserDtoBuilder, UserDtoBuilder>()
             .AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>()
+            .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
             .AddTransient<IIdentityService, IdentityService>()
             .AddTransient<IAuthLogger, AuthLogger>()
             .AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(_database.GetDbConnection()))
@@ -59,6 +61,9 @@ public class AuthenticatorTestConext : IDisposable
 
     public IIdentityService GetIdentityService() 
         => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IIdentityService>();
+
+    public IApplicationUserBuilder GetApplicationUserBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
 
     public async Task ResetState()
     {

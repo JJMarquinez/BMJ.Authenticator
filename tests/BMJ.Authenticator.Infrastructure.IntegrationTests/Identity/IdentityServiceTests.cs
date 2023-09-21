@@ -37,7 +37,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetAllUsers()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -65,7 +65,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldGetUserById()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -113,7 +113,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldUpdateUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -135,7 +135,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotUpdateUserGivenNullUsername()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -161,7 +161,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldDeleteUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -188,7 +188,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldAuthenticateUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -210,7 +210,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotAuthenticateUserGivenWronCredentials()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -232,7 +232,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldFindUserByUsername()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -260,7 +260,7 @@ public class IdentityServiceTests : IAsyncLifetime
     [Fact]
     public async Task ShouldFindUserId()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
