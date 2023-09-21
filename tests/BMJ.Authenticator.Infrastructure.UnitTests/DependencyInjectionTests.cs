@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Infrastructure.Consumers;
 using BMJ.Authenticator.Infrastructure.Handlers;
@@ -29,6 +30,7 @@ public class DependencyInjectionTests
         _serviceCollection.AddTransient<IResultDtoFactory, ResultDtoFactory>();
         _serviceCollection.AddTransient<IResultDtoGenericFactory, ResultDtoGenericFactory>();
         _serviceCollection.AddTransient<IResultDtoCreator, ResultDtoCreator>();
+        _serviceCollection.AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>();
         _serviceCollection.AddMediatR(Assembly.GetExecutingAssembly());
         _serviceCollection.AddOutputCache();
         _serviceCollection.AddInfrastructureServices(configuration);

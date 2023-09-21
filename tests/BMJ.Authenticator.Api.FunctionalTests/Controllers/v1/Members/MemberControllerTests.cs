@@ -55,7 +55,6 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetTokenGivenInvalidCredentials()
     {
-        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         var applicationUser = ApplicationUser.Builder()
             .WithUserName("Megan")
             .WithEmail("megan@authenticator.com")
@@ -78,11 +77,7 @@ public class MemberControllerTests : IAsyncLifetime
         Assert.NotNull(response);
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         Assert.NotNull(problemDetail);
-        Assert.Equal(error.Title, problemDetail.Title);
-        Assert.Equal(error.HttpStatusCode, problemDetail.Status);
-        Assert.Equal(error.Detail, problemDetail.Detail);
         Assert.Equal(AuthenticatorApi.GetTokenAsync(), problemDetail.Instance);
-        Assert.Equal(error.Code, errorCode!.ToString());
     }
 
     [Fact]

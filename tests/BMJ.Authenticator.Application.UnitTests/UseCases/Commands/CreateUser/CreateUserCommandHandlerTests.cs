@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
@@ -11,11 +12,13 @@ public class CreateUserCommandHandlerTests
 {
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
 
     public CreateUserCommandHandlerTests()
     {
         _identityAdapter = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _errorDtoBuilder = new ErrorDtoBuilder();
     }
 
     [Fact]
@@ -59,7 +62,7 @@ public class CreateUserCommandHandlerTests
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string?>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(new Application.Common.Models.ErrorDto()));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(_errorDtoBuilder.Build()));
         IRequestHandler<CreateUserCommand, ResultDto> handler = new CreateUserCommandHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(command, token);

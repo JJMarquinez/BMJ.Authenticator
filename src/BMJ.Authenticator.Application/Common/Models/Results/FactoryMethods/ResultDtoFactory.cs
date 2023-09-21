@@ -1,4 +1,6 @@
-﻿namespace BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+﻿using BMJ.Authenticator.Application.Common.Models.Errors;
+
+namespace BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 
 public class ResultDtoFactory : IResultDtoFactory
 {

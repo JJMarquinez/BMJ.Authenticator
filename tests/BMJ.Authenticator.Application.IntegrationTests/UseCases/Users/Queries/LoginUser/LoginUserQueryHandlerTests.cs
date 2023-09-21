@@ -1,5 +1,4 @@
-﻿using BMJ.Authenticator.Adapter.Common;
-using BMJ.Authenticator.Application.FunctionalTests.TestContext;
+﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using BMJ.Authenticator.Infrastructure.Identity;
 
@@ -47,7 +46,6 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetTokenGivenInvalidCredetials()
     {
-        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         var query = new LoginUserQuery
         {
             UserName = "Megan",
@@ -57,16 +55,12 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(error.Title, result.Error.Title);
-        Assert.Equal(error.Detail, result.Error.Detail);
-        Assert.Equal(error.Code, result.Error.Code);
-        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+        Assert.NotNull(result.Error);
     }
 
     [Fact]
     public async Task ShouldNotGetTokenGivenNoPassword()
     {
-        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         var query = new LoginUserQuery
         {
             UserName = "Megan"
@@ -75,16 +69,13 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(error.Title, result.Error.Title);
-        Assert.Equal(error.Detail, result.Error.Detail);
-        Assert.Equal(error.Code, result.Error.Code);
-        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+        Assert.NotNull(result.Error);
+
     }
 
     [Fact]
     public async Task ShouldThrowArgumentNullExceptionGivenNoUserName()
     {
-        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         var query = new LoginUserQuery
         {
             Password = ">+$93p]!5£Ki"

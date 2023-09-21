@@ -1,13 +1,12 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
-using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
 using Moq;
-using System.Xml.Linq;
 
 namespace BMJ.Authenticator.Application.UnitTests.UseCases.Queries.GetUserById;
 
@@ -16,12 +15,14 @@ public class GetUserByIdQueryHandlerTests
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly IResultDtoCreator _resultDtoCreator;
     private readonly IUserDtoBuilder _userDtoBuilder;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
 
     public GetUserByIdQueryHandlerTests()
     {
         _identityAdapter = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
         _userDtoBuilder = new UserDtoBuilder();
+        _errorDtoBuilder = new ErrorDtoBuilder();
     }
 
     [Fact]
@@ -64,7 +65,7 @@ public class GetUserByIdQueryHandlerTests
         var token = new CancellationTokenSource().Token;
         _identityAdapter.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<UserDto?>(new Application.Common.Models.ErrorDto()));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<UserDto?>(_errorDtoBuilder.Build()));
         IRequestHandler<GetUserByIdQuery, ResultDto<UserDto?>> handler = new GetUserByIdQueryHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(query, token);

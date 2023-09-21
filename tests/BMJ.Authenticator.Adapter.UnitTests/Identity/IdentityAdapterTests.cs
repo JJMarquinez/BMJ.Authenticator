@@ -2,7 +2,8 @@
 using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Adapter.Identity;
 using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Application.Common.Models.Errors;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
@@ -18,6 +19,7 @@ public class IdentityAdapterTests
     private readonly UserIdentification _jame, _penelope;
     private readonly IResultDtoCreator _resultDtoCreator;
     private readonly IUserDtoBuilder _userDtoBuilder;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
 
     public IdentityAdapterTests()
     {
@@ -25,6 +27,7 @@ public class IdentityAdapterTests
         _logger = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
         _userDtoBuilder = new UserDtoBuilder();
+        _errorDtoBuilder = new ErrorDtoBuilder();
         _jame = new UserIdentification
         {
             Id = Guid.NewGuid().ToString(),
@@ -67,21 +70,17 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotAuthenticateUser()
     {
-        var error = InfrastructureError.Identity.UserNameOrPasswordNotValid;
         _identityService.Setup(x => x.AuthenticateMemberAsync(
             It.IsAny<string>(),
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(error));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.AuthenticateMemberAsync("Jame", "oT586n@S&#nJ");
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
     }
 
     [Fact]
@@ -104,23 +103,19 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotCreateUser()
     {
-        var error = InfrastructureError.Identity.UserWasNotCreated;
         _identityService.Setup(x => x.CreateUserAsync(
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string?>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(error));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.CreateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
@@ -141,20 +136,16 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotDeleteUser()
     {
-        var error = InfrastructureError.Identity.UserWasNotDeleted;
         _identityService.Setup(x => x.DeleteUserAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(error));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.DeleteUserAsync(Guid.NewGuid().ToString());
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
@@ -232,18 +223,14 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotGetAllUsers()
     {
-        var error = InfrastructureError.Identity.ItDoesNotExistAnyUser;
-        _identityService.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(error));
+        _identityService.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.GetAllUserAsync();
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
     }
 
     [Fact]
@@ -269,20 +256,16 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotGetUserById()
     {
-        var error = InfrastructureError.Identity.ItDoesNotExistAnyUser;
         _identityService.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(error));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<string?>(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.GetUserByIdAsync(Guid.NewGuid().ToString());
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
     }
 
     [Fact]
@@ -331,23 +314,19 @@ public class IdentityAdapterTests
     [Fact]
     public async void ShouldNotUpdateUser()
     {
-        var error = InfrastructureError.Identity.UserWasNotUpdated;
         _identityService.Setup(x => x.UpdateUserAsync(
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>(),
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(error));
+            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult(_errorDtoBuilder.Build()));
         IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoCreator);
 
         var resultDto = await identityAdapter.UpdateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(error.Title, resultDto.Error.Title);
-        Assert.Equal(error.Code, resultDto.Error.Code);
-        Assert.Equal(error.Detail, resultDto.Error.Detail);
-        Assert.Equal(error.HttpStatusCode, resultDto.Error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
         _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 }

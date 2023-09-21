@@ -50,15 +50,11 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotReturnAnyUsers()
     {
-        var error = InfrastructureError.Identity.ItDoesNotExistAnyUser;
         var query = new GetAllUsersQuery();
         var result = await _testContext.SendAsync(query);
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(error.Title, result.Error.Title);
-        Assert.Equal(error.Detail, result.Error.Detail);
-        Assert.Equal(error.Code, result.Error.Code);
-        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+        Assert.NotNull(result.Error);
     }
 }

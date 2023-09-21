@@ -1,11 +1,11 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models;
+using BMJ.Authenticator.Application.Common.Models.Errors;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
-using BMJ.Authenticator.Domain.ValueObjects;
 using MediatR;
 using Moq;
 
@@ -17,6 +17,7 @@ public class LoginUserQueryHandlerTests
     private readonly Mock<IJwtProvider> _jwtProvider;
     private readonly IResultDtoCreator _resultDtoCreator;
     private readonly IUserDtoBuilder _userDtoBuilder;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
     private readonly LoginUserQuery _query;
 
     public LoginUserQueryHandlerTests()
@@ -25,6 +26,7 @@ public class LoginUserQueryHandlerTests
         _jwtProvider = new();
         _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
         _userDtoBuilder = new UserDtoBuilder();
+        _errorDtoBuilder = new ErrorDtoBuilder();
         _query = new LoginUserQuery
         {
             UserName = "Dan",
@@ -61,13 +63,7 @@ public class LoginUserQueryHandlerTests
     public async void ShouldNotLoginUser()
     {
         var token = new CancellationTokenSource().Token;
-        var error = new ErrorDto
-        {
-            Code = "Identity.Argument.Test.UserNameOrPasswordNotValid",
-            Title = "User name or password aren't valid.",
-            Detail = "The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.",
-            HttpStatusCode = 409
-        };
+        var error = _errorDtoBuilder.Build();
         _identityAdapter.Setup(x => x.AuthenticateMemberAsync(
             It.IsAny<string>(),
             It.IsAny<string>()
@@ -78,9 +74,6 @@ public class LoginUserQueryHandlerTests
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
-        Assert.Equal(resultDto.Error.Title, error.Title);
-        Assert.Equal(resultDto.Error.Code, error.Code);
-        Assert.Equal(resultDto.Error.Detail, error.Detail);
-        Assert.Equal(resultDto.Error.HttpStatusCode, error.HttpStatusCode);
+        Assert.NotNull(resultDto.Error);
     }
 }

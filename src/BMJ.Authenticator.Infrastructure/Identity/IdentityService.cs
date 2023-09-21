@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
+using BMJ.Authenticator.Infrastructure.Properties;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
@@ -13,15 +15,18 @@ namespace BMJ.Authenticator.Infrastructure.Identity
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthLogger _authLogger;
         private readonly IResultDtoCreator _resultDtoCreator;
+        private readonly IErrorDtoBuilder _errorDtoBuilder;
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
             IAuthLogger authLogger,
-            IResultDtoCreator resultDtoCreator)
+            IResultDtoCreator resultDtoCreator,
+            IErrorDtoBuilder errorDtoBuilder)
         {
             _userManager = userManager;
             _authLogger = authLogger;
             _resultDtoCreator = resultDtoCreator;
+            _errorDtoBuilder = errorDtoBuilder;
         }
 
         public async Task<ResultDto<string?>> GetAllUserAsync()
@@ -37,9 +42,16 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             if (userList.Count() == 0)
                 _authLogger.Warning("It doesn't exist any user.");
 
+            var error = _errorDtoBuilder
+                .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeInvalidOperationPrefix, InfrastructureString.ErrorGetAllUserCode))
+                .WithTitle(InfrastructureString.ErrorGetAllUserTitle)
+                .WithDetail(InfrastructureString.ErrorGetAllUserDetail)
+                .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorGetAllUserHttpStatusCode))
+                .Build();
+
             return userList.Count() > 0
                 ? _resultDtoCreator.CreateSuccessResult<string?>(JsonSerializer.Serialize(userList))
-                : _resultDtoCreator.CreateFailureResult<string?>(InfrastructureError.Identity.ItDoesNotExistAnyUser);
+                : _resultDtoCreator.CreateFailureResult<string?>(error);
         }
 
         public async Task<ResultDto<string?>> GetUserByIdAsync(string userId)
@@ -53,7 +65,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
         {
-            ResultDto result = _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotCreated); 
+            var error = _errorDtoBuilder
+                .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeInvalidOperationPrefix, InfrastructureString.ErrorCreateUserCode))
+                .WithTitle(InfrastructureString.ErrorCreateUserTitle)
+                .WithDetail(InfrastructureString.ErrorCreateUserDetail)
+                .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorCreateUserHttpStatusCode))
+                .Build();
+            ResultDto result = _resultDtoCreator.CreateFailureResult(error); 
             ApplicationUser user = ApplicationUser.Builder()
                 .WithUserName(userName)
                 .WithEmail(email)
@@ -73,7 +91,13 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public async Task<ResultDto> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber)
         {
-            ResultDto result = _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotUpdated);
+            var error = _errorDtoBuilder
+                .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeInvalidOperationPrefix, InfrastructureString.ErrorUpdateUserCode))
+                .WithTitle(InfrastructureString.ErrorUpdateUserTitle)
+                .WithDetail(InfrastructureString.ErrorUpdateUserDetail)
+                .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorUpdateUserHttpStatusCode))
+                .Build();
+            ResultDto result = _resultDtoCreator.CreateFailureResult(error);
 
             ApplicationUser? applicationUser = await _userManager.Users.FirstOrDefaultAsync(user => user.Id == userId);
 
@@ -105,15 +129,29 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                     identityResult.Errors,
                     user!);
 
+            var error = _errorDtoBuilder
+                .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeInvalidOperationPrefix, InfrastructureString.ErrorDeleteUserCode))
+                .WithTitle(InfrastructureString.ErrorDeleteUserTitle)
+                .WithDetail(InfrastructureString.ErrorDeleteUserDetail)
+                .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorDeleteUserHttpStatusCode))
+                .Build();
+
             return identityResult.Succeeded
                 ? _resultDtoCreator.CreateSuccessResult()
-                : _resultDtoCreator.CreateFailureResult(InfrastructureError.Identity.UserWasNotDeleted);
+                : _resultDtoCreator.CreateFailureResult(error);
         }
 
         public async Task<ResultDto<string?>> AuthenticateMemberAsync(string userName, string password)
         {
-            ResultDto<string?> result = _resultDtoCreator.CreateFailureResult<string?>(InfrastructureError.Identity.UserNameOrPasswordNotValid);
-            ApplicationUser? applicationUser = await _userManager.FindByNameAsync(userName);
+            var error = _errorDtoBuilder
+                .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeArgumentPrefix, InfrastructureString.ErrorAuthenticateMemberCode))
+                .WithTitle(InfrastructureString.ErrorAuthenticateMemberTitle)
+                .WithDetail(InfrastructureString.ErrorAuthenticateMemberDetail)
+                .WithHttpStatusCode(int.Parse(InfrastructureString.ErrorAuthenticateMemberHttpStatusCode))
+                .Build();
+
+            var result = _resultDtoCreator.CreateFailureResult<string?>(error);
+            var applicationUser = await _userManager.FindByNameAsync(userName);
 
             if (applicationUser == default || !await _userManager.CheckPasswordAsync(applicationUser, password))
                 _authLogger.Warning("Invalid username or password!");

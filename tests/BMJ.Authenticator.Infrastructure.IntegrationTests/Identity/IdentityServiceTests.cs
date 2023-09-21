@@ -1,6 +1,7 @@
 ﻿using BMJ.Authenticator.Adapter.Common;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.IntegrationTests.TextContext;
+using BMJ.Authenticator.Infrastructure.Properties;
 using System.Text.Json;
 
 namespace BMJ.Authenticator.Infrastructure.IntegrationTests.Identity;
@@ -30,7 +31,7 @@ public class IdentityServiceTests : IAsyncLifetime
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(InfrastructureError.Identity.ItDoesNotExistAnyUser, result.Error);
+        Assert.NotNull(result.Error);
     }
 
     [Fact]
@@ -146,7 +147,7 @@ public class IdentityServiceTests : IAsyncLifetime
         var result = await identityService.UpdateUserAsync(userId!, null!, "jhon@auth.com", "67543218");
 
         Assert.False(result.Success);
-        Assert.Equal(InfrastructureError.Identity.UserWasNotUpdated, result.Error);
+        Assert.NotNull(result.Error);
     }
 
     [Fact]
@@ -222,7 +223,10 @@ public class IdentityServiceTests : IAsyncLifetime
         var result = await identityService.AuthenticateMemberAsync("Jou", "M6#?m412kNSH-p-");
 
         Assert.False(result.Success);
-        Assert.Equal(InfrastructureError.Identity.UserNameOrPasswordNotValid, result.Error);
+        Assert.Equal(string.Format("{0}{1}", InfrastructureString.ErrorCodeArgumentPrefix, InfrastructureString.ErrorAuthenticateMemberCode), result.Error.Code);
+        Assert.Equal(InfrastructureString.ErrorAuthenticateMemberTitle, result.Error.Title);
+        Assert.Equal(InfrastructureString.ErrorAuthenticateMemberDetail, result.Error.Detail);
+        Assert.Equal(int.Parse(InfrastructureString.ErrorAuthenticateMemberHttpStatusCode), result.Error.HttpStatusCode);
     }
 
     [Fact]

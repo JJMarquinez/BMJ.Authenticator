@@ -1,4 +1,5 @@
-﻿using BMJ.Authenticator.Domain.Common;
+﻿using BMJ.Authenticator.Application.Common.Models.Errors;
+using BMJ.Authenticator.Domain.Common;
 
 namespace BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
 

@@ -54,7 +54,6 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldThrowNullReferenceExceptionGivenNonExistingUser()
     {
-        var error = InfrastructureError.Identity.UserWasNotUpdated;
         var command = new UpdateUserCommand
         {
             Id = Guid.NewGuid().ToString(),

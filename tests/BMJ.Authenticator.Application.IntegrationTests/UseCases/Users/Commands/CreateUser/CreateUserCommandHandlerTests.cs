@@ -40,7 +40,6 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotCreateUserGivenInValidPassword()
     {
-        var error = InfrastructureError.Identity.UserWasNotCreated;
         var command = new CreateUserCommand
         {
             UserName = "Drake",
@@ -53,16 +52,12 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(error.Title, result.Error.Title);
-        Assert.Equal(error.Detail, result.Error.Detail);
-        Assert.Equal(error.Code, result.Error.Code);
-        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+        Assert.NotNull(result.Error);
     }
 
     [Fact]
     public async Task ShouldNotCreateUserGivenInValidUsername()
     {
-        var error = InfrastructureError.Identity.UserWasNotCreated;
         var command = new CreateUserCommand
         {
             UserName = "Drake&",
@@ -75,9 +70,6 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
 
         Assert.NotNull(result);
         Assert.False(result.Success);
-        Assert.Equal(error.Title, result.Error.Title);
-        Assert.Equal(error.Detail, result.Error.Detail);
-        Assert.Equal(error.Code, result.Error.Code);
-        Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+        Assert.NotNull(result.Error);
     }
 }

@@ -10,17 +10,4 @@ public class UserDto : IMapFrom<User>
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string[] Roles { get; set; }
-
-    internal UserDto(string id, string userName, string email, string phoneNumber, string[] roles)
-    {
-        Id = id;
-        UserName = userName;
-        Email = email;
-        PhoneNumber = phoneNumber;
-        Roles = roles;
-    }
-
-    internal UserDto()
-    {
-    }
 }

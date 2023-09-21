@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Application.Common.Mappings;
 using BMJ.Authenticator.Domain.Common.Errors;
 
-namespace BMJ.Authenticator.Application.Common.Models;
+namespace BMJ.Authenticator.Application.Common.Models.Errors;
 
 public class ErrorDto : IMapFrom<Error>
 {
@@ -13,11 +13,11 @@ public class ErrorDto : IMapFrom<Error>
 
     public int HttpStatusCode { get; set; }
 
-    public static ErrorDto None = new ErrorDto 
-    { 
-        Code = "None", 
+    public static ErrorDto None = new ErrorDto
+    {
+        Code = "None",
         Title = "None",
-        Detail = "None", 
-        HttpStatusCode = 200 
+        Detail = "None",
+        HttpStatusCode = 200
     };
 }

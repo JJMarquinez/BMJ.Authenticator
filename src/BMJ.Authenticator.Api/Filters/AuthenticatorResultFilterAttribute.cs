@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.Common.Models;
+﻿using BMJ.Authenticator.Application.Common.Models.Errors;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
