@@ -1,6 +1,4 @@
-﻿using BMJ.Authenticator.Domain.Entities.Users.Builders;
-
-namespace BMJ.Authenticator.Infrastructure.Identity.Builders;
+﻿namespace BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 public interface IUserIdentificationBuilder
 {
