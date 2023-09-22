@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
-using BMJ.Authenticator.Domain.Common.Results.FactoryMethods;
+using BMJ.Authenticator.Domain.Common.Results.Factories;
 
 namespace BMJ.Authenticator.Application.UnitTests.Common.Models.Results;
 

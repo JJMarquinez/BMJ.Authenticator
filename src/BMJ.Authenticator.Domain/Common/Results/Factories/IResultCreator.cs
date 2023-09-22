@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
 
-namespace BMJ.Authenticator.Domain.Common.Results.FactoryMethods;
+namespace BMJ.Authenticator.Domain.Common.Results.Factories;
 
 public interface IResultCreator
 {

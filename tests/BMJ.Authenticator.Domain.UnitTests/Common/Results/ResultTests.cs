@@ -1,7 +1,7 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results;
-using BMJ.Authenticator.Domain.Common.Results.FactoryMethods;
+using BMJ.Authenticator.Domain.Common.Results.Factories;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 

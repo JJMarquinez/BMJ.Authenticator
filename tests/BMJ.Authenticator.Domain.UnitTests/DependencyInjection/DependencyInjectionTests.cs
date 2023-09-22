@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors.Builders;
-using BMJ.Authenticator.Domain.Common.Results.FactoryMethods;
+using BMJ.Authenticator.Domain.Common.Results.Factories;
 using BMJ.Authenticator.Domain.Entities.Users.Builders;
 using Microsoft.Extensions.DependencyInjection;
 
