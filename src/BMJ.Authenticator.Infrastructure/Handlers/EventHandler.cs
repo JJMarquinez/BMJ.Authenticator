@@ -38,7 +38,7 @@ public class EventHandler : IEventHandler
     {
         var command = new UpdateUserCommand
         {
-            Id = @event.UserId.ToString(),
+            Id = @event.Id.ToString(),
             UserName = @event.UserName,
             Email = @event.Email,
             PhoneNumber = @event.Phone
@@ -58,7 +58,7 @@ public class EventHandler : IEventHandler
     {
         var command = new DeleteUserCommand
         {
-            Id = @event.UserId.ToString()
+            Id = @event.Id.ToString()
         };
 
         var resultDto = await _mediator.Send(command);
