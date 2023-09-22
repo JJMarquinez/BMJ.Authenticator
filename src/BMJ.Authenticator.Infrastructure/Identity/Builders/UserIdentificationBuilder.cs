@@ -1,43 +1,49 @@
-﻿using BMJ.Authenticator.Domain.Entities.Users.Builders;
-
-namespace BMJ.Authenticator.Infrastructure.Identity.Builders;
+﻿namespace BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 public class UserIdentificationBuilder : IUserIdentificationBuilder
 {
-    private UserIdentification _userIdentification = new UserIdentification();
-    private UserIdentificationBuilder() { }
+    private string _id = null!;
+    private string _username = null!;
+    private string _email = null!;
+    private string _phoneNumber = null!;
+    private string[] _roles = null!;
 
-    internal static UserIdentificationBuilder New() => new UserIdentificationBuilder();
-
-    public UserIdentification Build() => _userIdentification;
+    public UserIdentification Build() => new()
+    { 
+        Id = _id,
+        UserName = _username,
+        Email = _email,
+        PhoneNumber = _phoneNumber,
+        Roles = _roles
+    };
 
     public IUserIdentificationBuilder WithEmail(string email)
     {
-        _userIdentification.Email = email;
+        _email = email;
         return this;
     }
 
     public IUserIdentificationBuilder WithId(string id)
     {
-        _userIdentification.Id = id;
+        _id = id;
         return this;
     }
 
-    public IUserIdentificationBuilder WithPhoneNumber(string? phoneNumber)
+    public IUserIdentificationBuilder WithPhoneNumber(string phoneNumber)
     {
-        _userIdentification.PhoneNumber = phoneNumber;
+        _phoneNumber = phoneNumber;
         return this;
     }
 
     public IUserIdentificationBuilder WithUserName(string userName)
     {
-        _userIdentification.UserName = userName;
+        _username = userName;
         return this;
     }
 
-    public IUserIdentificationBuilder WithRoles(string[]? roles)
+    public IUserIdentificationBuilder WithRoles(string[] roles)
     {
-        _userIdentification.Roles = roles;
+        _roles = roles;
         return this;
     }
 }

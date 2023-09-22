@@ -29,6 +29,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            services.AddTransient<IUserIdentificationBuilder, UserIdentificationBuilder>();
             services.AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>();
             services.AddTransient<IIdentityService, IdentityService>();
             services.AddTransient<IAuthLogger, AuthLogger>();
