@@ -6,11 +6,14 @@ public class Result<TValue> : Result
 {
     private Result(TValue value, bool success, Error error)
         : base(success, error)
-        => Value = value;
+    {
+        Ensure.Argument.IsNot(value is null && error == Error.None, "The result cannot be implemented with no value and no error");
+        Value = value;
+    }
 
     public TValue Value { get; }
 
-    public static implicit operator Result<TValue>(TValue value) => Success(value);
+    public static implicit operator Result<TValue>(TValue value) => MakeSuccess(value);
 
-    internal static Result<TValue> New(TValue value, bool success, Error error) => new(value, success, error);
+    internal static Result<TValue> NewInstance(TValue value, bool success, Error error) => new(value, success, error);
 }

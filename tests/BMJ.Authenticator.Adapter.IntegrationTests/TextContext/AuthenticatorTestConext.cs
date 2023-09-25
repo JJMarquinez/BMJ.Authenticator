@@ -2,7 +2,11 @@
 using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Adapter.Identity;
 using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using BMJ.Authenticator.Infrastructure.Persistence;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
@@ -16,9 +20,9 @@ namespace BMJ.Authenticator.Adapter.IntegrationTests.TextContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
-    private static ITestDatabase _database = null!;
-    private static IServiceScopeFactory _scopeFactory = null!;
-    private static IUserOperator _userOperator = null!;
+    private ITestDatabase _database = null!;
+    private IServiceScopeFactory _scopeFactory = null!;
+    private IUserOperator _userOperator = null!;
 
     public AuthenticatorTestConext()
     {
@@ -43,10 +47,15 @@ public class AuthenticatorTestConext : IDisposable
         IServiceCollection services = new ServiceCollection();
 
         services
+            .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
             .AddTransient<IIdentityService, IdentityService>()
             .AddTransient<IAuthLogger, AuthLogger>()
             .AddTransient<IIdentityAdapter, IdentityAdapter>()
             .AddTransient<IJwtProvider, JwtProvider>()
+            .AddTransient<IResultDtoBuilder, ResultDtoBuilder>()
+            .AddTransient<IResultDtoGenericBuilder, ResultDtoGenericBuilder>()
+            .AddTransient<IUserDtoBuilder, UserDtoBuilder>()
+            .AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>()
             .AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(_database.GetDbConnection()))
             .AddIdentityCore<ApplicationUser>()
             .AddRoles<IdentityRole>()
@@ -56,6 +65,9 @@ public class AuthenticatorTestConext : IDisposable
 
     public IIdentityAdapter GetIdentityAdapter()
         => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IIdentityAdapter>();
+
+    public IApplicationUserBuilder GetApplicationUserBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
 
     public async Task ResetState()
     {

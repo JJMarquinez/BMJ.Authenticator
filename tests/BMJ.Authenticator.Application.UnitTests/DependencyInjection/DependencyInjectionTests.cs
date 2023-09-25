@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using FluentValidation;
@@ -44,5 +47,16 @@ public class DependencyInjectionTests
         Assert.IsType<Mediator>(serviceProvider.GetService<IMediator>());
         Assert.IsType<Mediator>(serviceProvider.GetService<ISender>());
         Assert.IsType<Mediator>(serviceProvider.GetService<IPublisher>());
+    }
+
+    [Fact]
+    public void ShouldAddApplicationServices()
+    {
+        var serviceProvider = _serviceCollection.BuildServiceProvider();
+
+        Assert.IsType<ResultDtoGenericBuilder>(serviceProvider.GetService<IResultDtoGenericBuilder>());
+        Assert.IsType<ResultDtoBuilder>(serviceProvider.GetService<IResultDtoBuilder>());
+        Assert.IsType<UserDtoBuilder>(serviceProvider.GetService<IUserDtoBuilder>());
+        Assert.IsType<ErrorDtoBuilder>(serviceProvider.GetService<IErrorDtoBuilder>());
     }
 }

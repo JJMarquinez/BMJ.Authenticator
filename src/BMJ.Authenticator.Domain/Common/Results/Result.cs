@@ -9,6 +9,7 @@ public class Result
     private protected Result(bool success, Error error)
     {
         Ensure.Argument.NotNull(error, string.Format("{0} cannot be null.", nameof(error)));
+        Ensure.Argument.IsNot(!success && error == Error.None, "The failure result cannot be implemented with no error");
         _success = success;
         Error = error;
     }
@@ -16,8 +17,8 @@ public class Result
     public bool IsSuccess() => _success;
     public bool IsFailure() => !IsSuccess();
     public Error Error { get; }
-    public static Result Success() => new(true, Error.None);
-    public static Result Failure(Error error) => new(false, error);
-    public static Result<TValue> Success<TValue>(TValue value) => Result<TValue>.New(value, true, Error.None);
-    public static Result<TValue?> Failure<TValue>(Error error) => Result<TValue?>.New(default, false, error);
+    internal static Result MakeSuccess() => new(true, Error.None);
+    internal static Result MakeFailure(Error error) => new(false, error);
+    internal static Result<TValue> MakeSuccess<TValue>(TValue value) => Result<TValue>.NewInstance(value, true, Error.None);
+    internal static Result<TValue?> MakeFailure<TValue>(Error error) => Result<TValue?>.NewInstance(default, false, error);
 }

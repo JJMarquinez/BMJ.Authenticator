@@ -1,6 +1,4 @@
-﻿using BMJ.Authenticator.Infrastructure.Identity.Builders;
-
-namespace BMJ.Authenticator.Infrastructure.Identity;
+﻿namespace BMJ.Authenticator.Infrastructure.Identity;
 
 public struct UserIdentification
 {
@@ -9,6 +7,4 @@ public struct UserIdentification
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public string[] Roles { get; set; }
-
-    public static IUserIdentificationBuilder Builder() => UserIdentificationBuilder.New();
 }

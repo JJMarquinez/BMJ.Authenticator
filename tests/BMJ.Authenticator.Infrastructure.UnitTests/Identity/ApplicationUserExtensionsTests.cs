@@ -1,14 +1,22 @@
 ﻿using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
 public class ApplicationUserExtensionsTests
 {
+    private readonly IApplicationUserBuilder _applicationUserBuilder;
+
+    public ApplicationUserExtensionsTests()
+    {
+        _applicationUserBuilder = new ApplicationUserBuilder();
+    }
+
     [Fact]
     public void ShouldConvertApplicationUserToUserIdentification() 
     {
         ApplicationUser applicationUser = 
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -30,7 +38,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserIdentificationGivenNullPhoneNumber()
     {
         ApplicationUser applicationUser =
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -51,7 +59,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordAndNoRoles()
     {
         ApplicationUser applicationUser =
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .WithEmail("jame@auth.com")
@@ -70,7 +78,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesAndNoEmail()
     {
         ApplicationUser applicationUser =
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .WithId("8sIi8NZcD34l")
             .WithUserName("Jame")
             .Build();
@@ -88,7 +96,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesNoEmailAndNoUsername()
     {
         ApplicationUser applicationUser =
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .WithId("8sIi8NZcD34l")
 
             .Build();
@@ -106,7 +114,7 @@ public class ApplicationUserExtensionsTests
     public void ShouldConvertApplicationUserToUserGivenNoPhoneNumberNoPasswordNoRolesNoEmailNoUsernameAndNoId()
     {
         ApplicationUser applicationUser =
-            ApplicationUser.Builder()
+            _applicationUserBuilder
             .Build();
 
         UserIdentification user = applicationUser.ToUserIdentification(null!);

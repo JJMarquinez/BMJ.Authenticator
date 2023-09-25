@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,17 +12,20 @@ namespace BMJ.Authenticator.Infrastructure.Persistence
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IApplicationUserBuilder _applicationUserBuilder;
 
         public ApplicationDbContextInitialiser(
             ILogger<ApplicationDbContextInitialiser> logger,
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IApplicationUserBuilder applicationUserBuilder)
         {
             _logger = logger;
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _applicationUserBuilder = applicationUserBuilder;
         }
 
         public async Task InitialiseAsync()
@@ -64,7 +68,7 @@ namespace BMJ.Authenticator.Infrastructure.Persistence
             }
 
             // Default users
-            var administrator = ApplicationUser.Builder().WithUserName("admin").WithEmail("administrator@localhost.com").Build();
+            var administrator = _applicationUserBuilder.WithUserName("admin").WithEmail("administrator@localhost.com").Build();
 
             if (_userManager.Users.All(u => u.UserName != administrator.UserName))
             {

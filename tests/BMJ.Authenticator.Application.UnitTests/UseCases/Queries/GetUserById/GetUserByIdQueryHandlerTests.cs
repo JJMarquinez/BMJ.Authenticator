@@ -1,19 +1,28 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using MediatR;
 using Moq;
-using System.Xml.Linq;
 
 namespace BMJ.Authenticator.Application.UnitTests.UseCases.Queries.GetUserById;
 
 public class GetUserByIdQueryHandlerTests
 {
     private readonly Mock<IIdentityAdapter> _identityAdapter;
+    private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
+    private readonly IUserDtoBuilder _userDtoBuilder;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
+
     public GetUserByIdQueryHandlerTests()
     {
         _identityAdapter = new();
+        _resultDtoGenericBuilder = new ResultDtoGenericBuilder();
+        _userDtoBuilder = new UserDtoBuilder();
+        _errorDtoBuilder = new ErrorDtoBuilder();
     }
 
     [Fact]
@@ -24,16 +33,15 @@ public class GetUserByIdQueryHandlerTests
             Id = Guid.NewGuid().ToString(),
         };
         var token = new CancellationTokenSource().Token;
-        var user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Paola",
-            Email = "paola@auth.com",
-            PhoneNumber = "222-555-888"
-        };
+        var user = _userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Paola")
+            .WithEmail("paola@auth.com")
+            .WithPhone("222-555-888")
+            .Build();
         _identityAdapter.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(ResultDto<UserDto?>.NewSuccess<UserDto?>(user));
+            )).ReturnsAsync(_resultDtoGenericBuilder.BuildSuccess<UserDto?>(user));
         IRequestHandler<GetUserByIdQuery, ResultDto<UserDto?>> handler = new GetUserByIdQueryHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(query, token);
@@ -57,7 +65,7 @@ public class GetUserByIdQueryHandlerTests
         var token = new CancellationTokenSource().Token;
         _identityAdapter.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
-            )).ReturnsAsync(ResultDto<UserDto?>.NewFailure<UserDto?>(new Application.Common.Models.ErrorDto()));
+            )).ReturnsAsync(_resultDtoGenericBuilder.BuildFailure<UserDto?>(_errorDtoBuilder.Build()));
         IRequestHandler<GetUserByIdQuery, ResultDto<UserDto?>> handler = new GetUserByIdQueryHandler(_identityAdapter.Object);
 
         var resultDto = await handler.Handle(query, token);

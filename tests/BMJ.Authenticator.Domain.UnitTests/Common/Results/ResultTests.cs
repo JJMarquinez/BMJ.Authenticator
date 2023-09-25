@@ -1,17 +1,21 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
+using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results;
-using System.Net;
+using BMJ.Authenticator.Domain.Common.Results.Builders;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 
 public class ResultTests
 {
-    Error _error;
+    private readonly IResultBuilder _resultBuilder;
+    private readonly IResultGenericBuilder _resultGenericBuilder;
+    private readonly Error _error;
 
     public ResultTests()
     {
-        _error = 
-            Error.Builder()
+        _resultBuilder = new ResultBuilder();
+        _resultGenericBuilder = new ResultGenericBuilder();
+        _error = new ErrorBuilder()
             .WithCode("Identity.InvalidOperation.UserNameOrPasswordNotValid")
             .WithTitle("User name or password aren't valid.")
             .WithDetail("The user name or password wich were sent are not correct, either the user doesn't exist or password isn't correct.")
@@ -22,99 +26,117 @@ public class ResultTests
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullAsError()
     {
-        Assert.Throws<ArgumentNullException>(() => { Result.Failure(null!); });
+        Assert.Throws<ArgumentNullException>(() => { _resultBuilder.WithError(null!).Build(); });
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateFailureResult()
+    {
+        Assert.Throws<ArgumentException>(() => { _resultBuilder.WithError(Error.None).Build(); });
     }
 
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullAsErrorToGenericResult()
     {
-        Assert.Throws<ArgumentNullException>(() => { Result.Failure<object>(null!); });
+        Assert.Throws<ArgumentNullException>(() => { _resultGenericBuilder.BuildFailure<object>(null!); });
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateGenericFailureResult()
+    {
+        Assert.Throws<ArgumentException>(() => { _resultGenericBuilder.BuildFailure<object>(Error.None); });
     }
 
     [Fact]
     public void ShouldBeCreatedAResultGivenACreatedError()
     {
-        Assert.NotNull(Result.Failure(_error));
+        Assert.NotNull(_resultBuilder.WithError(_error).Build());
     }
 
     [Fact]
     public void ShouldBeCreatedAGenericReultGivenACreatedError()
     {
-        Assert.NotNull(Result.Failure<object?>(_error));
+        Assert.NotNull(_resultGenericBuilder.BuildFailure<object?>(_error));
     }
 
     [Fact]
     public void ShouldBeCreatedASuccessResult()
     {
-        Assert.NotNull(Result.Success());
+        Assert.NotNull(_resultBuilder.BuildSuccess());
     }
 
     [Fact]
     public void ShouldBeCreatedAGenericSuccessResult()
     {
-        Assert.NotNull(Result.Success<object?>(new()));
+        Assert.NotNull(_resultGenericBuilder.BuildSuccess<object?>(new()));
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoValueCreatingGenericSuccessResult()
+    {
+        Assert.Throws<ArgumentException>(() => { _resultGenericBuilder.BuildSuccess<object?>(default); });
     }
 
     [Fact]
     public void ShouldGetErrorGivenAError()
     {
-        Result result = Result.Failure(_error);
+        Result result = _resultBuilder.WithError(_error).Build();
         Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
     public void ShouldGetErrorGivenAErrorToGenericResult()
     {
-        Result<object?> result = Result.Failure<object?>(_error);
+        Result<object?> result = _resultGenericBuilder.BuildFailure<object?>(_error);
         Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
     public void ShouldBeSuccessResult()
     {
-        Assert.True(Result.Success().IsSuccess());
+        Assert.True(_resultBuilder.BuildSuccess().IsSuccess());
     }
 
     [Fact]
     public void ShouldBeGenericSuccessResult()
     {
-        Assert.True(Result.Success<object?>(new()).IsSuccess());
+        Assert.True(_resultGenericBuilder.BuildSuccess<object?>(new()).IsSuccess());
     }
 
     [Fact]
     public void ShouldBeUnsuccessResult()
     {
-        Assert.False(Result.Failure(_error).IsSuccess());
+        Assert.False(_resultBuilder.WithError(_error).Build().IsSuccess());
     }
 
     [Fact]
     public void ShouldBeGenericUnsuccessResult()
     {
-        Assert.False(Result.Failure<object?>(_error).IsSuccess());
+        Assert.False(_resultGenericBuilder.BuildFailure<object?>(_error).IsSuccess());
     }
 
     [Fact]
     public void ShouldBeFailureResult()
     {
-        Assert.True(Result.Failure(_error).IsFailure());
+        Assert.True(_resultBuilder.WithError(_error).Build().IsFailure());
     }
 
     [Fact]
     public void ShouldBeGenericFailureResult()
     {
-        Assert.True(Result.Failure<object?>(_error).IsFailure());
+        Assert.True(_resultGenericBuilder.BuildFailure<object?>(_error).IsFailure());
     }
 
     [Fact]
     public void ShouldNotBeFailureResultGivenSuccessResult()
     {
-        Assert.False(Result.Success().IsFailure());
+        Assert.False(_resultBuilder.BuildSuccess().IsFailure());
     }
 
     [Fact]
     public void ShouldNotBeGenericFailureResultGivenGenericSuccessResult()
     {
-        Assert.False(Result.Success<object?>(new()).IsFailure());
+        Assert.False(_resultGenericBuilder.BuildSuccess<object?>(new()).IsFailure());
     }
 
     [Fact]
@@ -143,7 +165,7 @@ public class ResultTests
     public void ShouldResultValueNotToBeNullGivenSuccessResult()
     {
         string guid = Guid.NewGuid().ToString();
-        Result<string> result = Result.Success(guid);
+        Result<string> result = _resultGenericBuilder.BuildSuccess(guid);
         Assert.NotNull(result.Value);
     }
 
@@ -151,7 +173,7 @@ public class ResultTests
     public void ShouldResultValueBeNullGivenFailureResult()
     {
         string guid = Guid.NewGuid().ToString();
-        Result<string?> result = Result.Failure<string?>(_error);
+        Result<string?> result = _resultGenericBuilder.BuildFailure<string?>(_error);
         Assert.Null(result.Value);
     }
 }

@@ -23,7 +23,7 @@ public class DeleteUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldDeleteUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")

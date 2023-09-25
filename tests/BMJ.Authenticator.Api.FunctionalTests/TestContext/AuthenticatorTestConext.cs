@@ -1,7 +1,8 @@
 ﻿using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
 using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Infrastructure.Identity;
+using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
 using BMJ.Authenticator.ToolKit.Database.Testcontainters;
 using BMJ.Authenticator.ToolKit.Identity.UserOperators;
@@ -17,11 +18,11 @@ namespace BMJ.Authenticator.Api.FunctionalTests.TestContext;
 
 public class AuthenticatorTestConext : IDisposable
 {
-    private static ITestDatabase _database = null!;
-    private static ITestCache _cache = null!;
-    private static AuthenticatorWebApplicationFactory _factory = null!;
-    private static IServiceScopeFactory _scopeFactory = null!;
-    private static IUserOperator _userOperator = null!;
+    private ITestDatabase _database = null!;
+    private ITestCache _cache = null!;
+    private AuthenticatorWebApplicationFactory _factory = null!;
+    private IServiceScopeFactory _scopeFactory = null!;
+    private IUserOperator _userOperator = null!;
 
     public AuthenticatorTestConext()
     {
@@ -81,14 +82,15 @@ public class AuthenticatorTestConext : IDisposable
 
     public async ValueTask<string> GetTokenAsync()
     {
-        var user = new UserDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Joe",
-            Email = "joe@authenticator.com",
-            PhoneNumber = "111-444-777",
-            Roles = new[] { "Guest" }
-        };
+        var userDtoBuilder = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IUserDtoBuilder>();
+        var user = userDtoBuilder
+            .WithId(Guid.NewGuid().ToString())
+            .WithName("Joe")
+            .WithEmail("joe@authenticator.com")
+            .WithPhone("111-444-777")
+            .WithRoles(new[] { "Guest" })
+            .Build();
+
         var jwtProvider = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IJwtProvider>();
         return await jwtProvider.GenerateAsync(user);
     }
@@ -106,6 +108,9 @@ public class AuthenticatorTestConext : IDisposable
         var userManager = _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
         return await userManager.Users.FirstOrDefaultAsync(user => user.Id == applicationUserId);
     }
+
+    public IApplicationUserBuilder GetApplicationUserBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
 
     public async void Dispose()
     {

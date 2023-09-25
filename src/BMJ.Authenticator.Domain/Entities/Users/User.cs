@@ -27,6 +27,4 @@ public class User
 
     internal static User NewInstance(string id, string userName, Email email, string[]? roles, Phone? phoneNumber)
         => new(id, userName, email, roles, phoneNumber);
-
-    public static IUserBuilder Builder() => UserBuilder.NewInstance();
 }

@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<InternalsVisibleTo Include="BMJ.Authenticator.Infrastructure.IntegrationTests" />
+	<InternalsVisibleTo Include="BMJ.Authenticator.Infrastructure.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Confluent.Kafka" Version="$(ConfluentKafka)" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="$(MicrosoftAspNetCoreIdentityEntityFrameworkCore)" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftEntityFrameworkCoreDesign)">
@@ -20,6 +25,21 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BMJ.Authenticator.Adapter\BMJ.Authenticator.Adapter.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\InfrastructureString.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>InfrastructureString.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\InfrastructureString.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>InfrastructureString.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Mappings;
-using BMJ.Authenticator.Application.Common.Models;
-using BMJ.Authenticator.Application.Common.Models.Users;
+using BMJ.Authenticator.Application.Common.Models.Errors;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
+using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Entities.Users;
 
@@ -10,15 +11,19 @@ namespace BMJ.Authenticator.Application.UnitTests.Common.Mappings;
 public class IMapFromTests
 {
     private readonly MapFromProfile _profile;
+    private readonly IUserDtoBuilder _userDtoBuilder;
+    private readonly IErrorDtoBuilder _errorDtoBuilder;
     public IMapFromTests()
     {
         _profile = new MapFromProfile();
+        _userDtoBuilder = new UserDtoBuilder();
+        _errorDtoBuilder = new ErrorDtoBuilder();
     }
 
     [Fact]
     public void ShouldMapErrorToErrorDto()
     {
-        IMapFrom<Error> mapFrom = new ErrorDto();
+        IMapFrom<Error> mapFrom = _errorDtoBuilder.Build();
         mapFrom.Mapping(_profile);
         var configuration = new MapperConfiguration(cfg => cfg.AddProfile(_profile));
         configuration.AssertConfigurationIsValid();
@@ -34,7 +39,7 @@ public class IMapFromTests
     [Fact]
     public void ShouldNotMapErrorToErrorDto()
     {
-        IMapFrom<User> mapFrom = new UserDto();
+        IMapFrom<User> mapFrom = _userDtoBuilder.Build();
         mapFrom.Mapping(_profile);
         var configuration = new MapperConfiguration(cfg => cfg.AddProfile(_profile));
         configuration.AssertConfigurationIsValid();

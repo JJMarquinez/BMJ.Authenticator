@@ -24,7 +24,7 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldUpdateUser()
     {
-        var applicationUser = ApplicationUser.Builder()
+        var applicationUser = _testContext.GetApplicationUserBuilder()
             .WithUserName("Joe")
             .WithEmail("joe@authenticator.com")
             .WithPhoneNumber("111-444-777")
@@ -54,7 +54,6 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldThrowNullReferenceExceptionGivenNonExistingUser()
     {
-        var error = InfrastructureError.Identity.UserWasNotUpdated;
         var command = new UpdateUserCommand
         {
             Id = Guid.NewGuid().ToString(),

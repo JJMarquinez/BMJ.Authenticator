@@ -38,6 +38,4 @@ public class Error
             && string.Equals(Detail, other.Detail, StringComparison.Ordinal)
             && HttpStatusCode == other.HttpStatusCode;
     }
-
-    public static IErrorBuilder Builder() => ErrorBuilder.NewInstance();
 }
