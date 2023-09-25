@@ -1,6 +1,6 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
-using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Infrastructure.Consumers;
 using BMJ.Authenticator.Infrastructure.Events.Factories;
 using BMJ.Authenticator.Infrastructure.Events.Factories.Creators;
@@ -33,9 +33,8 @@ public class DependencyInjectionTests
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .Build();
-        _serviceCollection.AddTransient<IResultDtoFactory, ResultDtoFactory>();
-        _serviceCollection.AddTransient<IResultDtoGenericFactory, ResultDtoGenericFactory>();
-        _serviceCollection.AddTransient<IResultDtoCreator, ResultDtoCreator>();
+        _serviceCollection.AddTransient<IResultDtoBuilder, ResultDtoBuilder>();
+        _serviceCollection.AddTransient<IResultDtoGenericBuilder, ResultDtoGenericBuilder>();
         _serviceCollection.AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>();
         _serviceCollection.AddMediatR(Assembly.GetExecutingAssembly());
         _serviceCollection.AddOutputCache();

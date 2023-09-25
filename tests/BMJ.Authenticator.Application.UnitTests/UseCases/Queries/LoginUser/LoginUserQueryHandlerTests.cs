@@ -2,7 +2,7 @@
 using BMJ.Authenticator.Application.Common.Models.Errors;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results;
-using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
@@ -15,7 +15,7 @@ public class LoginUserQueryHandlerTests
 {
     private readonly Mock<IIdentityAdapter> _identityAdapter;
     private readonly Mock<IJwtProvider> _jwtProvider;
-    private readonly IResultDtoCreator _resultDtoCreator;
+    private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
     private readonly IUserDtoBuilder _userDtoBuilder;
     private readonly IErrorDtoBuilder _errorDtoBuilder;
     private readonly LoginUserQuery _query;
@@ -24,7 +24,7 @@ public class LoginUserQueryHandlerTests
     {
         _identityAdapter = new();
         _jwtProvider = new();
-        _resultDtoCreator = new ResultDtoCreator(new ResultDtoFactory(), new ResultDtoGenericFactory());
+        _resultDtoGenericBuilder = new ResultDtoGenericBuilder();
         _userDtoBuilder = new UserDtoBuilder();
         _errorDtoBuilder = new ErrorDtoBuilder();
         _query = new LoginUserQuery
@@ -48,9 +48,9 @@ public class LoginUserQueryHandlerTests
         _identityAdapter.Setup(x => x.AuthenticateMemberAsync(
             It.IsAny<string>(),
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateSuccessResult<UserDto?>(user));
+            )).ReturnsAsync(_resultDtoGenericBuilder.BuildSuccess<UserDto?>(user));
         _jwtProvider.Setup(x => x.GenerateAsync(It.IsAny<UserDto>())).ReturnsAsync(jwtToken);
-        IRequestHandler<LoginUserQuery, ResultDto<string?>> handler = new LoginUserQueryHandler(_identityAdapter.Object, _jwtProvider.Object, _resultDtoCreator);
+        IRequestHandler<LoginUserQuery, ResultDto<string?>> handler = new LoginUserQueryHandler(_identityAdapter.Object, _jwtProvider.Object, _resultDtoGenericBuilder);
 
         var resultDto = await handler.Handle(_query, token);
 
@@ -67,8 +67,8 @@ public class LoginUserQueryHandlerTests
         _identityAdapter.Setup(x => x.AuthenticateMemberAsync(
             It.IsAny<string>(),
             It.IsAny<string>()
-            )).ReturnsAsync(_resultDtoCreator.CreateFailureResult<UserDto?>(error));
-        IRequestHandler<LoginUserQuery, ResultDto<string?>> handler = new LoginUserQueryHandler(_identityAdapter.Object, _jwtProvider.Object, _resultDtoCreator);
+            )).ReturnsAsync(_resultDtoGenericBuilder.BuildFailure<UserDto?>(error));
+        IRequestHandler<LoginUserQuery, ResultDto<string?>> handler = new LoginUserQueryHandler(_identityAdapter.Object, _jwtProvider.Object, _resultDtoGenericBuilder);
 
         var resultDto = await handler.Handle(_query, token);
 

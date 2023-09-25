@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BMJ.Authenticator.Application.Common.Models.Errors;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results.Builders;
 
@@ -9,12 +11,14 @@ public class ResultTDtoTests
 {
     private readonly ResultMappingProfile _profile;
     private readonly IResultGenericBuilder _resultGenericBuilder;
+    private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
 
 
     public ResultTDtoTests()
     {
         _profile = new ResultMappingProfile();
         _resultGenericBuilder = new ResultGenericBuilder();
+        _resultDtoGenericBuilder = new ResultDtoGenericBuilder();
     }
 
     [Fact]
@@ -51,5 +55,23 @@ public class ResultTDtoTests
         Assert.Equal(error.Code, result.Error.Code);
         Assert.Equal(error.Detail, result.Error.Detail);
         Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentNullExceptionGivenNullAsErrorToGenericResult()
+    {
+        Assert.Throws<ArgumentException>(() => { _resultDtoGenericBuilder.BuildFailure<object>(null!); });
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateGenericFailureResult()
+    {
+        Assert.Throws<ArgumentException>(() => { _resultDtoGenericBuilder.BuildFailure<object>(ErrorDto.None); });
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoValueCreatingGenericSuccessResult()
+    {
+        Assert.Throws<ArgumentNullException>(() => { _resultDtoGenericBuilder.BuildSuccess<object?>(default); });
     }
 }

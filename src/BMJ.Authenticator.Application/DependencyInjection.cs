@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
-using BMJ.Authenticator.Application.Common.Models.Results.FactoryMethods;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using FluentValidation;
 using MediatR;
@@ -13,9 +13,8 @@ namespace BMJ.Authenticator.Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services
-                .AddTransient<IResultDtoFactory, ResultDtoFactory>()
-                .AddTransient<IResultDtoGenericFactory, ResultDtoGenericFactory>()
-                .AddTransient<IResultDtoCreator, ResultDtoCreator>()
+                .AddTransient<IResultDtoBuilder, ResultDtoBuilder>()
+                .AddTransient<IResultDtoGenericBuilder, ResultDtoGenericBuilder>()
                 .AddTransient<IUserDtoBuilder, UserDtoBuilder>()
                 .AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>()
                 .AddAutoMapper(Assembly.GetExecutingAssembly())

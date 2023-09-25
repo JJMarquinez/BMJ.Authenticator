@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BMJ.Authenticator.Application.Common.Models.Errors;
 using BMJ.Authenticator.Application.Common.Models.Results;
+using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results.Builders;
 
@@ -9,11 +11,13 @@ public class ResultDtoTests
 {
     private readonly ResultMappingProfile _profile;
     private readonly IResultBuilder _resultBuilder;
+    private readonly IResultDtoBuilder _resultDtoBuilder;
 
     public ResultDtoTests()
     {
         _profile = new ResultMappingProfile();
         _resultBuilder = new ResultBuilder();
+        _resultDtoBuilder = new ResultDtoBuilder();
     }
 
     [Fact]
@@ -50,5 +54,17 @@ public class ResultDtoTests
         Assert.Equal(error.Code, result.Error.Code);
         Assert.Equal(error.Detail, result.Error.Detail);
         Assert.Equal(error.HttpStatusCode, result.Error.HttpStatusCode);
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateFailureResult()
+    {
+        Assert.Throws<ArgumentException>(() => _resultDtoBuilder.WithError(ErrorDto.None).Build());
+    }
+
+    [Fact]
+    public void ShouldThrowArgumentNullExceptionGivenNullAsErrorToGenericResult()
+    {
+        Assert.Throws<ArgumentException>(() => _resultDtoBuilder.WithError(null!).Build());
     }
 }
