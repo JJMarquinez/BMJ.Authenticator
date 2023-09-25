@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors.Builders;
-using BMJ.Authenticator.Domain.Common.Results.Factories;
+using BMJ.Authenticator.Domain.Common.Results.Builders;
 using BMJ.Authenticator.Domain.Entities.Users.Builders;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,9 +21,8 @@ public class DependencyInjectionTests
         var serviceProvider = _serviceCollection.BuildServiceProvider();
 
         Assert.IsType<ErrorBuilder>(serviceProvider.GetService<IErrorBuilder>());
-        Assert.IsType<ResultFactory>(serviceProvider.GetService<IResultFactory>());
-        Assert.IsType<ResultGenericFactory>(serviceProvider.GetService<IResultGenericFactory>());
-        Assert.IsType<ResultCreator>(serviceProvider.GetService<IResultCreator>());
+        Assert.IsType<ResultBuilder>(serviceProvider.GetService<IResultBuilder>());
+        Assert.IsType<ResultGenericBuilder>(serviceProvider.GetService<IResultGenericBuilder>());
         Assert.IsType<UserBuilder>(serviceProvider.GetService<IUserBuilder>());
     }
 }

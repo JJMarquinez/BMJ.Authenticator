@@ -9,6 +9,7 @@ public class Result
     private protected Result(bool success, Error error)
     {
         Ensure.Argument.NotNull(error, string.Format("{0} cannot be null.", nameof(error)));
+        Ensure.Argument.IsNot(!success && error == Error.None, "The failure result cannot be implemented with no error");
         _success = success;
         Error = error;
     }

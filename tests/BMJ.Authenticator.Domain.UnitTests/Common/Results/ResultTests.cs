@@ -1,18 +1,20 @@
 ﻿using BMJ.Authenticator.Domain.Common.Errors;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
 using BMJ.Authenticator.Domain.Common.Results;
-using BMJ.Authenticator.Domain.Common.Results.Factories;
+using BMJ.Authenticator.Domain.Common.Results.Builders;
 
 namespace BMJ.Authenticator.Domain.UnitTests.Common.Results;
 
 public class ResultTests
 {
-    private readonly IResultCreator _resultCreator;
+    private readonly IResultBuilder _resultBuilder;
+    private readonly IResultGenericBuilder _resultGenericBuilder;
     private readonly Error _error;
 
     public ResultTests()
     {
-        _resultCreator = new ResultCreator(new ResultFactory(), new ResultGenericFactory());
+        _resultBuilder = new ResultBuilder();
+        _resultGenericBuilder = new ResultGenericBuilder();
         _error = new ErrorBuilder()
             .WithCode("Identity.InvalidOperation.UserNameOrPasswordNotValid")
             .WithTitle("User name or password aren't valid.")
@@ -24,117 +26,117 @@ public class ResultTests
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullAsError()
     {
-        Assert.Throws<ArgumentNullException>(() => { _resultCreator.CreateFailureResult(null!); });
+        Assert.Throws<ArgumentNullException>(() => { _resultBuilder.WithError(null!).Build(); });
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateFailureResult()
     {
-        Assert.Throws<ArgumentException>(() => { _resultCreator.CreateFailureResult(Error.None); });
+        Assert.Throws<ArgumentException>(() => { _resultBuilder.WithError(Error.None).Build(); });
     }
 
     [Fact]
     public void ShouldThrowArgumentNullExceptionGivenNullAsErrorToGenericResult()
     {
-        Assert.Throws<ArgumentNullException>(() => { _resultCreator.CreateFailureResult<object>(null!); });
+        Assert.Throws<ArgumentNullException>(() => { _resultGenericBuilder.BuildFailure<object>(null!); });
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenNoneErrorAttemptingToCreateGenericFailureResult()
     {
-        Assert.Throws<ArgumentException>(() => { _resultCreator.CreateFailureResult<object>(Error.None); });
+        Assert.Throws<ArgumentException>(() => { _resultGenericBuilder.BuildFailure<object>(Error.None); });
     }
 
     [Fact]
     public void ShouldBeCreatedAResultGivenACreatedError()
     {
-        Assert.NotNull(_resultCreator.CreateFailureResult(_error));
+        Assert.NotNull(_resultBuilder.WithError(_error).Build());
     }
 
     [Fact]
     public void ShouldBeCreatedAGenericReultGivenACreatedError()
     {
-        Assert.NotNull(_resultCreator.CreateFailureResult<object?>(_error));
+        Assert.NotNull(_resultGenericBuilder.BuildFailure<object?>(_error));
     }
 
     [Fact]
     public void ShouldBeCreatedASuccessResult()
     {
-        Assert.NotNull(_resultCreator.CreateSuccessResult());
+        Assert.NotNull(_resultBuilder.BuildSuccess());
     }
 
     [Fact]
     public void ShouldBeCreatedAGenericSuccessResult()
     {
-        Assert.NotNull(_resultCreator.CreateSuccessResult<object?>(new()));
+        Assert.NotNull(_resultGenericBuilder.BuildSuccess<object?>(new()));
     }
 
     [Fact]
     public void ShouldThrowArgumentExceptionGivenNoValueCreatingGenericSuccessResult()
     {
-        Assert.Throws<ArgumentException>(() => { _resultCreator.CreateSuccessResult<object?>(default); });
+        Assert.Throws<ArgumentException>(() => { _resultGenericBuilder.BuildSuccess<object?>(default); });
     }
 
     [Fact]
     public void ShouldGetErrorGivenAError()
     {
-        Result result = _resultCreator.CreateFailureResult(_error);
+        Result result = _resultBuilder.WithError(_error).Build();
         Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
     public void ShouldGetErrorGivenAErrorToGenericResult()
     {
-        Result<object?> result = _resultCreator.CreateFailureResult<object?>(_error);
+        Result<object?> result = _resultGenericBuilder.BuildFailure<object?>(_error);
         Assert.True(_error.Equals(result.Error));
     }
 
     [Fact]
     public void ShouldBeSuccessResult()
     {
-        Assert.True(_resultCreator.CreateSuccessResult().IsSuccess());
+        Assert.True(_resultBuilder.BuildSuccess().IsSuccess());
     }
 
     [Fact]
     public void ShouldBeGenericSuccessResult()
     {
-        Assert.True(_resultCreator.CreateSuccessResult<object?>(new()).IsSuccess());
+        Assert.True(_resultGenericBuilder.BuildSuccess<object?>(new()).IsSuccess());
     }
 
     [Fact]
     public void ShouldBeUnsuccessResult()
     {
-        Assert.False(_resultCreator.CreateFailureResult(_error).IsSuccess());
+        Assert.False(_resultBuilder.WithError(_error).Build().IsSuccess());
     }
 
     [Fact]
     public void ShouldBeGenericUnsuccessResult()
     {
-        Assert.False(_resultCreator.CreateFailureResult<object?>(_error).IsSuccess());
+        Assert.False(_resultGenericBuilder.BuildFailure<object?>(_error).IsSuccess());
     }
 
     [Fact]
     public void ShouldBeFailureResult()
     {
-        Assert.True(_resultCreator.CreateFailureResult(_error).IsFailure());
+        Assert.True(_resultBuilder.WithError(_error).Build().IsFailure());
     }
 
     [Fact]
     public void ShouldBeGenericFailureResult()
     {
-        Assert.True(_resultCreator.CreateFailureResult<object?>(_error).IsFailure());
+        Assert.True(_resultGenericBuilder.BuildFailure<object?>(_error).IsFailure());
     }
 
     [Fact]
     public void ShouldNotBeFailureResultGivenSuccessResult()
     {
-        Assert.False(_resultCreator.CreateSuccessResult().IsFailure());
+        Assert.False(_resultBuilder.BuildSuccess().IsFailure());
     }
 
     [Fact]
     public void ShouldNotBeGenericFailureResultGivenGenericSuccessResult()
     {
-        Assert.False(_resultCreator.CreateSuccessResult<object?>(new()).IsFailure());
+        Assert.False(_resultGenericBuilder.BuildSuccess<object?>(new()).IsFailure());
     }
 
     [Fact]
@@ -163,7 +165,7 @@ public class ResultTests
     public void ShouldResultValueNotToBeNullGivenSuccessResult()
     {
         string guid = Guid.NewGuid().ToString();
-        Result<string> result = _resultCreator.CreateSuccessResult(guid);
+        Result<string> result = _resultGenericBuilder.BuildSuccess(guid);
         Assert.NotNull(result.Value);
     }
 
@@ -171,7 +173,7 @@ public class ResultTests
     public void ShouldResultValueBeNullGivenFailureResult()
     {
         string guid = Guid.NewGuid().ToString();
-        Result<string?> result = _resultCreator.CreateFailureResult<string?>(_error);
+        Result<string?> result = _resultGenericBuilder.BuildFailure<string?>(_error);
         Assert.Null(result.Value);
     }
 }

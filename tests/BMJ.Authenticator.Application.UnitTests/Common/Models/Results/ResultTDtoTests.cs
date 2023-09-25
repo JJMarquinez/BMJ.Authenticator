@@ -1,19 +1,20 @@
 ﻿using AutoMapper;
 using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Domain.Common.Errors.Builders;
-using BMJ.Authenticator.Domain.Common.Results.Factories;
+using BMJ.Authenticator.Domain.Common.Results.Builders;
 
 namespace BMJ.Authenticator.Application.UnitTests.Common.Models.Results;
 
 public class ResultTDtoTests
 {
     private readonly ResultMappingProfile _profile;
-    private readonly IResultCreator _resultCreator;
+    private readonly IResultGenericBuilder _resultGenericBuilder;
+
 
     public ResultTDtoTests()
     {
         _profile = new ResultMappingProfile();
-        _resultCreator = new ResultCreator(new ResultFactory(), new ResultGenericFactory());
+        _resultGenericBuilder = new ResultGenericBuilder();
     }
 
     [Fact]
@@ -23,7 +24,7 @@ public class ResultTDtoTests
         var configuration = new MapperConfiguration(cfg => cfg.AddProfile(_profile));
         configuration.AssertConfigurationIsValid();
 
-        var result = configuration.CreateMapper().Map<ResultDto<object>>(_resultCreator.CreateSuccessResult(new object()));
+        var result = configuration.CreateMapper().Map<ResultDto<object>>(_resultGenericBuilder.BuildSuccess(new object()));
 
         Assert.NotNull(result);
         Assert.True(result.Success);
@@ -42,7 +43,7 @@ public class ResultTDtoTests
             .WithHttpStatusCode(409)
             .Build();
 
-        var result = configuration.CreateMapper().Map<ResultDto<object>>(_resultCreator.CreateFailureResult<object>(error));
+        var result = configuration.CreateMapper().Map<ResultDto<object>>(_resultGenericBuilder.BuildFailure<object>(error));
 
         Assert.NotNull(result);
         Assert.False(result.Success);
