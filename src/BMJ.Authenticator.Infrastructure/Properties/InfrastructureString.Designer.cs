@@ -61,6 +61,15 @@ namespace BMJ.Authenticator.Infrastructure.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to There is either ambiguous even factory or no one to use. There must be just one registered..
+        /// </summary>
+        internal static string AmbiguousOrNoOneFactory {
+            get {
+                return ResourceManager.GetString("AmbiguousOrNoOneFactory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to UserNameOrPasswordNotValid.
         /// </summary>
         internal static string ErrorAuthenticateMemberCode {
@@ -255,6 +264,15 @@ namespace BMJ.Authenticator.Infrastructure.Properties {
         internal static string ErrorUpdateUserTitle {
             get {
                 return ResourceManager.GetString("ErrorUpdateUserTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The event was not created due to invalid inputs.
+        /// </summary>
+        internal static string EventCreationFailure {
+            get {
+                return ResourceManager.GetString("EventCreationFailure", resourceCulture);
             }
         }
     }

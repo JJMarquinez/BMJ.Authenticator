@@ -10,6 +10,12 @@ using BMJ.Authenticator.Infrastructure.Handlers;
 using BMJ.Authenticator.Infrastructure.Consumers;
 using Confluent.Kafka;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
+using BMJ.Authenticator.Infrastructure.Events.Factories.Creators;
+using System.Reflection;
+using BMJ.Authenticator.Infrastructure.Events.Factories;
+using BMJ.Authenticator.Infrastructure.Events.Factories.UserDeletedEventFactories.Contexts.Builders;
+using BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories.Contexts.Builders;
+using BMJ.Authenticator.Infrastructure.Events.Factories.UserUpdatedEventFactories.Contexts.Builders;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -29,14 +35,30 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            services.AddTransient<IUserIdentificationBuilder, UserIdentificationBuilder>();
-            services.AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>();
-            services.AddTransient<IIdentityService, IdentityService>();
-            services.AddTransient<IAuthLogger, AuthLogger>();
-            services.AddTransient<IEventHandler, Handlers.EventHandler>();
-            services.AddTransient<IEventConsumer, EventConsumer>();
-            services.Configure<ConsumerConfig>(configuration.GetSection(nameof(ConsumerConfig)));
+            services.AddEventFactories()
+                .AddTransient<IEventCreator, EventCreator>()
+                .AddTransient<IUserUpdatedEventContextBuilder, UserUpdatedEventContextBuilder>()
+                .AddTransient<IUserCreatedEventContextBuilder, UserCreatedEventContextBuilder>()
+                .AddTransient<IUserDeletedEventContextBuilder, UserDeletedEventContextBuilder>()
+                .AddTransient<IUserIdentificationBuilder, UserIdentificationBuilder>()
+                .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
+                .AddTransient<IIdentityService, IdentityService>()
+                .AddTransient<IAuthLogger, AuthLogger>()
+                .AddTransient<IEventHandler, Handlers.EventHandler>()
+                .AddTransient<IEventConsumer, EventConsumer>()
+                .Configure<ConsumerConfig>(configuration.GetSection(nameof(ConsumerConfig)));
 
+            return services;
+        }
+
+        private static IServiceCollection AddEventFactories(this IServiceCollection services)
+        {
+            var types = Assembly
+                .GetExecutingAssembly()
+                .GetTypes()
+                .Where(type => !type.IsAbstract && !type.IsGenericTypeDefinition && typeof(EventFactory).IsAssignableFrom(type));
+
+            types.ToList().ForEach(type => services.AddScoped(typeof(EventFactory), type));
             return services;
         }
     }
