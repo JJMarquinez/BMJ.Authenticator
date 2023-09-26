@@ -9,15 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Common\Behaviours\**" />
-    <EmbeddedResource Remove="Common\Behaviours\**" />
-    <None Remove="Common\Behaviours\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="$(AutoMapperExtensionsMicrosoftDependencyInjection)" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="$(FluentValidationDependencyInjectionExtensions)" />
-    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="$(MediatRExtensionsMicrosoftDependencyInjection)" />
+    <PackageReference Include="MediatR" Version="12.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(MicrosoftExtensionsLogging)" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@ using System.Net;
 
 namespace BMJ.Authenticator.Api.Filters;
 
-public class AuthenticatorResultFilterAttribute : ActionFilterAttribute
+public class ApiResultFilterAttribute : ActionFilterAttribute
 {
     public override void OnActionExecuted(ActionExecutedContext context)
     {

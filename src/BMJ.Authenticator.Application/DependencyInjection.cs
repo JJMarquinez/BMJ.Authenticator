@@ -1,4 +1,5 @@
-﻿using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
+﻿using BMJ.Authenticator.Application.Common.Behaviours;
+using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
 using FluentValidation;
@@ -19,7 +20,10 @@ namespace BMJ.Authenticator.Application
                 .AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>()
                 .AddAutoMapper(Assembly.GetExecutingAssembly())
                 .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly())
-                .AddMediatR(Assembly.GetExecutingAssembly());
+                .AddMediatR(cfg => {
+                    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+                });
             return services;
         }
     }

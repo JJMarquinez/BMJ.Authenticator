@@ -13,8 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation.AspNetCore" Version="$(FluentValidationAspNetCore)" />
-    <PackageReference Include="MediatR" Version="$(MediatR)" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="$(MicrosoftAspNetCoreMvcVersioning)" />
     <PackageReference Include="StackExchange.Redis" Version="$(StackExchangeRedis)" />
   </ItemGroup>

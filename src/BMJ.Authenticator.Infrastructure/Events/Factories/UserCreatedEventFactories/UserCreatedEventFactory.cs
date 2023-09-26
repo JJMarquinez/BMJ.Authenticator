@@ -1,5 +1,4 @@
 ﻿using BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories.Contexts;
-using BMJ.Authenticator.Infrastructure.Events.Factories.UserDeletedEventFactories.Contexts;
 
 namespace BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories;
 

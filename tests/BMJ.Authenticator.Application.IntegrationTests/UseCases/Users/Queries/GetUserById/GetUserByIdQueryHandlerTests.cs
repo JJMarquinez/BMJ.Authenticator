@@ -1,6 +1,6 @@
-﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext;
+﻿using BMJ.Authenticator.Application.Common.Exceptions;
+using BMJ.Authenticator.Application.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
-using BMJ.Authenticator.Infrastructure.Identity;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.UseCases.Users.Queries.GetUserById;
 
@@ -47,13 +47,13 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     public async Task ShouldThrowArgumentNullExceptionGivenNonExistingUserId()
     {
         var query = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
+        await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 
     [Fact]
     public async Task ShouldThrowArgumentNullExceptionGivenNullUserId()
     {
         var query = new GetUserByIdQuery();
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
+        await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 }

@@ -1,10 +1,14 @@
 ﻿using BMJ.Authenticator.Api.Caching;
+using BMJ.Authenticator.Api.Exceptions.Strategies;
+using BMJ.Authenticator.Api.Exceptions.Strategies.Factories;
+using BMJ.Authenticator.Api.Exceptions.Strategies.Handlers;
+using BMJ.Authenticator.Api.Exceptions.Strategies.Handlers.Supporters;
 using BMJ.Authenticator.Api.Filters;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using System.Reflection;
 
 namespace BMJ.Authenticator.Api;
 
@@ -13,6 +17,10 @@ public static class DependencyInjection
     public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services
+            .AddExceptionHandlers()
+            .AddScoped<IExceptionSupporter, ExceptionSupporter>()
+            .AddScoped<IExceptionHandlerStrategyFactory, ExceptionHandlerStrategyFactory>()
+            .AddScoped<IExceptionHandlerStrategyContext, ExceptionHandlerStrategyContext>()
             .AddApiVersioning(options =>
             {
                 options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
@@ -23,7 +31,6 @@ public static class DependencyInjection
                                                                 new MediaTypeApiVersionReader("x-api-version"));
             })
             .AddProblemDetails()
-            .AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters()
             .AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(configuration.GetValue<string>("Redis:Configuration")!))
             .AddRedisOutputCache(options =>
             {
@@ -36,7 +43,7 @@ public static class DependencyInjection
             {
                 options.Filters.Add<ApiLogFilterAttribute>();
                 options.Filters.Add<ApiExceptionFilterAttribute>();
-                options.Filters.Add<AuthenticatorResultFilterAttribute>();
+                options.Filters.Add<ApiResultFilterAttribute>();
             })
             .AddJsonOptions(options =>
             {
@@ -44,6 +51,17 @@ public static class DependencyInjection
             })
             .AddApiExplorer()
             .AddApplicationPart(typeof(DependencyInjection).Assembly);
+        return services;
+    }
+
+    private static IServiceCollection AddExceptionHandlers(this IServiceCollection services)
+    {
+        var types = Assembly
+            .GetExecutingAssembly()
+            .GetTypes()
+            .Where(type => !type.IsAbstract && !type.IsGenericTypeDefinition && typeof(ExceptionHandlerStrategy).IsAssignableFrom(type));
+
+        types.ToList().ForEach(type => services.AddScoped(typeof(ExceptionHandlerStrategy), type));
         return services;
     }
 }

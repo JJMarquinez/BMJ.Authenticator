@@ -1,6 +1,6 @@
-﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext;
+﻿using BMJ.Authenticator.Application.Common.Exceptions;
+using BMJ.Authenticator.Application.FunctionalTests.TestContext;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
-using BMJ.Authenticator.Infrastructure.Identity;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.UseCases.Users.Queries.LoginUser;
 
@@ -65,12 +65,7 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
         {
             UserName = "Megan"
         };
-        var result = await _testContext.SendAsync(query);
-
-        Assert.NotNull(result);
-        Assert.False(result.Success);
-        Assert.NotNull(result.Error);
-
+        await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 
     [Fact]
@@ -80,6 +75,6 @@ public class LoginUserQueryHandlerTests : IAsyncLifetime
         {
             Password = ">+$93p]!5£Ki"
         };
-        await Assert.ThrowsAsync<ArgumentNullException>(() => _testContext.SendAsync(query));
+        await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 }

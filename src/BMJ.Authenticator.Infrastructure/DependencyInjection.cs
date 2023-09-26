@@ -58,7 +58,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .GetTypes()
                 .Where(type => !type.IsAbstract && !type.IsGenericTypeDefinition && typeof(EventFactory).IsAssignableFrom(type));
 
-            types.ToList().ForEach(type => services.AddScoped(typeof(EventFactory), type));
+            types.ToList().ForEach(type => services.AddTransient(typeof(EventFactory), type));
             return services;
         }
     }
