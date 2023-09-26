@@ -1,6 +1,6 @@
-﻿namespace BMJ.Authenticator.Adapter.Common.Abstractions;
+﻿namespace BMJ.Authenticator.Application.Common.Abstractions;
 
-public interface IAuthLogger
+public interface IApiLogger
 {
     void Debug(string messageTemplate);
     void Debug<T>(string messageTemplate, T propertyValue);

@@ -1,14 +1,14 @@
-﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Consumers;
 
 namespace BMJ.Authenticator.Host.Consumers;
 
 public class ConsumerHostedService : IHostedService
 {
-    private readonly IAuthLogger _logger;
+    private readonly IApiLogger _logger;
     private readonly IServiceScopeFactory _serviceScopeFactory;
 
-    public ConsumerHostedService(IAuthLogger logger, IServiceScopeFactory serviceScopeFactory)
+    public ConsumerHostedService(IApiLogger logger, IServiceScopeFactory serviceScopeFactory)
     {
         _logger = logger;
         _serviceScopeFactory = serviceScopeFactory;

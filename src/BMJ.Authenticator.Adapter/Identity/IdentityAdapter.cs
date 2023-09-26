@@ -10,14 +10,11 @@ namespace BMJ.Authenticator.Adapter.Identity;
 public class IdentityAdapter : IIdentityAdapter
 {
     private readonly IIdentityService _identityService;
-    private readonly IAuthLogger _logger;
     private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
 
-
-    public IdentityAdapter(IIdentityService identityService, IAuthLogger logger, IResultDtoGenericBuilder resultDtoGenericBuilder)
+    public IdentityAdapter(IIdentityService identityService, IResultDtoGenericBuilder resultDtoGenericBuilder)
     {
         _identityService = identityService;
-        _logger = logger;
         _resultDtoGenericBuilder = resultDtoGenericBuilder;
     }
 
@@ -30,24 +27,11 @@ public class IdentityAdapter : IIdentityAdapter
     }
 
     public async Task<ResultDto> CreateUserAsync(string userName, string password, string email, string? phoneNumber)
-    {
-        var resultDto = await _identityService.CreateUserAsync(userName, password, email, phoneNumber);
-
-        if(!resultDto.Success) 
-            _logger.Error("The user was not created due to the following error: @Error", resultDto.Error);
-
-        return resultDto;
-    }
+        => await _identityService.CreateUserAsync(userName, password, email, phoneNumber);
 
     public async Task<ResultDto> DeleteUserAsync(string userId)
-    {
-        var resultDto = await _identityService.DeleteUserAsync(userId);
+        => await _identityService.DeleteUserAsync(userId);
 
-        if (!resultDto.Success)
-            _logger.Error("The user was not deleted due to the following error: @Error", resultDto.Error);
-
-        return resultDto;
-    }
 
     public bool DoesUserNameNotExist(string userName)
         => _identityService.DoesUserNameNotExist(userName);
@@ -72,12 +56,5 @@ public class IdentityAdapter : IIdentityAdapter
         => _identityService.IsUserIdAssigned(userId);
 
     public async Task<ResultDto> UpdateUserAsync(string userId, string userName, string email, string? phoneNumber)
-    {
-        var resultDto = await _identityService.UpdateUserAsync(userId, userName, email, phoneNumber);
-
-        if (!resultDto.Success)
-            _logger.Error("The user was not updated due to the following error: @Error", resultDto.Error);
-
-        return resultDto;
-    }
+        => await _identityService.UpdateUserAsync(userId, userName, email, phoneNumber);
 }

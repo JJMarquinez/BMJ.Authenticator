@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
@@ -50,7 +51,7 @@ public class AuthenticatorTestConext : IDisposable
             .AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>()
             .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
             .AddTransient<IIdentityService, IdentityService>()
-            .AddTransient<IAuthLogger, AuthLogger>()
+            .AddTransient<IApiLogger, ApiLogger>()
             .AddDbContextPool<ApplicationDbContext>(options => options.UseSqlServer(_database.GetDbConnection()))
             .AddIdentityCore<ApplicationUser>()
             .AddRoles<IdentityRole>()

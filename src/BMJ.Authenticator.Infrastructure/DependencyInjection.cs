@@ -16,6 +16,7 @@ using BMJ.Authenticator.Infrastructure.Events.Factories;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserDeletedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserUpdatedEventFactories.Contexts.Builders;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -43,7 +44,7 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddTransient<IUserIdentificationBuilder, UserIdentificationBuilder>()
                 .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
                 .AddTransient<IIdentityService, IdentityService>()
-                .AddTransient<IAuthLogger, AuthLogger>()
+                .AddTransient<IApiLogger, ApiLogger>()
                 .AddTransient<IEventHandler, Handlers.EventHandler>()
                 .AddTransient<IEventConsumer, EventConsumer>()
                 .Configure<ConsumerConfig>(configuration.GetSection(nameof(ConsumerConfig)));

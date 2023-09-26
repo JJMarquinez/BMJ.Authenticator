@@ -1,8 +1,6 @@
-﻿using BMJ.Authenticator.Adapter.Common;
-using BMJ.Authenticator.Adapter.Common.Abstractions;
+﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Adapter.Identity;
 using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Application.Common.Models.Errors;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users;
@@ -15,7 +13,6 @@ namespace BMJ.Authenticator.Adapter.UnitTests.Identity;
 public class IdentityAdapterTests
 {
     private readonly Mock<IIdentityService> _identityService;
-    private readonly Mock<IAuthLogger> _logger;
     private readonly UserIdentification _jame, _penelope;
     private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
     private readonly IResultDtoBuilder _resultDtoBuilder;
@@ -25,7 +22,6 @@ public class IdentityAdapterTests
     public IdentityAdapterTests()
     {
         _identityService = new();
-        _logger = new();
         _resultDtoGenericBuilder = new ResultDtoGenericBuilder();
         _resultDtoBuilder = new ResultDtoBuilder();
         _userDtoBuilder = new UserDtoBuilder();
@@ -56,7 +52,7 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoGenericBuilder.BuildSuccess<string?>(userJson));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.AuthenticateMemberAsync("Jame", "oT586n@S&#nJ");
         
@@ -76,7 +72,7 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoGenericBuilder.BuildFailure<string?>(_errorDtoBuilder.Build()));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.AuthenticateMemberAsync("Jame", "oT586n@S&#nJ");
 
@@ -94,7 +90,7 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string?>()
             )).ReturnsAsync(_resultDtoBuilder.BuildSuccess());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.CreateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
@@ -111,14 +107,13 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string?>()
             )).ReturnsAsync(_resultDtoBuilder.WithError(_errorDtoBuilder.Build()).Build());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.CreateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
         Assert.NotNull(resultDto.Error);
-        _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
     [Fact]
@@ -127,7 +122,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.DeleteUserAsync(
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoBuilder.BuildSuccess());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.DeleteUserAsync(Guid.NewGuid().ToString());
 
@@ -141,14 +136,13 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.DeleteUserAsync(
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoBuilder.WithError(_errorDtoBuilder.Build()).Build());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.DeleteUserAsync(Guid.NewGuid().ToString());
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
         Assert.NotNull(resultDto.Error);
-        _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 
     [Fact]
@@ -157,7 +151,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.DoesUserNameNotExist(
             It.IsAny<string>()
             )).Returns(true);
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var notExist = identityAdapter.DoesUserNameNotExist("Jaime");
 
@@ -170,7 +164,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.DoesUserNameNotExist(
             It.IsAny<string>()
             )).Returns(false);
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var notExist = identityAdapter.DoesUserNameNotExist("Jaime");
 
@@ -182,7 +176,7 @@ public class IdentityAdapterTests
     {
         var listUsersJson = JsonSerializer.Serialize(new List<UserIdentification> { _penelope, _jame });
         _identityService.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoGenericBuilder.BuildSuccess<string?>(listUsersJson));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
         var userDtoList = new List<UserDto>
         {
             _userDtoBuilder
@@ -226,7 +220,7 @@ public class IdentityAdapterTests
     public async void ShouldNotGetAllUsers()
     {
         _identityService.Setup(x => x.GetAllUserAsync()).ReturnsAsync(_resultDtoGenericBuilder.BuildFailure<string?>(_errorDtoBuilder.Build()));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.GetAllUserAsync();
 
@@ -242,7 +236,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoGenericBuilder.BuildSuccess<string?>(userJson));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.GetUserByIdAsync(Guid.NewGuid().ToString());
 
@@ -261,7 +255,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.GetUserByIdAsync(
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoGenericBuilder.BuildFailure<string?>(_errorDtoBuilder.Build()));
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.GetUserByIdAsync(Guid.NewGuid().ToString());
 
@@ -276,7 +270,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.IsUserIdAssigned(
             It.IsAny<string>()
             )).Returns(true);
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var notExist = identityAdapter.IsUserIdAssigned(Guid.NewGuid().ToString());
 
@@ -289,7 +283,7 @@ public class IdentityAdapterTests
         _identityService.Setup(x => x.IsUserIdAssigned(
             It.IsAny<string>()
             )).Returns(false);
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var notExist = identityAdapter.IsUserIdAssigned(Guid.NewGuid().ToString());
 
@@ -305,7 +299,7 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoBuilder.BuildSuccess());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.UpdateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
@@ -322,13 +316,12 @@ public class IdentityAdapterTests
             It.IsAny<string>(),
             It.IsAny<string>()
             )).ReturnsAsync(_resultDtoBuilder.WithError(_errorDtoBuilder.Build()).Build());
-        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _logger.Object, _resultDtoGenericBuilder);
+        IIdentityAdapter identityAdapter = new IdentityAdapter(_identityService.Object, _resultDtoGenericBuilder);
 
         var resultDto = await identityAdapter.UpdateUserAsync("Jame", "oT586n@S&#nJ", "jame@auth.com", "111-222-3333");
 
         Assert.NotNull(resultDto);
         Assert.False(resultDto.Success);
         Assert.NotNull(resultDto.Error);
-        _logger.Verify(l => l.Error(It.IsAny<string>(), It.IsAny<ErrorDto>()), Times.Once);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Instrumentation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -9,9 +10,9 @@ namespace BMJ.Authenticator.Api.Filters
 {
     public class ApiLogFilterAttribute : ActionFilterAttribute
     {
-        private readonly IAuthLogger _logger;
+        private readonly IApiLogger _logger;
 
-        public ApiLogFilterAttribute(IAuthLogger logger)
+        public ApiLogFilterAttribute(IApiLogger logger)
         {
             _logger = logger;
         }

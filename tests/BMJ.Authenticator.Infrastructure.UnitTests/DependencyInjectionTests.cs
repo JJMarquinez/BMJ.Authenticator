@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Behaviours;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
@@ -57,7 +58,7 @@ public class DependencyInjectionTests
         Assert.IsType<UserIdentificationBuilder>(serviceProvider.GetService<IUserIdentificationBuilder>());
         Assert.IsType<ApplicationUserBuilder>(serviceProvider.GetService<IApplicationUserBuilder>());
         Assert.IsType<IdentityService>(serviceProvider.GetService<IIdentityService>());
-        Assert.IsType<AuthLogger>(serviceProvider.GetService<IAuthLogger>());
+        Assert.IsType<ApiLogger>(serviceProvider.GetService<IApiLogger>());
         Assert.IsType<Infrastructure.Handlers.EventHandler>(serviceProvider.GetService<IEventHandler>());
         Assert.IsType<EventConsumer>(serviceProvider.GetService<IEventConsumer>());
         Assert.IsType<UserValidator<ApplicationUser>>(serviceProvider.GetService<IUserValidator<ApplicationUser>>());

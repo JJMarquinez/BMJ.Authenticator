@@ -1,4 +1,5 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Abstractions;
 using Microsoft.Extensions.Logging;
 
 namespace BMJ.Authenticator.Infrastructure.Loggers;
@@ -7,11 +8,11 @@ public sealed class BMJAuthenticator
 {
 }
 
-public class AuthLogger : IAuthLogger
+public class ApiLogger : IApiLogger
 {
     private readonly ILogger _logger;
 
-    public AuthLogger(ILogger<BMJAuthenticator> logger)
+    public ApiLogger(ILogger<BMJAuthenticator> logger)
     {
         _logger = logger;
     }

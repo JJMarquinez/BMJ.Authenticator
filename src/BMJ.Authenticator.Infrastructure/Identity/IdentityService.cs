@@ -7,13 +7,14 @@ using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Infrastructure.Properties;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure.Identity
 {
     public class IdentityService : IIdentityService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAuthLogger _authLogger;
+        private readonly IApiLogger _authLogger;
         private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
         private readonly IResultDtoBuilder _resultDtoBuilder;
         private readonly IErrorDtoBuilder _errorDtoBuilder;
@@ -21,7 +22,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
 
         public IdentityService(
             UserManager<ApplicationUser> userManager,
-            IAuthLogger authLogger,
+            IApiLogger authLogger,
             IErrorDtoBuilder errorDtoBuilder,
             IApplicationUserBuilder applicationUserBuilder,
             IResultDtoGenericBuilder resultDtoGenericBuilder,
@@ -44,9 +45,6 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 var roles = await _userManager.GetRolesAsync(applicationUser);
                 userList.Add(applicationUser.ToUserIdentification(roles?.ToArray()));
             }
-
-            if (userList.Count() == 0)
-                _authLogger.Warning("It doesn't exist any user.");
 
             var error = _errorDtoBuilder
                 .WithCode(string.Format("{0}{1}", InfrastructureString.ErrorCodeInvalidOperationPrefix, InfrastructureString.ErrorGetAllUserCode))
@@ -88,7 +86,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
             if (identityResult.Succeeded)
                 result = _resultDtoBuilder.BuildSuccess();
             else
-                _authLogger.Error("The following errors {@Errors} don't allow delete the user {@user}",
+                _authLogger.Error("The following errors {@Errors} don't allow create the user {@user}",
                     identityResult.Errors,
                     user);
             
@@ -117,7 +115,7 @@ namespace BMJ.Authenticator.Infrastructure.Identity
                 result = _resultDtoBuilder.BuildSuccess();
             else
             {
-                _authLogger.Error("The following errors {@Errors} don't allow delete the user {@applicationUser}",
+                _authLogger.Error("The following errors {@Errors} don't allow update the user {@applicationUser}",
                     identityResult.Errors,
                     applicationUser);
             }

@@ -17,7 +17,7 @@ public class DependencyInjectionTests
         _serviceCollection.AddTransient<IResultDtoBuilder, ResultDtoBuilder>();
         _serviceCollection.AddTransient<IResultDtoGenericBuilder, ResultDtoGenericBuilder>();
         _serviceCollection.AddTransient<IIdentityService, IdentityServiceTest>();
-        _serviceCollection.AddTransient<IAuthLogger, AuthLoggerTest>();
+        _serviceCollection.AddTransient<IApiLogger, AuthLoggerTest>();
         _serviceCollection.Configure<JwtOptions>(new ConfigurationManager().GetSection(nameof(JwtOptions)));
 
         _serviceCollection.AddAdapterServices();

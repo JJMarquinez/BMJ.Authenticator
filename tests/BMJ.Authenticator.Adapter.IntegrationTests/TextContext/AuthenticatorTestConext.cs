@@ -49,7 +49,7 @@ public class AuthenticatorTestConext : IDisposable
         services
             .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
             .AddTransient<IIdentityService, IdentityService>()
-            .AddTransient<IAuthLogger, AuthLogger>()
+            .AddTransient<IApiLogger, ApiLogger>()
             .AddTransient<IIdentityAdapter, IdentityAdapter>()
             .AddTransient<IJwtProvider, JwtProvider>()
             .AddTransient<IResultDtoBuilder, ResultDtoBuilder>()

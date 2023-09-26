@@ -1,8 +1,9 @@
 ﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Adapter.UnitTests.DependencyInjection;
 
-public class AuthLoggerTest : IAuthLogger
+public class AuthLoggerTest : IApiLogger
 {
     public void Critical(string messageTemplate)
     {

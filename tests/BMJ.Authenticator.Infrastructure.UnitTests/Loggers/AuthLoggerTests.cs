@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Adapter.Common.Abstractions;
+﻿using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Infrastructure.Loggers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -7,14 +7,14 @@ namespace BMJ.Authenticator.Infrastructure.UnitTests.Loggers;
 
 public class AuthLoggerTests
 {
-    private readonly IAuthLogger _authLogger;
+    private readonly IApiLogger _authLogger;
     private readonly Mock<ILogger<BMJAuthenticator>> _logger;
 
     public AuthLoggerTests()
     {
         _logger = new();
         _logger.Setup(l => l.IsEnabled(It.IsAny<LogLevel>())).Returns(true);
-        _authLogger = new AuthLogger(_logger.Object);
+        _authLogger = new ApiLogger(_logger.Object);
     }
 
     [Fact]

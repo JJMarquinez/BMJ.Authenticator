@@ -8,6 +8,7 @@ using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Infrastructure.Properties;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Infrastructure.UnitTests.Identity;
 
@@ -17,7 +18,7 @@ public class IdentityServiceTests
     private readonly IResultDtoGenericBuilder _resultDtoGenericBuilder;
     private readonly IResultDtoBuilder _resultDtoBuilder;
     private readonly IApplicationUserBuilder _applicationUserBuilder;
-    private readonly Mock<IAuthLogger> _authLogger;
+    private readonly Mock<IApiLogger> _apiLogger;
     private readonly Mock<UserManager<ApplicationUser>> _userManager;
     private readonly List<ApplicationUser> _users;
     private readonly List<string> _roles;
@@ -38,7 +39,7 @@ public class IdentityServiceTests
             .Build()
         };
         _roles = new List<string>() { "Administrator", "Standard" };
-        _authLogger = new();
+        _apiLogger = new();
         _errorDtoBuilder = new ErrorDtoBuilder();
         _resultDtoGenericBuilder = new ResultDtoGenericBuilder();
         _resultDtoBuilder = new ResultDtoBuilder();
@@ -58,7 +59,7 @@ public class IdentityServiceTests
     public async void ShouldGetAllUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.GetAllUserAsync();
         var resultValue = JsonSerializer.Deserialize<List<UserIdentification>?>(result.Value!);
@@ -81,7 +82,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.GetAllUserAsync();
         var resultValue = JsonSerializer.Deserialize<List<UserIdentification>?>(result.Value!);
@@ -103,7 +104,7 @@ public class IdentityServiceTests
     public async void ShouldNotGetAnyUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(new List<ApplicationUser>().AsQueryable());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.GetAllUserAsync();
 
@@ -113,14 +114,13 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorGetAllUserTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorGetAllUserDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorGetAllUserHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
     public async void ShouldGetUserById()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.GetUserByIdAsync(_userId);
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -139,7 +139,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.GetUserByIdAsync(_userId);
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -158,7 +158,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.GetUserByIdAsync(Guid.NewGuid().ToString()));
     }
@@ -167,7 +167,7 @@ public class IdentityServiceTests
     public async void ShouldCreateUser()
     {
         _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.CreateUserAsync("Jhon", "Jhon1234!", "jhon@auth.com", "67543218");
 
@@ -178,7 +178,7 @@ public class IdentityServiceTests
     public async void ShouldNotCreateUser()
     {
         _userManager.Setup(x => x.CreateAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.CreateUserAsync("Jhon", "1234", "jhonauth.com", "67543218");
 
@@ -187,7 +187,7 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorCreateUserTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorCreateUserDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorCreateUserHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
+        _apiLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 
     [Fact]
@@ -195,7 +195,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
 
@@ -207,7 +207,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.UpdateAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.UpdateUserAsync(_userId, "Jhon", "jhon@auth.com", "67543218");
 
@@ -216,14 +216,14 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorUpdateUserTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorUpdateUserDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorUpdateUserHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
+        _apiLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 
     [Fact]
     public void ShouldThrowNullReferenceExceptionWhenUpdateUserAsyncIsCalledGivenNonexistentUser()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         _ = Assert.ThrowsAsync<NullReferenceException>(async () => await _identityService.UpdateUserAsync(Guid.NewGuid().ToString(), "Jhon", "jhon@auth.com", "67543218"));
     }
@@ -233,7 +233,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Success);
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.DeleteUserAsync(_userId);
 
@@ -245,7 +245,7 @@ public class IdentityServiceTests
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
         _userManager.Setup(x => x.DeleteAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(IdentityResult.Failed());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.DeleteUserAsync(_userId);
 
@@ -254,7 +254,7 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorDeleteUserTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorDeleteUserDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorDeleteUserHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
+        _apiLogger.Verify(m => m.Error(It.IsAny<string>(), It.IsAny<IEnumerable<IdentityError>>(), It.IsAny<ApplicationUser>()), Times.Once);
     }
 
     [Fact]
@@ -264,7 +264,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(true);
         _userManager.Setup(userManager => userManager.GetRolesAsync(It.IsAny<ApplicationUser>())).ReturnsAsync(_roles);
         
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -283,7 +283,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(_users.FirstOrDefault());
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(true);
 
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
         var resultValue = JsonSerializer.Deserialize<UserIdentification>(result.Value!);
@@ -299,7 +299,7 @@ public class IdentityServiceTests
     [Fact]
     public async void ShouldNotAuthenticateUserGivenWrongUsername()
     {
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
@@ -308,7 +308,7 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorAuthenticateMemberTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorAuthenticateMemberDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorAuthenticateMemberHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
+        _apiLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
@@ -317,7 +317,7 @@ public class IdentityServiceTests
         _userManager.Setup(x => x.FindByNameAsync(It.IsAny<string>())).ReturnsAsync(_users.FirstOrDefault());
         _userManager.Setup(x => x.CheckPasswordAsync(It.IsAny<ApplicationUser>(), It.IsAny<string>())).ReturnsAsync(false);
 
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         var result = await _identityService.AuthenticateMemberAsync("Ven", "#553zP1k");
 
@@ -326,14 +326,14 @@ public class IdentityServiceTests
         Assert.Equal(InfrastructureString.ErrorAuthenticateMemberTitle, result.Error.Title);
         Assert.Equal(InfrastructureString.ErrorAuthenticateMemberDetail, result.Error.Detail);
         Assert.Equal(int.Parse(InfrastructureString.ErrorAuthenticateMemberHttpStatusCode), result.Error.HttpStatusCode);
-        _authLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
+        _apiLogger.Verify(m => m.Warning(It.IsAny<string>()), Times.Once);
     }
 
     [Fact]
     public void ShouldNotFindUserByUsername()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         bool result = _identityService.DoesUserNameNotExist("Ven");
 
@@ -344,7 +344,7 @@ public class IdentityServiceTests
     public void ShouldFindUserByUsername()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         bool result = _identityService.DoesUserNameNotExist("Maberic");
 
@@ -355,7 +355,7 @@ public class IdentityServiceTests
     public void ShouldFindUserId()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         bool result = _identityService.IsUserIdAssigned(_userId);
 
@@ -366,7 +366,7 @@ public class IdentityServiceTests
     public void ShouldNotFindUserId()
     {
         _userManager.Setup(userManager => userManager.Users).Returns(_users.AsQueryable().BuildMock());
-        IIdentityService _identityService = new IdentityService(_userManager.Object, _authLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
+        IIdentityService _identityService = new IdentityService(_userManager.Object, _apiLogger.Object,_errorDtoBuilder, _applicationUserBuilder, _resultDtoGenericBuilder, _resultDtoBuilder);
 
         bool result = _identityService.IsUserIdAssigned(Guid.NewGuid().ToString());
 

@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using BMJ.Authenticator.Adapter.Common.Abstractions;
 using BMJ.Authenticator.Api.Exceptions.Strategies;
+using BMJ.Authenticator.Application.Common.Abstractions;
 
 namespace BMJ.Authenticator.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
-    private readonly IAuthLogger _logger;
+    private readonly IApiLogger _logger;
     private readonly IExceptionHandlerStrategyContext _handlerStrategyContext;
-    public ApiExceptionFilterAttribute(IAuthLogger logger, IExceptionHandlerStrategyContext handlerStrategyContext)
+    public ApiExceptionFilterAttribute(IApiLogger logger, IExceptionHandlerStrategyContext handlerStrategyContext)
     {
         _logger = logger;
         _handlerStrategyContext = handlerStrategyContext;
