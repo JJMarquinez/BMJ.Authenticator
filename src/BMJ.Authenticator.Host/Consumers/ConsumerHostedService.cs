@@ -1,5 +1,5 @@
 ﻿using BMJ.Authenticator.Application.Common.Abstractions;
-using BMJ.Authenticator.Infrastructure.Consumers;
+using BMJ.Authenticator.Infrastructure.Events.Consumers;
 
 namespace BMJ.Authenticator.Host.Consumers;
 

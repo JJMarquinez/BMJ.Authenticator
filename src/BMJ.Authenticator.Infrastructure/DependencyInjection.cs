@@ -6,8 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using BMJ.Authenticator.Adapter.Common.Abstractions;
-using BMJ.Authenticator.Infrastructure.Handlers;
-using BMJ.Authenticator.Infrastructure.Consumers;
 using Confluent.Kafka;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.Creators;
@@ -17,6 +15,10 @@ using BMJ.Authenticator.Infrastructure.Events.Factories.UserDeletedEventFactorie
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserUpdatedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Application.Common.Abstractions;
+using BMJ.Authenticator.Infrastructure.Events.Consumers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Factories;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Strategies;
 
 namespace BMJ.Authenticator.Infrastructure
 {
@@ -45,7 +47,9 @@ namespace BMJ.Authenticator.Infrastructure
                 .AddTransient<IApplicationUserBuilder, ApplicationUserBuilder>()
                 .AddTransient<IIdentityService, IdentityService>()
                 .AddTransient<IApiLogger, ApiLogger>()
-                .AddTransient<IEventHandler, Handlers.EventHandler>()
+                .AddEventHandlerStrategies()
+                .AddTransient<IEventHandlerStrategyFactory, EventHandlerStrategyFactory>()
+                .AddTransient<IEventHandlerStrategyContext, EventHandlerStrategyContext>()
                 .AddTransient<IEventConsumer, EventConsumer>()
                 .Configure<ConsumerConfig>(configuration.GetSection(nameof(ConsumerConfig)));
 
@@ -60,6 +64,17 @@ namespace BMJ.Authenticator.Infrastructure
                 .Where(type => !type.IsAbstract && !type.IsGenericTypeDefinition && typeof(EventFactory).IsAssignableFrom(type));
 
             types.ToList().ForEach(type => services.AddTransient(typeof(EventFactory), type));
+            return services;
+        }
+
+        private static IServiceCollection AddEventHandlerStrategies(this IServiceCollection services)
+        {
+            var types = Assembly
+                .GetExecutingAssembly()
+                .GetTypes()
+                .Where(type => !type.IsAbstract && !type.IsGenericTypeDefinition && typeof(EventHandlerStrategy).IsAssignableFrom(type));
+
+            types.ToList().ForEach(type => services.AddTransient(typeof(EventHandlerStrategy), type));
             return services;
         }
     }

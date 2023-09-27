@@ -63,9 +63,18 @@ namespace BMJ.Authenticator.Infrastructure.Properties {
         /// <summary>
         ///   Looks up a localized string similar to There is either ambiguous even factory or no one to use. There must be just one registered..
         /// </summary>
-        internal static string AmbiguousOrNoOneFactory {
+        internal static string AmbiguousOrNoOneEventFactory {
             get {
-                return ResourceManager.GetString("AmbiguousOrNoOneFactory", resourceCulture);
+                return ResourceManager.GetString("AmbiguousOrNoOneEventFactory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There is either ambiguous even handler or no one to use. There must be just one registered..
+        /// </summary>
+        internal static string AmbiguousOrNoOneEventHandlerStrategy {
+            get {
+                return ResourceManager.GetString("AmbiguousOrNoOneEventHandlerStrategy", resourceCulture);
             }
         }
         

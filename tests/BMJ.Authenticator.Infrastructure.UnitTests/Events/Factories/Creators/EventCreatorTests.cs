@@ -112,6 +112,6 @@ public class EventCreatorTests
 
         var exception = Assert.Throws<Exception>(() => eventCreator.Create(eventContext));
 
-        Assert.Equal(InfrastructureString.AmbiguousOrNoOneFactory, exception.Message);
+        Assert.Equal(InfrastructureString.AmbiguousOrNoOneEventFactory, exception.Message);
     }
 }

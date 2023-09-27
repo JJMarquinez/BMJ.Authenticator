@@ -1,7 +1,9 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Infrastructure.Events;
-using BMJ.Authenticator.Infrastructure.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Factories;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Strategies;
 using MediatR;
 using Microsoft.AspNetCore.OutputCaching;
 using Moq;
@@ -12,7 +14,9 @@ public class EventHandlerTests
 {
     private readonly Mock<ISender> _sender;
     private readonly Mock<IOutputCacheStore> _cache;
-    private readonly IEventHandler _eventHandler;
+    private readonly IEventHandlerStrategyContext _eventHandlerStrategyContext;
+    private readonly IEventHandlerStrategyFactory _eventHandlerStrategyFactory;
+    private readonly IEnumerable<EventHandlerStrategy> _eventHandlerStrategies;
 
     public EventHandlerTests()
     {
@@ -28,7 +32,14 @@ public class EventHandlerTests
             It.IsAny<CancellationToken>()
             )).Returns(new ValueTask());
 
-        _eventHandler = new Infrastructure.Handlers.EventHandler(_sender.Object, _cache.Object);
+        _eventHandlerStrategies = new List<EventHandlerStrategy> 
+        {
+            new UserCreatedEventHandlerStrategy(_sender.Object, _cache.Object),
+            new UserUpdatedEventHandlerStrategy(_sender.Object, _cache.Object),
+            new UserDeletedEventHandlerStrategy(_sender.Object, _cache.Object)
+        };
+        _eventHandlerStrategyFactory = new EventHandlerStrategyFactory(_eventHandlerStrategies);
+        _eventHandlerStrategyContext = new EventHandlerStrategyContext(_eventHandlerStrategyFactory);
     }
 
     [Fact]
@@ -42,7 +53,7 @@ public class EventHandlerTests
             Password = "22*kZ7V8ISl$",
             Version = 9
         };
-        var exception = await Record.ExceptionAsync(() => _eventHandler.On(@event));
+        var exception = await Record.ExceptionAsync(() => _eventHandlerStrategyContext.ExecuteHandlingAsync(@event));
         Assert.Null(exception);
     }
 
@@ -56,7 +67,7 @@ public class EventHandlerTests
             Phone = "111-222-333",
             Version = 9
         };
-        var exception = await Record.ExceptionAsync(() => _eventHandler.On(@event));
+        var exception = await Record.ExceptionAsync(() => _eventHandlerStrategyContext.ExecuteHandlingAsync(@event));
         Assert.Null(exception);
     }
 
@@ -68,7 +79,7 @@ public class EventHandlerTests
             Id = Guid.NewGuid(),
             Version = 9
         };
-        var exception = await Record.ExceptionAsync(() => _eventHandler.On(@event));
+        var exception = await Record.ExceptionAsync(() => _eventHandlerStrategyContext.ExecuteHandlingAsync(@event));
         Assert.Null(exception);
     }
 }

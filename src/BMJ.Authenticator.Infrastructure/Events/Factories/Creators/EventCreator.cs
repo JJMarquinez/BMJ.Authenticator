@@ -25,7 +25,7 @@ public class EventCreator : IEventCreator
         if (factories.Count == 1)
             factory = factories.First();
         else
-            throw new Exception(InfrastructureString.AmbiguousOrNoOneFactory);
+            throw new Exception(InfrastructureString.AmbiguousOrNoOneEventFactory);
 
         return factory;
     }

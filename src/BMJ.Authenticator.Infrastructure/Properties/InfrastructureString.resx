@@ -117,8 +117,11 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AmbiguousOrNoOneFactory" xml:space="preserve">
+  <data name="AmbiguousOrNoOneEventFactory" xml:space="preserve">
     <value>There is either ambiguous even factory or no one to use. There must be just one registered.</value>
+  </data>
+  <data name="AmbiguousOrNoOneEventHandlerStrategy" xml:space="preserve">
+    <value>There is either ambiguous even handler or no one to use. There must be just one registered.</value>
   </data>
   <data name="ErrorAuthenticateMemberCode" xml:space="preserve">
     <value>UserNameOrPasswordNotValid</value>

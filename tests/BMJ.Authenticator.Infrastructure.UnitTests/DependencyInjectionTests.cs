@@ -3,13 +3,15 @@ using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Behaviours;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
-using BMJ.Authenticator.Infrastructure.Consumers;
+using BMJ.Authenticator.Infrastructure.Events.Consumers;
 using BMJ.Authenticator.Infrastructure.Events.Factories;
 using BMJ.Authenticator.Infrastructure.Events.Factories.Creators;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserCreatedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserDeletedEventFactories.Contexts.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Factories.UserUpdatedEventFactories.Contexts.Builders;
-using BMJ.Authenticator.Infrastructure.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Factories;
+using BMJ.Authenticator.Infrastructure.Events.Handlers.Strategies;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.Infrastructure.Loggers;
@@ -59,11 +61,13 @@ public class DependencyInjectionTests
         Assert.IsType<ApplicationUserBuilder>(serviceProvider.GetService<IApplicationUserBuilder>());
         Assert.IsType<IdentityService>(serviceProvider.GetService<IIdentityService>());
         Assert.IsType<ApiLogger>(serviceProvider.GetService<IApiLogger>());
-        Assert.IsType<Infrastructure.Handlers.EventHandler>(serviceProvider.GetService<IEventHandler>());
+        Assert.IsType<EventHandlerStrategyFactory>(serviceProvider.GetService<IEventHandlerStrategyFactory>());
+        Assert.IsType<EventHandlerStrategyContext>(serviceProvider.GetService<IEventHandlerStrategyContext>());
         Assert.IsType<EventConsumer>(serviceProvider.GetService<IEventConsumer>());
         Assert.IsType<UserValidator<ApplicationUser>>(serviceProvider.GetService<IUserValidator<ApplicationUser>>());
         Assert.NotNull(serviceProvider.GetService<IOptions<ConsumerConfig>>());
         Assert.Equal(3, serviceProvider.GetServices<EventFactory>().Count());
+        Assert.Equal(3, serviceProvider.GetServices<EventHandlerStrategy>().Count());
     }
 
     [Fact]

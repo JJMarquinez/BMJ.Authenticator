@@ -1,23 +1,22 @@
 ﻿using BMJ.Authenticator.Infrastructure.Converters;
-using BMJ.Authenticator.Infrastructure.Events;
-using BMJ.Authenticator.Infrastructure.Handlers;
+using BMJ.Authenticator.Infrastructure.Events.Handlers;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
 using System.Text.Json;
 
-namespace BMJ.Authenticator.Infrastructure.Consumers;
+namespace BMJ.Authenticator.Infrastructure.Events.Consumers;
 
 public class EventConsumer : IEventConsumer
 {
     private readonly ConsumerConfig _config;
-    private readonly IEventHandler _eventHandler;
-    public EventConsumer(IOptions<ConsumerConfig> config, IEventHandler eventHandler)
+    private readonly IEventHandlerStrategyContext _eventHandlerStrategyContext;
+    public EventConsumer(IOptions<ConsumerConfig> config, IEventHandlerStrategyContext eventHandlerStrategyContext)
     {
         _config = config.Value;
-        _eventHandler = eventHandler;
+        _eventHandlerStrategyContext = eventHandlerStrategyContext;
     }
 
-    public void Consume(string topic)
+    public async Task Consume(string topic)
     {
         using var consumer = new ConsumerBuilder<string, string>(_config)
             .SetKeyDeserializer(Deserializers.Utf8)
@@ -34,12 +33,7 @@ public class EventConsumer : IEventConsumer
 
             var options = new JsonSerializerOptions { Converters = { new EventJsonConverter() } };
             var @event = JsonSerializer.Deserialize<BaseEvent>(consumeResult.Message.Value, options);
-            var handlerMethod = _eventHandler.GetType().GetMethod("On", new Type[] { @event.GetType() });
-
-            if (handlerMethod == null)
-                throw new ArgumentException(nameof(handlerMethod), "Could not find event handler method!");
-
-            handlerMethod.Invoke(_eventHandler, new object[] { @event });
+            await _eventHandlerStrategyContext.ExecuteHandlingAsync(@event!);
             consumer.Commit(consumeResult);
         }
     }
