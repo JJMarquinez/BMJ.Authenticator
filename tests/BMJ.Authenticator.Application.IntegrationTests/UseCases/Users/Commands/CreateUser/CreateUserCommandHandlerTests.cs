@@ -1,6 +1,4 @@
-﻿using BMJ.Authenticator.Adapter.Common;
-using BMJ.Authenticator.Application.FunctionalTests.TestContext;
-using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser;
+﻿using BMJ.Authenticator.Application.FunctionalTests.TestContext;
 
 namespace BMJ.Authenticator.Application.FunctionalTests.UseCases.Users.Commands.CreateUser;
 
@@ -23,13 +21,12 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldCreateUser()
     {
-        var command = new CreateUserCommand
-        {
-            UserName = "Drake",
-            Email = "drake@authenticator.com",
-            PhoneNumber = "123-456-789",
-            Password = "K6#?m412kNSe",
-        };
+        var command = _testContext.GetCreateUserCommandBuilder()
+            .WithUsername("Drake")
+            .WithEmail("drake@authenticator.com")
+            .WithPhoneNumber("123-456-789")
+            .WithPassword("K6#?m412kNSe")
+            .Build();
 
         var result = await _testContext.SendAsync(command);
 
@@ -40,13 +37,12 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotCreateUserGivenInValidPassword()
     {
-        var command = new CreateUserCommand
-        {
-            UserName = "Drake",
-            Email = "drake@authenticator.com",
-            PhoneNumber = "123-456-789",
-            Password = "1234",
-        };
+        var command = _testContext.GetCreateUserCommandBuilder()
+            .WithUsername("Drake")
+            .WithEmail("drake@authenticator.com")
+            .WithPhoneNumber("123-456-789")
+            .WithPassword("1234")
+            .Build();
 
         var result = await _testContext.SendAsync(command);
 
@@ -58,13 +54,12 @@ public class CreateUserCommandHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotCreateUserGivenInValidUsername()
     {
-        var command = new CreateUserCommand
-        {
-            UserName = "Drake&",
-            Email = "drake@authenticator.com",
-            PhoneNumber = "123-456-789",
-            Password = "K6#?m412kNSe",
-        };
+        var command = _testContext.GetCreateUserCommandBuilder()
+            .WithUsername("Drake&")
+            .WithEmail("drake@authenticator.com")
+            .WithPhoneNumber("123-456-789")
+            .WithPassword("K6#?m412kNSe")
+            .Build();
 
         var result = await _testContext.SendAsync(command);
 

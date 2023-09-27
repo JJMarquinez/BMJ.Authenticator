@@ -32,13 +32,12 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
         var roles = new[] { "Guest" };
         string? userId = await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
 
-        var command = new UpdateUserCommand
-        {
-            Id = userId,
-            UserName = "Drake",
-            Email = "drake@authenticator.com",
-            PhoneNumber = "123-456-789",
-        };
+        var command = _testContext.GetUpdateUserCommandBuilder()
+            .WithId(userId)
+            .WithUsername("Drake")
+            .WithEmail("drake@authenticator.com")
+            .WithPhoneNumber("123-456-789")
+            .Build();
 
         var result = await _testContext.SendAsync(command);
         var user = await _testContext.FindAsync(userId!);
@@ -46,21 +45,20 @@ public class UpdateUserCommandHandlerTests : IAsyncLifetime
         Assert.NotNull(result);
         Assert.True(result.Success);
         Assert.NotNull(user);
-        Assert.Equal(command.UserName, user.UserName);
-        Assert.Equal(command.Email, user.Email);
-        Assert.Equal(command.PhoneNumber, user.PhoneNumber);
+        Assert.Equal(((UpdateUserCommand)command).UserName, user.UserName);
+        Assert.Equal(((UpdateUserCommand)command).Email, user.Email);
+        Assert.Equal(((UpdateUserCommand)command).PhoneNumber, user.PhoneNumber);
     }
 
     [Fact]
     public async Task ShouldThrowNullReferenceExceptionGivenNonExistingUser()
     {
-        var command = new UpdateUserCommand
-        {
-            Id = Guid.NewGuid().ToString(),
-            UserName = "Drake",
-            Email = "drake@authenticator.com",
-            PhoneNumber = "123-456-789",
-        };
+        var command = _testContext.GetUpdateUserCommandBuilder()
+            .WithId(Guid.NewGuid().ToString())
+            .WithUsername("Drake")
+            .WithEmail("drake@authenticator.com")
+            .WithPhoneNumber("123-456-789")
+            .Build();
 
         await Assert.ThrowsAsync<NullReferenceException>(() => _testContext.SendAsync(command));
     }

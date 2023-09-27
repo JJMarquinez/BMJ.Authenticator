@@ -1,5 +1,8 @@
 ﻿using BMJ.Authenticator.Application.Common.Models.Results;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser.Builders;
 using BMJ.Authenticator.Infrastructure.Events;
 using BMJ.Authenticator.Infrastructure.Events.Handlers;
 using BMJ.Authenticator.Infrastructure.Events.Handlers.Factories;
@@ -17,6 +20,9 @@ public class EventHandlerTests
     private readonly IEventHandlerStrategyContext _eventHandlerStrategyContext;
     private readonly IEventHandlerStrategyFactory _eventHandlerStrategyFactory;
     private readonly IEnumerable<EventHandlerStrategy> _eventHandlerStrategies;
+    private readonly ICreateUserCommandBuilder _createUserCommandBuilder;
+    private readonly IDeleteUserCommandBuilder _deleteUserCommandBuilder;
+    private readonly IUpdateUserCommandBuilder _updateUserCommandBuilder;
 
     public EventHandlerTests()
     {
@@ -32,11 +38,15 @@ public class EventHandlerTests
             It.IsAny<CancellationToken>()
             )).Returns(new ValueTask());
 
+        _createUserCommandBuilder = new CreateUserCommandBuilder();
+        _deleteUserCommandBuilder = new DeleteUserCommandBuilder();
+        _updateUserCommandBuilder = new UpdateUserCommandBuilder();
+
         _eventHandlerStrategies = new List<EventHandlerStrategy> 
         {
-            new UserCreatedEventHandlerStrategy(_sender.Object, _cache.Object),
-            new UserUpdatedEventHandlerStrategy(_sender.Object, _cache.Object),
-            new UserDeletedEventHandlerStrategy(_sender.Object, _cache.Object)
+            new UserCreatedEventHandlerStrategy(_sender.Object, _cache.Object, _createUserCommandBuilder),
+            new UserUpdatedEventHandlerStrategy(_sender.Object, _cache.Object, _updateUserCommandBuilder),
+            new UserDeletedEventHandlerStrategy(_sender.Object, _cache.Object, _deleteUserCommandBuilder)
         };
         _eventHandlerStrategyFactory = new EventHandlerStrategyFactory(_eventHandlerStrategies);
         _eventHandlerStrategyContext = new EventHandlerStrategyContext(_eventHandlerStrategyFactory);

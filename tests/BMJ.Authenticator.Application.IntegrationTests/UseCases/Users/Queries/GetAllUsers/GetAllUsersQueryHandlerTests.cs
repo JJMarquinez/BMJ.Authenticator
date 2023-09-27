@@ -32,7 +32,8 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
         var roles = new[] { "Guest" };
         await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
 
-        var query = new GetAllUsersQuery();
+        var query = _testContext.GetGetAllUserQueryFactory().Genarate();
+
         var result = await _testContext.SendAsync(query);
         Assert.NotNull(result);
         Assert.True(result.Success);
@@ -50,7 +51,7 @@ public class GetAllUsersQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotReturnAnyUsers()
     {
-        var query = new GetAllUsersQuery();
+        var query = _testContext.GetGetAllUserQueryFactory().Genarate();
         var result = await _testContext.SendAsync(query);
 
         Assert.NotNull(result);

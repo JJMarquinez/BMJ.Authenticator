@@ -1,4 +1,4 @@
-﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser;
+﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser.Builders;
 using MediatR;
 using Microsoft.AspNetCore.OutputCaching;
 
@@ -8,26 +8,26 @@ public class UserDeletedEventHandlerStrategy : EventHandlerStrategy
 {
     private readonly ISender _mediator;
     private readonly IOutputCacheStore _cache;
+    private readonly IDeleteUserCommandBuilder _deleteUserCommandBuilder;
 
-    public UserDeletedEventHandlerStrategy(ISender mediator, IOutputCacheStore cache)
+    public UserDeletedEventHandlerStrategy(ISender mediator, IOutputCacheStore cache, IDeleteUserCommandBuilder deleteUserCommandBuilder)
     {
         _mediator = mediator;
         _cache = cache;
+        _deleteUserCommandBuilder = deleteUserCommandBuilder;
     }
 
     public override async Task HandlerAsync(BaseEvent @event)
     {
-        var command = new DeleteUserCommand
-        {
-            Id = @event.Id.ToString()
-        };
+        var userId = @event.Id.ToString();
+        var command = _deleteUserCommandBuilder.WithId(userId).Build();
 
         var resultDto = await _mediator.Send(command);
 
         if (resultDto.Success)
         {
             var ct = new CancellationTokenSource().Token;
-            await _cache.EvictByTagAsync(command.Id, ct);
+            await _cache.EvictByTagAsync(userId, ct);
             await _cache.EvictByTagAsync("getAllAsync", ct);
         }
     }

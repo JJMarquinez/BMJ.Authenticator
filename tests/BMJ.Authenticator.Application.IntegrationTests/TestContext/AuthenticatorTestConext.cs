@@ -1,4 +1,9 @@
-﻿using BMJ.Authenticator.Infrastructure.Identity;
+﻿using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers.Factories;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById.Factories;
+using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
 using BMJ.Authenticator.ToolKit.Database.Testcontainters;
@@ -62,6 +67,21 @@ public class AuthenticatorTestConext : IDisposable
 
     public IApplicationUserBuilder GetApplicationUserBuilder()
         => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
+    
+    public ICreateUserCommandBuilder GetCreateUserCommandBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<ICreateUserCommandBuilder>();
+
+    public IDeleteUserCommandBuilder GetDeleteUserCommandBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IDeleteUserCommandBuilder>();
+
+    public IUpdateUserCommandBuilder GetUpdateUserCommandBuilder()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IUpdateUserCommandBuilder>();
+
+    public IGetAllUserQueryFactory GetGetAllUserQueryFactory()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IGetAllUserQueryFactory>();
+
+    public IGetUserByIdQueryFactory GetGetUserByIdQueryFactory()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IGetUserByIdQueryFactory>();
 
     public async void Dispose()
     {

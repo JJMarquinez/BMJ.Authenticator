@@ -6,6 +6,7 @@ using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using BMJ.Authenticator.Infrastructure.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Nest;
 using System.Net;
 using System.Text.Json;
 
@@ -131,7 +132,7 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetAnyUsersGivenAnonymousRequest()
     {
-        var request = new GetAllUsersQuery();
+        var request = _testContext.GetGetAllUserQueryFactory().Genarate();
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetAllAsync(), request);
 
@@ -150,7 +151,7 @@ public class MemberControllerTests : IAsyncLifetime
             .Build();
         var roles = new[] { "Guest" };
         await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
-        var request = new GetAllUsersQuery();
+        var request = _testContext.GetGetAllUserQueryFactory().Genarate();
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetAllAsync(), request, token);
         var result = await response.Content.ReadAsStringAsync();
@@ -165,7 +166,7 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetUserByIdGivenAnonymousRequest()
     {
-        var request = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+        var request = _testContext.GetGetUserByIdQueryFactory().Genarate(Guid.NewGuid().ToString());
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request);
 
@@ -185,7 +186,7 @@ public class MemberControllerTests : IAsyncLifetime
         string? userId = await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
 
         var token = await _testContext.GetTokenAsync();
-        var request = new GetUserByIdQuery { Id = userId };
+        var request = _testContext.GetGetUserByIdQueryFactory().Genarate(userId!);
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);
         var result = await response.Content.ReadAsStringAsync();
@@ -199,7 +200,8 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetUserByIdGivenEmptyUserId()
     {
-        var request = new GetUserByIdQuery();
+        var request = _testContext.GetGetUserByIdQueryFactory().Genarate(null!);
+
         var token = await _testContext.GetTokenAsync();
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);
@@ -216,7 +218,8 @@ public class MemberControllerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldNotGetUserByIdGivenNonExistingUserId()
     {
-        var request = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+        var request = _testContext.GetGetUserByIdQueryFactory().Genarate(Guid.NewGuid().ToString());
+
         var token = await _testContext.GetTokenAsync();
 
         var response = await _testContext.GetAsync(AuthenticatorApi.GetByIdAsync(), request, token);

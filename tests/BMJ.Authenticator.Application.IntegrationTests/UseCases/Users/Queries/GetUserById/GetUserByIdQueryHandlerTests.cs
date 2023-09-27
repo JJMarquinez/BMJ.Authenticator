@@ -31,7 +31,8 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
         var roles = new[] { "Guest" };
         string? userId =  await _testContext.AddAsync(applicationUser, "M6#?m412kNSH", roles);
 
-        var query = new GetUserByIdQuery { Id = userId };
+        var query = _testContext.GetGetUserByIdQueryFactory().Genarate(userId!);
+
         var result = await _testContext.SendAsync(query);
 
         Assert.NotNull(result);
@@ -46,14 +47,16 @@ public class GetUserByIdQueryHandlerTests : IAsyncLifetime
     [Fact]
     public async Task ShouldThrowArgumentNullExceptionGivenNonExistingUserId()
     {
-        var query = new GetUserByIdQuery { Id = Guid.NewGuid().ToString() };
+        var query = _testContext.GetGetUserByIdQueryFactory().Genarate(Guid.NewGuid().ToString());
+
         await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 
     [Fact]
     public async Task ShouldThrowArgumentNullExceptionGivenNullUserId()
     {
-        var query = new GetUserByIdQuery();
+        var query = _testContext.GetGetUserByIdQueryFactory().Genarate(null!);
+
         await Assert.ThrowsAsync<ApiValidationException>(() => _testContext.SendAsync(query));
     }
 }

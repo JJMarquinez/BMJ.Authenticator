@@ -3,6 +3,9 @@ using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Behaviours;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser.Builders;
 using BMJ.Authenticator.Infrastructure.Events.Consumers;
 using BMJ.Authenticator.Infrastructure.Events.Factories;
 using BMJ.Authenticator.Infrastructure.Events.Factories.Creators;
@@ -37,6 +40,9 @@ public class DependencyInjectionTests
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables()
             .Build();
+        _serviceCollection.AddTransient<ICreateUserCommandBuilder, CreateUserCommandBuilder>();
+        _serviceCollection.AddTransient<IDeleteUserCommandBuilder, DeleteUserCommandBuilder>();
+        _serviceCollection.AddTransient<IUpdateUserCommandBuilder, UpdateUserCommandBuilder>();
         _serviceCollection.AddTransient<IResultDtoBuilder, ResultDtoBuilder>();
         _serviceCollection.AddTransient<IResultDtoGenericBuilder, ResultDtoGenericBuilder>();
         _serviceCollection.AddTransient<IErrorDtoBuilder, ErrorDtoBuilder>();

@@ -1,5 +1,6 @@
 ﻿using BMJ.Authenticator.Api.Caching;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers.Factories;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,13 @@ namespace BMJ.Authenticator.Api.Controllers.v1.Members;
 [ApiVersion("1.0")]
 public class MemberController : ApiControllerBase
 {
+    private readonly IGetAllUserQueryFactory _getAllUserQueryFactory;
+
+    public MemberController(IGetAllUserQueryFactory getAllUserQueryFactory)
+    {
+        _getAllUserQueryFactory = getAllUserQueryFactory;
+    }
+
     /// <summary>
     /// Reatrieves a user token to an authenticated user.
     /// </summary>
@@ -29,7 +37,7 @@ public class MemberController : ApiControllerBase
     [HttpGet("getAllAsync")]
     public async Task<IActionResult> GetAllAsync()
     {
-        return Ok(await Mediator.Send(new GetAllUsersQuery()));
+        return Ok(await Mediator.Send(_getAllUserQueryFactory.Genarate()));
     }
 
     [OutputCache(PolicyName = nameof(ByIdCachePolicy))]

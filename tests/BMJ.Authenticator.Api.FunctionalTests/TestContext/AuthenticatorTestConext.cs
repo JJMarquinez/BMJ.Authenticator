@@ -1,6 +1,8 @@
 ﻿using BMJ.Authenticator.Api.FunctionalTests.TestContext.Cache;
 using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers.Factories;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById.Factories;
 using BMJ.Authenticator.Infrastructure.Identity;
 using BMJ.Authenticator.Infrastructure.Identity.Builders;
 using BMJ.Authenticator.ToolKit.Database.Abstractions;
@@ -111,6 +113,12 @@ public class AuthenticatorTestConext : IDisposable
 
     public IApplicationUserBuilder GetApplicationUserBuilder()
         => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IApplicationUserBuilder>();
+
+    public IGetAllUserQueryFactory GetGetAllUserQueryFactory()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IGetAllUserQueryFactory>();
+
+    public IGetUserByIdQueryFactory GetGetUserByIdQueryFactory()
+        => _scopeFactory.CreateScope().ServiceProvider.GetRequiredService<IGetUserByIdQueryFactory>();
 
     public async void Dispose()
     {
