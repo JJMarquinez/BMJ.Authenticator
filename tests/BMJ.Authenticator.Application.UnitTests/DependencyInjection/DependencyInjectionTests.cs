@@ -3,7 +3,12 @@ using BMJ.Authenticator.Application.Common.Abstractions;
 using BMJ.Authenticator.Application.Common.Models.Errors.Builders;
 using BMJ.Authenticator.Application.Common.Models.Results.Builders;
 using BMJ.Authenticator.Application.Common.Models.Users.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.CreateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.DeleteUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Commands.UpdateUser.Builders;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetAllUsers.Factories;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById;
+using BMJ.Authenticator.Application.UseCases.Users.Queries.GetUserById.Factories;
 using BMJ.Authenticator.Application.UseCases.Users.Queries.LoginUser;
 using FluentValidation;
 using MediatR;
@@ -54,6 +59,11 @@ public class DependencyInjectionTests
     {
         var serviceProvider = _serviceCollection.BuildServiceProvider();
 
+        Assert.IsType<UpdateUserCommandBuilder>(serviceProvider.GetService<IUpdateUserCommandBuilder>());
+        Assert.IsType<DeleteUserCommandBuilder>(serviceProvider.GetService<IDeleteUserCommandBuilder>());
+        Assert.IsType<CreateUserCommandBuilder>(serviceProvider.GetService<ICreateUserCommandBuilder>());
+        Assert.IsType<GetAllUserQueryFactory>(serviceProvider.GetService<IGetAllUserQueryFactory>());
+        Assert.IsType<GetUserByIdQueryFactory>(serviceProvider.GetService<IGetUserByIdQueryFactory>());
         Assert.IsType<ResultDtoGenericBuilder>(serviceProvider.GetService<IResultDtoGenericBuilder>());
         Assert.IsType<ResultDtoBuilder>(serviceProvider.GetService<IResultDtoBuilder>());
         Assert.IsType<UserDtoBuilder>(serviceProvider.GetService<IUserDtoBuilder>());
